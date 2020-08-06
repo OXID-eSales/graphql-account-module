@@ -14,6 +14,7 @@ use OxidEsales\GraphQL\Account\NewsletterStatus\DataType\NewsletterStatusSubscri
 use OxidEsales\GraphQL\Account\NewsletterStatus\DataType\NewsletterStatusUnsubscribe as NewsletterStatusUnsubscribeType;
 use OxidEsales\GraphQL\Account\NewsletterStatus\DataType\Subscriber as SubscriberType;
 use OxidEsales\GraphQL\Account\NewsletterStatus\Exception\SubscriberNotFound;
+use OxidEsales\GraphQL\Account\NewsletterStatus\Infrastructure\NewsletterStatus as NewsletterStatusInfrastructure;
 use OxidEsales\GraphQL\Account\NewsletterStatus\Infrastructure\Repository as NewsletterStatusRepository;
 use OxidEsales\GraphQL\Account\NewsletterStatus\Service\Subscriber as SubscriberService;
 use OxidEsales\GraphQL\Base\Exception\InvalidLogin;
@@ -24,6 +25,9 @@ final class NewsletterStatus
 {
     /** @var NewsletterStatusRepository */
     private $newsletterStatusRepository;
+
+    /** @var NewsletterStatusInfrastructure */
+    private $newsletterStatusInfrastructure;
 
     /** @var Repository */
     private $repository;
@@ -36,14 +40,16 @@ final class NewsletterStatus
 
     public function __construct(
         NewsletterStatusRepository $newsletterStatusRepository,
+        NewsletterStatusInfrastructure $newsletterStatusInfrastructure,
         Authentication $authenticationService,
         Repository $repository,
         SubscriberService $subscriberService
     ) {
-        $this->newsletterStatusRepository = $newsletterStatusRepository;
-        $this->authenticationService      = $authenticationService;
-        $this->repository                 = $repository;
-        $this->subscriberService          = $subscriberService;
+        $this->newsletterStatusRepository     = $newsletterStatusRepository;
+        $this->newsletterStatusInfrastructure = $newsletterStatusInfrastructure;
+        $this->authenticationService          = $authenticationService;
+        $this->repository                     = $repository;
+        $this->subscriberService              = $subscriberService;
     }
 
     public function newsletterStatus(): NewsletterStatusType
@@ -62,7 +68,7 @@ final class NewsletterStatus
     {
         $subscriber = $this->subscriberService->subscriber((string) $newsletterStatus->userId());
 
-        return $this->newsletterStatusRepository->optIn($subscriber, $newsletterStatus);
+        return $this->newsletterStatusInfrastructure->optIn($subscriber, $newsletterStatus);
     }
 
     public function unsubscribe(?NewsletterStatusUnsubscribeType $newsletterStatus): bool
@@ -82,15 +88,15 @@ final class NewsletterStatus
 
         $subscriber = $this->subscriberService->subscriber($userId);
 
-        return $this->newsletterStatusRepository->unsubscribe($subscriber);
+        return $this->newsletterStatusInfrastructure->unsubscribe($subscriber);
     }
 
     public function subscribe(NewsletterStatusSubscribeType $newsletterStatusSubscribe): NewsletterStatusType
     {
-        $customer   = $this->newsletterStatusRepository->createNewsletterUser($newsletterStatusSubscribe);
+        $customer   = $this->newsletterStatusInfrastructure->createNewsletterUser($newsletterStatusSubscribe);
         $subscriber = new SubscriberType($customer->getEshopModel());
 
-        return $newsletterStatus = $this->newsletterStatusRepository->subscribe(
+        return $newsletterStatus = $this->newsletterStatusInfrastructure->subscribe(
             $subscriber,
             $newsletterStatusSubscribe->userId() ? false : true
         );

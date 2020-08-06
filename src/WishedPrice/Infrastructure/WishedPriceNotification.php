@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\WishedPrice\Service;
+namespace OxidEsales\GraphQL\Account\WishedPrice\Infrastructure;
 
 use OxidEsales\Eshop\Core\Email;
 use OxidEsales\GraphQL\Account\WishedPrice\DataType\WishedPrice as WishedPriceDataType;

@@ -11,8 +11,8 @@ namespace OxidEsales\GraphQL\Account\WishedPrice\Controller;
 
 use OxidEsales\GraphQL\Account\WishedPrice\DataType\WishedPrice as WishedPriceDataType;
 use OxidEsales\GraphQL\Account\WishedPrice\DataType\WishedPriceFilterList;
+use OxidEsales\GraphQL\Account\WishedPrice\Infrastructure\WishedPriceNotification as WishedPriceNotificationService;
 use OxidEsales\GraphQL\Account\WishedPrice\Service\WishedPrice as WishedPriceService;
-use OxidEsales\GraphQL\Account\WishedPrice\Service\WishedPriceNotification as WishedPriceNotificationService;
 use OxidEsales\GraphQL\Base\Exception\InvalidToken;
 use TheCodingMachine\GraphQLite\Annotations\Logged;
 use TheCodingMachine\GraphQLite\Annotations\Mutation;

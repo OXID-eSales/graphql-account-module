@@ -9,10 +9,10 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\WishedPrice\Service;
 
-use OxidEsales\Eshop\Core\Price as EshopPriceModel;
 use OxidEsales\GraphQL\Account\WishedPrice\DataType\Inquirer as InquirerDataType;
 use OxidEsales\GraphQL\Account\WishedPrice\DataType\WishedPrice;
 use OxidEsales\GraphQL\Account\WishedPrice\Exception\InquirerNotFound;
+use OxidEsales\GraphQL\Account\WishedPrice\Infrastructure\PriceFactory;
 use OxidEsales\GraphQL\Account\WishedPrice\Service\Inquirer as InquirerService;
 use OxidEsales\GraphQL\Catalogue\Currency\DataType\Currency;
 use OxidEsales\GraphQL\Catalogue\Product\DataType\Price;
@@ -33,12 +33,17 @@ final class RelationService
     /** @var CatalogueProductService */
     private $productService;
 
+    /** @var PriceFactory */
+    private $priceFactory;
+
     public function __construct(
         InquirerService $inquirerService,
-        CatalogueProductService $productService
+        CatalogueProductService $productService,
+        PriceFactory $priceFactory
     ) {
         $this->inquirerService    = $inquirerService;
         $this->productService     = $productService;
+        $this->priceFactory       = $priceFactory;
     }
 
     /**
@@ -69,11 +74,7 @@ final class RelationService
      */
     public function getPrice(WishedPrice $wishedPrice): Price
     {
-        /** @var EshopPriceModel $price */
-        $price = oxNew(EshopPriceModel::class);
-        $price->setPrice((float) $wishedPrice->getEshopModel()->getFieldData('oxprice'));
-
-        return new Price($price);
+        return $this->priceFactory->createPrice($wishedPrice);
     }
 
     /**
