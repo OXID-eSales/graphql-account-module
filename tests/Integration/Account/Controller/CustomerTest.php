@@ -258,7 +258,7 @@ final class CustomerTest extends TokenTestCase
             [
                 'testUser1',
                 'useruser',
-                'Email is not valid',
+                "This e-mail address 'testUser1' is invalid!",
             ],
             [
                 'user@oxid-esales.com',
@@ -273,7 +273,7 @@ final class CustomerTest extends TokenTestCase
             [
                 '',
                 'useruser',
-                'Email empty',
+                'The e-mail address must not be empty!',
             ],
         ];
     }

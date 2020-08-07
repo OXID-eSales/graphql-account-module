@@ -14,8 +14,8 @@ use OxidEsales\GraphQL\Account\NewsletterStatus\DataType\NewsletterStatusSubscri
 use OxidEsales\GraphQL\Account\NewsletterStatus\DataType\NewsletterStatusUnsubscribe as NewsletterStatusUnsubscribeType;
 use OxidEsales\GraphQL\Account\NewsletterStatus\DataType\Subscriber as SubscriberType;
 use OxidEsales\GraphQL\Account\NewsletterStatus\Exception\SubscriberNotFound;
-use OxidEsales\GraphQL\Account\NewsletterStatus\Infrastructure\NewsletterStatus as NewsletterStatusInfrastructure;
-use OxidEsales\GraphQL\Account\NewsletterStatus\Infrastructure\Repository as NewsletterStatusRepository;
+use OxidEsales\GraphQL\Account\NewsletterStatus\Infrastructure\NewsletterStatus as NewsletterStatusRepository;
+use OxidEsales\GraphQL\Account\NewsletterStatus\Infrastructure\Repository as NewsletterSubscriptionRepository;
 use OxidEsales\GraphQL\Account\NewsletterStatus\Service\Subscriber as SubscriberService;
 use OxidEsales\GraphQL\Base\Exception\InvalidLogin;
 use OxidEsales\GraphQL\Base\Service\Authentication;
@@ -23,11 +23,11 @@ use OxidEsales\GraphQL\Catalogue\Shared\Infrastructure\Repository;
 
 final class NewsletterStatus
 {
-    /** @var NewsletterStatusRepository */
-    private $newsletterStatusRepository;
+    /** @var NewsletterSubscriptionRepository */
+    private $NewsletterSubscriptionRepository;
 
-    /** @var NewsletterStatusInfrastructure */
-    private $newsletterStatusInfrastructure;
+    /** @var NewsletterStatusRepository */
+    private $NewsletterStatusRepository;
 
     /** @var Repository */
     private $repository;
@@ -39,17 +39,17 @@ final class NewsletterStatus
     private $authenticationService;
 
     public function __construct(
-        NewsletterStatusRepository $newsletterStatusRepository,
-        NewsletterStatusInfrastructure $newsletterStatusInfrastructure,
+        NewsletterSubscriptionRepository $NewsletterSubscriptionRepository,
+        NewsletterStatusRepository $NewsletterStatusRepository,
         Authentication $authenticationService,
         Repository $repository,
         SubscriberService $subscriberService
     ) {
-        $this->newsletterStatusRepository     = $newsletterStatusRepository;
-        $this->newsletterStatusInfrastructure = $newsletterStatusInfrastructure;
-        $this->authenticationService          = $authenticationService;
-        $this->repository                     = $repository;
-        $this->subscriberService              = $subscriberService;
+        $this->NewsletterSubscriptionRepository     = $NewsletterSubscriptionRepository;
+        $this->NewsletterStatusRepository           = $NewsletterStatusRepository;
+        $this->authenticationService                = $authenticationService;
+        $this->repository                           = $repository;
+        $this->subscriberService                    = $subscriberService;
     }
 
     public function newsletterStatus(): NewsletterStatusType
@@ -59,7 +59,7 @@ final class NewsletterStatus
             throw new InvalidLogin('Unauthenticated');
         }
 
-        return $this->newsletterStatusRepository->getByUserId(
+        return $this->NewsletterSubscriptionRepository->getByUserId(
             $this->authenticationService->getUserId()
         );
     }
@@ -68,7 +68,7 @@ final class NewsletterStatus
     {
         $subscriber = $this->subscriberService->subscriber((string) $newsletterStatus->userId());
 
-        return $this->newsletterStatusInfrastructure->optIn($subscriber, $newsletterStatus);
+        return $this->NewsletterStatusRepository->optIn($subscriber, $newsletterStatus);
     }
 
     public function unsubscribe(?NewsletterStatusUnsubscribeType $newsletterStatus): bool
@@ -88,15 +88,15 @@ final class NewsletterStatus
 
         $subscriber = $this->subscriberService->subscriber($userId);
 
-        return $this->newsletterStatusInfrastructure->unsubscribe($subscriber);
+        return $this->NewsletterStatusRepository->unsubscribe($subscriber);
     }
 
     public function subscribe(NewsletterStatusSubscribeType $newsletterStatusSubscribe): NewsletterStatusType
     {
-        $customer   = $this->newsletterStatusInfrastructure->createNewsletterUser($newsletterStatusSubscribe);
+        $customer   = $this->NewsletterStatusRepository->createNewsletterUser($newsletterStatusSubscribe);
         $subscriber = new SubscriberType($customer->getEshopModel());
 
-        return $newsletterStatus = $this->newsletterStatusInfrastructure->subscribe(
+        return $newsletterStatus = $this->NewsletterStatusRepository->subscribe(
             $subscriber,
             $newsletterStatusSubscribe->userId() ? false : true
         );
