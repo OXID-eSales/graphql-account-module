@@ -12,6 +12,7 @@ namespace OxidEsales\GraphQL\Account\Account\Service;
 use DateTimeInterface;
 use OxidEsales\GraphQL\Account\Account\DataType\Customer as CustomerDataType;
 use OxidEsales\GraphQL\Account\Account\Exception\CustomerExists;
+use OxidEsales\GraphQL\Account\Account\Exception\CustomerNotDeletable;
 use OxidEsales\GraphQL\Account\Account\Exception\CustomerNotFound;
 use OxidEsales\GraphQL\Account\Account\Exception\InvalidEmail;
 use OxidEsales\GraphQL\Account\Account\Infrastructure\Repository as CustomerRepository;
@@ -122,6 +123,40 @@ final class Customer
         }
 
         return $customer;
+    }
+
+    /**
+     * @throws CustomerNotDeletable
+     */
+    public function deleteCustomer(): bool
+    {
+        if (!((string) $id = $this->authenticationService->getUserId())) {
+            throw new InvalidLogin('Unauthorized');
+        }
+
+        if (!(bool) $this->legacyService->getConfigParam('blAllowUsersToDeleteTheirAccount')) {
+            throw CustomerNotDeletable::notEnabledByAdmin();
+        }
+
+        $customerModel = $this->fetchCustomer($id)->getEshopModel();
+
+        if ((bool) $customerModel->isMallAdmin()) {
+            throw CustomerNotDeletable::whileMallAdmin();
+        }
+
+        /**
+         * Setting derived to false allows mall users to delete their account in a shop
+         * that's different from the one the account was originally created in.
+         */
+        if ($this->legacyService->getConfigParam('blMallUsers')) {
+            $customerModel->setIsDerived(false);
+        }
+
+        if (!$customerModel->delete()) {
+            throw CustomerNotDeletable::byModel();
+        }
+
+        return true;
     }
 
     private function fetchCustomer(string $id): CustomerDataType

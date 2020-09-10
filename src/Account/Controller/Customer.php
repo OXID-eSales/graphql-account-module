@@ -69,4 +69,13 @@ final class Customer
     {
         return $this->customerService->changeBirthdate($birthdate);
     }
+
+    /**
+     * @Mutation()
+     * @Logged()
+     */
+    public function customerDelete(): bool
+    {
+        return $this->customerService->deleteCustomer();
+    }
 }
