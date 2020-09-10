@@ -13,6 +13,7 @@ use OxidEsales\GraphQL\Account\Account\DataType\Customer as CustomerDataType;
 use OxidEsales\GraphQL\Account\Account\DataType\DeliveryAddress;
 use OxidEsales\GraphQL\Account\Account\DataType\InvoiceAddress as InvoiceAddressDataType;
 use OxidEsales\GraphQL\Account\Account\DataType\Order as OrderDataType;
+use OxidEsales\GraphQL\Account\Account\DataType\OrderFile;
 use OxidEsales\GraphQL\Account\Account\Infrastructure\Customer as CustomerInfrastructure;
 use OxidEsales\GraphQL\Account\Account\Infrastructure\Repository as AccountRepository;
 use OxidEsales\GraphQL\Account\Account\Service\InvoiceAddress as InvoiceAddressService;
@@ -144,5 +145,15 @@ final class RelationService
     public function getOrders(CustomerDataType $customer, ?PaginationFilter $pagination = null): array
     {
         return $this->customerInfrastructure->getOrders($customer, $pagination);
+    }
+
+    /**
+     * @Field
+     *
+     * @return OrderFile[]
+     */
+    public function getFiles(CustomerDataType $customer): array
+    {
+        return $this->customerInfrastructure->getOrderFiles($customer);
     }
 }

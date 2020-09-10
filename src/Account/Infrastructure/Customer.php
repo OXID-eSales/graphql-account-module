@@ -10,10 +10,12 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Account\Infrastructure;
 
 use OxidEsales\Eshop\Application\Model\Order as EshopOrderModel;
+use OxidEsales\Eshop\Application\Model\OrderFileList as OrderFileListModel;
 use OxidEsales\Eshop\Application\Model\User as EshopUserModel;
 use OxidEsales\Eshop\Core\Model\ListModel as EshopListModel;
 use OxidEsales\GraphQL\Account\Account\DataType\Customer as CustomerDataType;
 use OxidEsales\GraphQL\Account\Account\DataType\Order as OrderDataType;
+use OxidEsales\GraphQL\Account\Account\DataType\OrderFile;
 use OxidEsales\GraphQL\Base\DataType\PaginationFilter;
 
 final class Customer
@@ -54,5 +56,21 @@ final class Customer
         }
 
         return $orders;
+    }
+
+    public function getOrderFiles(CustomerDataType $customer): array
+    {
+        /** @var OrderFileListModel $orderFileList */
+        $orderFileList = oxNew(OrderFileListModel::class);
+        $orderFileList->loadUserFiles((string) $customer->getId());
+        $result = [];
+
+        if ($orderFiles = $orderFileList->getArray()) {
+            foreach ($orderFiles as $orderFile) {
+                $result[] = new OrderFile($orderFile);
+            }
+        }
+
+        return $result;
     }
 }

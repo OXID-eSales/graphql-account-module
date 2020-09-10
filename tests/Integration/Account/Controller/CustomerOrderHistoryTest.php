@@ -41,7 +41,8 @@ final class CustomerOrderHistoryTest extends TokenTestCase
 
     protected function tearDown(): void
     {
-        $this->originalParcel = EshopRegistry::getConfig()->setConfigParam('sParcelService', $this->originalParcelService);
+        $this->originalParcel = EshopRegistry::getConfig()
+        ->setConfigParam('sParcelService', $this->originalParcelService);
 
         parent::tearDown();
     }

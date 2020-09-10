@@ -13,6 +13,7 @@ use OxidEsales\GraphQL\Account\Account\DataType\Order as OrderDataType;
 use OxidEsales\GraphQL\Account\Account\DataType\OrderCost;
 use OxidEsales\GraphQL\Account\Account\DataType\OrderDelivery;
 use OxidEsales\GraphQL\Account\Account\DataType\OrderDeliveryAddress;
+use OxidEsales\GraphQL\Account\Account\DataType\OrderFile;
 use OxidEsales\GraphQL\Account\Account\DataType\OrderInvoiceAddress;
 use OxidEsales\GraphQL\Account\Account\DataType\OrderItem;
 use OxidEsales\GraphQL\Account\Account\DataType\OrderPayment;
@@ -93,5 +94,15 @@ final class OrderRelations
     public function getPayment(OrderDataType $order): ?OrderPayment
     {
         return $this->orderInfrastructure->getOrderPayment($order);
+    }
+
+    /**
+     * @Field
+     *
+     * @return OrderFile[]
+     */
+    public function getFiles(OrderDataType $order): array
+    {
+        return $this->orderInfrastructure->getOrderFiles($order);
     }
 }

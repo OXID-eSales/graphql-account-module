@@ -11,12 +11,14 @@ namespace OxidEsales\GraphQL\Account\Account\Infrastructure;
 
 use Iterator;
 use OxidEsales\Eshop\Application\Model\OrderArticle;
+use OxidEsales\Eshop\Application\Model\OrderFileList as OrderFileListModel;
 use OxidEsales\Eshop\Application\Model\UserPayment as EshopUserPaymentModel;
 use OxidEsales\Eshop\Application\Model\Voucher as EshopVoucherModel;
 use OxidEsales\Eshop\Application\Model\VoucherList as EshopVoucherListModel;
 use OxidEsales\GraphQL\Account\Account\DataType\Order as OrderDataType;
 use OxidEsales\GraphQL\Account\Account\DataType\OrderDelivery as OrderDeliveryDataType;
 use OxidEsales\GraphQL\Account\Account\DataType\OrderDeliveryAddress;
+use OxidEsales\GraphQL\Account\Account\DataType\OrderFile;
 use OxidEsales\GraphQL\Account\Account\DataType\OrderInvoiceAddress;
 use OxidEsales\GraphQL\Account\Account\DataType\OrderItem;
 use OxidEsales\GraphQL\Account\Account\DataType\OrderPayment;
@@ -89,5 +91,21 @@ final class Order
         $payment = $order->getEshopModel()->getPaymentType();
 
         return $payment ? new OrderPayment($payment) : null;
+    }
+
+    public function getOrderFiles(OrderDataType $order): array
+    {
+        /** @var OrderFileListModel $orderFileList */
+        $orderFileList = oxNew(OrderFileListModel::class);
+        $orderFileList->loadOrderFiles((string) $order->getId());
+        $result = [];
+
+        if ($orderFiles = $orderFileList->getArray()) {
+            foreach ($orderFiles as $orderFile) {
+                $result[] = new OrderFile($orderFile);
+            }
+        }
+
+        return $result;
     }
 }
