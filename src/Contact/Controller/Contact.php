@@ -29,8 +29,8 @@ final class Contact
     /**
      * @Mutation()
      */
-    public function contactRequest(ContactRequest $contactRequest): bool
+    public function contactRequest(ContactRequest $request): bool
     {
-        return $this->contactRequestService->sendContactRequest($contactRequest);
+        return $this->contactRequestService->sendContactRequest($request);
     }
 }

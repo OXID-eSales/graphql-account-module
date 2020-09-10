@@ -9,11 +9,6 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\Contact\DataType;
 
-use TheCodingMachine\GraphQLite\Annotations\Type;
-
-/**
- * @Type()
- */
 final class ContactRequest
 {
     /**

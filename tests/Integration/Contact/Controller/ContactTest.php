@@ -16,7 +16,7 @@ final class ContactTest extends TokenTestCase
     public function testContactRequest(): void
     {
         $result = $this->query(
-            'mutation{contactRequest(contactRequest:{
+            'mutation{contactRequest(request:{
               email:"sometest@somedomain.com"
               firstName:"myName"
               lastName:"mySurname"
@@ -34,7 +34,7 @@ final class ContactTest extends TokenTestCase
     public function testContactRequestUsesShopValidation(): void
     {
         $result = $this->query(
-            'mutation{contactRequest(contactRequest:{
+            'mutation{contactRequest(request:{
               email:"wrongEmail"
             })}'
         );

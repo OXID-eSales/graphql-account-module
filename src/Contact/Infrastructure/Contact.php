@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\Contact\Infrastructure;
 
+use OxidEsales\Eshop\Core\Email as EshopEmail;
 use OxidEsales\EshopCommunity\Internal\Domain\Contact\Form\ContactFormBridgeInterface;
 use OxidEsales\GraphQL\Account\Contact\DataType\ContactRequest;
 use OxidEsales\GraphQL\Account\Contact\Exception\ContactRequestFieldsValidationError;
@@ -52,19 +53,13 @@ final class Contact
         return true;
     }
 
-    public function getRequiredContactFormFields(): array
-    {
-        $contactFormRequiredFields = $this->legacy->getConfigParam('contactFormRequiredFields');
-
-        return $contactFormRequiredFields === null ? [] : $contactFormRequiredFields;
-    }
-
     public function sendRequest(ContactRequest $contactRequest): bool
     {
         $form = $this->contactFormBridge->getContactForm();
         $form->handleRequest($contactRequest->getFields());
         $message = $this->contactFormBridge->getContactFormMessage($form);
-        $mailer = $this->legacy->getEmail();
+        /** @var EshopEmail $mailer */
+        $mailer  = $this->legacy->getEmail();
 
         return $mailer->sendContactMail($contactRequest->getEmail(), $contactRequest->getSubject(), $message);
     }
