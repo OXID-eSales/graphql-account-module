@@ -13,6 +13,8 @@ use OxidEsales\GraphQL\Account\Account\DataType\OrderPayment;
 use OxidEsales\GraphQL\Account\Account\DataType\OrderPaymentValue;
 use OxidEsales\GraphQL\Account\Account\Infrastructure\OrderPayment as OrderPaymentInfrastructure;
 use OxidEsales\GraphQL\Account\Payment\DataType\Payment;
+use OxidEsales\GraphQL\Account\Payment\Exception\PaymentNotFound;
+use OxidEsales\GraphQL\Account\Payment\Service\Payment as PaymentService;
 use TheCodingMachine\GraphQLite\Annotations\ExtendType;
 use TheCodingMachine\GraphQLite\Annotations\Field;
 
@@ -21,12 +23,17 @@ use TheCodingMachine\GraphQLite\Annotations\Field;
  */
 final class OrderPaymentRelations
 {
+    /** @var PaymentService */
+    private $paymentService;
+
     /** @var OrderPaymentInfrastructure */
     private $orderPaymentInfrastructure;
 
     public function __construct(
+        PaymentService $paymentService,
         OrderPaymentInfrastructure $orderPaymentInfrastructure
     ) {
+        $this->paymentService             = $paymentService;
         $this->orderPaymentInfrastructure = $orderPaymentInfrastructure;
     }
 
@@ -35,7 +42,13 @@ final class OrderPaymentRelations
      */
     public function getPayment(OrderPayment $orderPayment): ?Payment
     {
-        return $this->orderPaymentInfrastructure->getPayment($orderPayment);
+        try {
+            return $this->paymentService->payment(
+                $orderPayment->getPaymentId()
+            );
+        } catch (PaymentNotFound $e) {
+            return null;
+        }
     }
 
     /**

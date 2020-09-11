@@ -48,7 +48,14 @@ final class OrderPayment implements DataType
      */
     public function getUpdated(): ?DateTimeImmutable
     {
-        return DateTimeImmutableFactory::fromString($this->payment->getFieldData('oxtimestamp'));
+        $timestamp = $this->payment->getFieldData('oxtimestamp');
+
+        return $timestamp ? DateTimeImmutableFactory::fromString($timestamp) : null;
+    }
+
+    public function getPaymentId(): string
+    {
+        return $this->payment->getFieldData('oxpaymentsid');
     }
 
     public static function getModelClass(): string

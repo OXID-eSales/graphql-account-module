@@ -41,7 +41,7 @@ final class Payment implements DataType
     /**
      * @Field()
      */
-    public function getActive(): bool
+    public function isActive(): bool
     {
         return (bool) $this->payment->getFieldData('oxactive');
     }

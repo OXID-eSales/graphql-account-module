@@ -57,7 +57,7 @@ final class CustomerOrderHistoryTest extends TokenTestCase
 
         $order = $result['body']['data']['customer']['orders'][0];
         $this->assertSame(self::ORDER_WITH_ALL_DATA, $order['id']);
-        $this->assertSame(5, $order['orderNumber']);
+        $this->assertSame(4, $order['orderNumber']);
         $this->assertSame(665, $order['invoiceNumber']);
         $this->assertSame('2020-08-24T00:00:00+02:00', $order['invoiced']);
         $this->assertSame('please deliver as fast as you can', $order['remark']);
