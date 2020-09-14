@@ -1,0 +1,4 @@
+name: GraphQL Account module migration
+migrations_namespace: OxidEsales\GraphQL\Account\Migrations
+table_name: oxmigrations_graphql_account
+migrations_directory: data
