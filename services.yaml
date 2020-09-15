@@ -6,7 +6,7 @@ services:
 
   OxidEsales\GraphQL\Account\:
     resource: 'src/*'
-    exclude: 'src/**/{DataType,Exception}'
+    exclude: 'src/**/{DataType,Exception,Shop}'
     public: true
 
   OxidEsales\GraphQL\Account\Shared\Service\NamespaceMapper:
