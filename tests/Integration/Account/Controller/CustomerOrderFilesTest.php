@@ -132,7 +132,10 @@ final class CustomerOrderFilesTest extends TokenTestCase
             }'
         );
 
-        $this->assertResponseStatus(404, $result);
-        $this->assertEquals('File was not found by id: non_existing_file', $result['body']['errors'][0]['message']);
+        $this->assertResponseStatus(200, $result);
+        $this->assertSame([
+            'id'   => '886deb7e49bb2e51b4fb939f6ed7655c',
+            'file' => null,
+        ], $result['body']['data']['customer']['orders'][0]['files'][0]);
     }
 }
