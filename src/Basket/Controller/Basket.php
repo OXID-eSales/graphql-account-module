@@ -103,4 +103,13 @@ final class Basket
             $owner
         );
     }
+
+    /**
+     * @Mutation()
+     * @Logged()
+     */
+    public function addVoucherToBasket(string $voucherNr, string $basketId): bool
+    {
+        return $this->basketService->addVoucherToBasket($voucherNr, $basketId);
+    }
 }

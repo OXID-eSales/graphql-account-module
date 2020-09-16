@@ -211,4 +211,9 @@ final class Basket
 
         return $basket;
     }
+
+    public function addVoucherToBasket(string $voucherNr, string $basketId): bool
+    {
+        return $this->basketInfraService->addVoucherToUserBasket($voucherNr, $basketId);
+    }
 }

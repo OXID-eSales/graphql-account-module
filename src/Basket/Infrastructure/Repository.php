@@ -135,6 +135,23 @@ final class Repository
         return $baskets;
     }
 
+    /**
+     * @return string[]
+     */
+    public function getUserBasketVouchers(string $userBasketId): array
+    {
+        $queryBuilder = $this->queryBuilderFactory->create();
+        $result = $queryBuilder->select('oxvouchers.oxid')
+            ->from('oxvouchers')
+            ->where('oxvouchers.oxuserbasketid = :oxuserbasketid')
+            ->setParameters([
+                ':oxuserbasketid' => $userBasketId,
+            ])
+            ->execute();
+
+        return $result->fetchAll(FetchMode::COLUMN);
+    }
+
     private function getCustomerBasketIds(ID $customerId): array
     {
         $queryBuilder = $this->queryBuilderFactory->create();

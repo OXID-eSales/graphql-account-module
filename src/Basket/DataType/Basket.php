@@ -107,28 +107,4 @@ final class Basket implements DataType
     {
         return BasketModel::class;
     }
-
-    /**
-     * @Field()
-     */
-    public function getTotal(): float
-    {
-        $basket = oxNew(\OxidEsales\Eshop\Application\Model\Basket::class);
-
-        /** @var \OxidEsales\Eshop\Application\Model\UserBasketItem $oneArticle */
-        foreach ($this->basket->getItems() as $oneArticle)
-        {
-            $basket->addToBasket(
-                $oneArticle->getFieldData('oxartid'),
-                $oneArticle->getFieldData('oxamount')
-            );
-        }
-
-//        getting all basket vouchers by basket id from vouchers table and foreach should be here.
-//        $basket->applyVoucher('08b3e124919d60cfd803fdf9d375cc86');
-
-        $basket->calculateBasket();
-
-        return $basket->getNettoSum();
-    }
 }
