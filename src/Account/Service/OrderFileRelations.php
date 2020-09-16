@@ -11,6 +11,7 @@ namespace OxidEsales\GraphQL\Account\Account\Service;
 
 use OxidEsales\GraphQL\Account\Account\DataType\OrderFile;
 use OxidEsales\GraphQL\Account\File\DataType\File as FileDataType;
+use OxidEsales\GraphQL\Account\File\Exception\FileNotFound;
 use OxidEsales\GraphQL\Account\File\Service\File as FileService;
 use TheCodingMachine\GraphQLite\Annotations\ExtendType;
 use TheCodingMachine\GraphQLite\Annotations\Field;
@@ -32,8 +33,12 @@ final class OrderFileRelations
     /**
      * @Field()
      */
-    public function file(OrderFile $orderFile): FileDataType
+    public function file(OrderFile $orderFile): ?FileDataType
     {
-        return $this->fileService->file((string) $orderFile->fileId());
+        try {
+            return $this->fileService->file((string) $orderFile->fileId());
+        } catch (FileNotFound $e) {
+            return null;
+        }
     }
 }
