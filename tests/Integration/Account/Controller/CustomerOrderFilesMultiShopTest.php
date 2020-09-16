@@ -20,9 +20,12 @@ final class CustomerOrderFilesMultiShopTest extends MultishopTestCase
 
     public function testCustomerOrderFilesSubShopOnly(): void
     {
+        $shopId = '2';
+
+        $this->ensureShop((int) $shopId);
         EshopRegistry::getConfig()->setConfigParam('blMallUsers', false);
-        EshopRegistry::getConfig()->setShopId(2);
-        $this->setGETRequestParameter('shp', '2');
+        EshopRegistry::getConfig()->setShopId($shopId);
+        $this->setGETRequestParameter('shp', $shopId);
 
         $this->prepareToken(self::USERNAME, self::PASSWORD);
 
@@ -48,6 +51,7 @@ final class CustomerOrderFilesMultiShopTest extends MultishopTestCase
                         maxDownloadCount
                         validUntil
                         valid
+                        url
                     }
                     orders {
                         id
@@ -70,6 +74,7 @@ final class CustomerOrderFilesMultiShopTest extends MultishopTestCase
                             maxDownloadCount
                             validUntil
                             valid
+                            url
                         }
                     }
                 }
@@ -103,6 +108,10 @@ final class CustomerOrderFilesMultiShopTest extends MultishopTestCase
                 'valid'            => false,
             ],
         ];
+
+        $this->assertRegExp('/https?:\/\/.*\..*sorderfileid=' . $expectedFiles[0]['id'] . '/', $customerFiles[0]['url']);
+        $this->assertRegExp('/https?:\/\/.*\..*sorderfileid=' . $expectedFiles[0]['id'] . '/', $orderFiles[0]['url']);
+        unset($customerFiles[0]['url'], $orderFiles[0]['url']);
 
         $this->assertEquals($customerFiles, $expectedFiles);
         $this->assertEquals($orderFiles, $expectedFiles);
