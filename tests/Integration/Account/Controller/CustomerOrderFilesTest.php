@@ -45,6 +45,7 @@ final class CustomerOrderFilesTest extends TokenTestCase
                         maxDownloadCount
                         validUntil
                         valid
+                        url
                     }
                     orders {
                         id
@@ -67,6 +68,7 @@ final class CustomerOrderFilesTest extends TokenTestCase
                             maxDownloadCount
                             validUntil
                             valid
+                            url
                         }
                     }
                 }
@@ -100,6 +102,10 @@ final class CustomerOrderFilesTest extends TokenTestCase
                 'valid'                       => false,
             ],
         ];
+
+        $this->assertRegExp('/https?:\/\/.*\..*sorderfileid=' . $expectedFiles[0]['id'] . '/', $customerFiles[0]['url']);
+        $this->assertRegExp('/https?:\/\/.*\..*sorderfileid=' . $expectedFiles[0]['id'] . '/', $orderFiles[0]['url']);
+        unset($customerFiles[0]['url'], $orderFiles[0]['url']);
 
         $this->assertEquals($customerFiles, $expectedFiles);
         $this->assertEquals($orderFiles, $expectedFiles);
