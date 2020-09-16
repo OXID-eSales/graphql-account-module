@@ -111,9 +111,13 @@ final class OrderFile implements DataType
         /** @var EshopSeoEncoder $seoEncoder */
         $seoEncoder  = EshopRegistry::getSeoEncoder();
         $shopUrl     = EshopRegistry::getConfig()->getShopHomeUrl();
-        $downloadUrl = $seoEncoder->getStaticUrl($shopUrl . 'cl=download');
+        $downloadUrl = $shopUrl . 'cl=download';
+        $seoUrl      = $seoEncoder->getStaticUrl($downloadUrl) ?: $downloadUrl;
 
-        return $downloadUrl . '?sorderfileid=' . (string) $this->id();
+        //Take care of some extra parameter after seo url
+        $filePath = (strpos($seoUrl, '?') !== false ? '&' : '?') . sprintf('sorderfileid=%s', $this->id());
+
+        return htmlspecialchars_decode($seoUrl . $filePath);
     }
 
     public function fileId(): string
