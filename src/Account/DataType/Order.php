@@ -12,6 +12,7 @@ namespace OxidEsales\GraphQL\Account\Account\DataType;
 use DateTimeInterface;
 use OxidEsales\Eshop\Application\Model\Order as EshopOrderModel;
 use OxidEsales\GraphQL\Base\DataType\DateTimeImmutableFactory;
+use OxidEsales\GraphQL\Catalogue\Shared\DataType\DataType;
 use TheCodingMachine\GraphQLite\Annotations\Field;
 use TheCodingMachine\GraphQLite\Annotations\Type;
 use TheCodingMachine\GraphQLite\Types\ID;
@@ -19,7 +20,7 @@ use TheCodingMachine\GraphQLite\Types\ID;
 /**
  * @Type()
  */
-final class Order
+final class Order implements DataType
 {
     /** @var EshopOrderModel */
     private $order;
@@ -112,5 +113,10 @@ final class Order
         return DateTimeImmutableFactory::fromString(
             (string) $this->order->getFieldData('oxtimestamp')
         );
+    }
+
+    public static function getModelClass(): string
+    {
+        return \OxidEsales\Eshop\Application\Model\Order::class;
     }
 }
