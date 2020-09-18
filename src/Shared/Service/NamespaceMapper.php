@@ -55,12 +55,12 @@ final class NamespaceMapper implements NamespaceMapperInterface
             '\\OxidEsales\\GraphQL\\Account\\Contact\\DataType'                => __DIR__ . '/../../Contact/DataType/',
             '\\OxidEsales\\GraphQL\\Account\\Contact\\Service'                 => __DIR__ . '/../../Contact/Service/',
             '\\OxidEsales\\GraphQL\\Account\\Contact\\Infrastructure'          => __DIR__ . '/../../Contact/Infrastructure/',
-            '\\OxidEsales\\GraphQL\\Account\\Address\\DataType'                => __DIR__ . '/../../Contact/DataType/',
-            '\\OxidEsales\\GraphQL\\Account\\Address\\Service'                 => __DIR__ . '/../../Contact/Service/',
-            '\\OxidEsales\\GraphQL\\Account\\Address\\Infrastructure'          => __DIR__ . '/../../Contact/Infrastructure/',
-            '\\OxidEsales\\GraphQL\\Account\\Delivery\\DataType'               => __DIR__ . '/../../Contact/DataType/',
-            '\\OxidEsales\\GraphQL\\Account\\Delivery\\Service'                => __DIR__ . '/../../Contact/Service/',
-            '\\OxidEsales\\GraphQL\\Account\\Delivery\\Infrastructure'         => __DIR__ . '/../../Contact/Infrastructure/',
+            '\\OxidEsales\\GraphQL\\Account\\Address\\DataType'                => __DIR__ . '/../../Address/DataType/',
+            '\\OxidEsales\\GraphQL\\Account\\Address\\Service'                 => __DIR__ . '/../../Address/Service/',
+            '\\OxidEsales\\GraphQL\\Account\\Address\\Infrastructure'          => __DIR__ . '/../../Address/Infrastructure/',
+            '\\OxidEsales\\GraphQL\\Account\\Delivery\\DataType'               => __DIR__ . '/../../Delivery/DataType/',
+            '\\OxidEsales\\GraphQL\\Account\\Delivery\\Service'                => __DIR__ . '/../../Delivery/Service/',
+            '\\OxidEsales\\GraphQL\\Account\\Delivery\\Infrastructure'         => __DIR__ . '/../../Delivery/Infrastructure/',
         ];
     }
 }
