@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Tests\Unit\Delivery\DataType;
 
 use OxidEsales\Eshop\Application\Model\Address as EshopAddressModel;
-use OxidEsales\GraphQL\Account\Account\DataType\DeliveryAddress;
+use OxidEsales\GraphQL\Account\Delivery\DataType\DeliveryAddress;
 use PHPUnit\Framework\Constraint\IsType;
 use PHPUnit\Framework\TestCase;
 
