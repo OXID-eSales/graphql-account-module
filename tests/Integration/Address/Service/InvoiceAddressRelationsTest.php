@@ -7,13 +7,13 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Tests\Integration\Account\Service;
+namespace OxidEsales\GraphQL\Account\Tests\Integration\Address\Service;
 
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
 use OxidEsales\GraphQL\Base\Tests\Integration\TokenTestCase;
 
-final class DeliveryAddressRelationsTest extends TokenTestCase
+final class InvoiceAddressRelationsTest extends TokenTestCase
 {
     private const USERNAME = 'user@oxid-esales.com';
 
@@ -32,17 +32,10 @@ final class DeliveryAddressRelationsTest extends TokenTestCase
 
         $this->assertResponseStatus(200, $result);
 
-        $deliveryAddresses = $result['body']['data']['customerDeliveryAddresses'];
-        $this->assertCount(2, $deliveryAddresses);
-
-        [$deliveryAddress1, $deliveryAddress2] = $deliveryAddresses;
-        $this->assertCount(1, $deliveryAddress1['country']);
-        $this->assertNotEmpty($deliveryAddress1['country']);
-        $this->assertSame('Germany', $deliveryAddress1['country']['title']);
-
-        $this->assertCount(1, $deliveryAddress2['country']);
-        $this->assertNotEmpty($deliveryAddress2['country']);
-        $this->assertSame('Austria', $deliveryAddress2['country']['title']);
+        $invoiceAddress = $result['body']['data']['customerInvoiceAddress'];
+        $this->assertCount(1, $invoiceAddress['country']);
+        $this->assertNotEmpty($invoiceAddress['country']);
+        $this->assertSame('Germany', $invoiceAddress['country']['title']);
     }
 
     public function testGetInactiveCountryRelation(): void
@@ -69,7 +62,7 @@ final class DeliveryAddressRelationsTest extends TokenTestCase
         $this->setCountryActiveStatus(self::COUNTRY_ID, 1);
     }
 
-    public function testGetStateRelation(): void
+    public function testStateRelation(): void
     {
         $this->setGETRequestParameter('lang', '1');
         $this->prepareToken(self::US_USERNAME, self::PASSWORD);
@@ -78,13 +71,9 @@ final class DeliveryAddressRelationsTest extends TokenTestCase
 
         $this->assertResponseStatus(200, $result);
 
-        $deliveryAddresses = $result['body']['data']['customerDeliveryAddresses'];
-        $this->assertCount(1, $deliveryAddresses);
-
-        [$deliveryAddress] = $deliveryAddresses;
-
-        $this->assertNotEmpty($deliveryAddress['state']);
-        $this->assertSame('Arizona', $deliveryAddress['state']['title']);
+        $invoiceAddress = $result['body']['data']['customerInvoiceAddress'];
+        $this->assertNotEmpty($invoiceAddress['state']);
+        $this->assertSame('Arizona', $invoiceAddress['state']['title']);
     }
 
     public function testGetStateRelationAsNull(): void
@@ -95,17 +84,14 @@ final class DeliveryAddressRelationsTest extends TokenTestCase
 
         $this->assertResponseStatus(200, $result);
 
-        $deliveryAddresses = $result['body']['data']['customerDeliveryAddresses'];
-        $this->assertCount(2, $deliveryAddresses);
-
-        [$deliveryAddress] = $deliveryAddresses;
-        $this->assertNull($deliveryAddress['state']);
+        $invoiceAddress = $result['body']['data']['customerInvoiceAddress'];
+        $this->assertNull($invoiceAddress['state']);
     }
 
     private function queryCountryRelation(): array
     {
         return $this->query('query {
-            customerDeliveryAddresses {
+            customerInvoiceAddress {
                 country {
                     title
                 }
@@ -131,7 +117,7 @@ final class DeliveryAddressRelationsTest extends TokenTestCase
     private function queryStateRelation(): array
     {
         return $this->query('query {
-            customerDeliveryAddresses {
+            customerInvoiceAddress {
                 state {
                     title
                 }

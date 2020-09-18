@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Account\Infrastructure;
+namespace OxidEsales\GraphQL\Account\Address\Infrastructure;
 
 use OxidEsales\Eshop\Application\Model\Country as EshopCountryModel;
 use OxidEsales\Eshop\Application\Model\RequiredAddressFields;

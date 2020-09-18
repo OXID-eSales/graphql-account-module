@@ -7,9 +7,9 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Account\Service;
+namespace OxidEsales\GraphQL\Account\Address\Service;
 
-use OxidEsales\GraphQL\Account\Account\DataType\InvoiceAddress;
+use OxidEsales\GraphQL\Account\Address\DataType\InvoiceAddress;
 use OxidEsales\GraphQL\Account\Country\DataType\Country;
 use OxidEsales\GraphQL\Account\Country\DataType\State;
 use OxidEsales\GraphQL\Account\Country\Exception\StateNotFound;

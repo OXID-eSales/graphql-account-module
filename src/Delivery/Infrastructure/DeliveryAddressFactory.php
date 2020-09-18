@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Account\Infrastructure;
+namespace OxidEsales\GraphQL\Account\Delivery\Infrastructure;
 
 use OxidEsales\Eshop\Application\Model\Address as EshopAddressModel;
 use OxidEsales\Eshop\Application\Model\Country as EshopCountryModel;
@@ -15,8 +15,8 @@ use OxidEsales\Eshop\Application\Model\RequiredAddressFields;
 use OxidEsales\Eshop\Application\Model\RequiredFieldsValidator;
 use OxidEsales\Eshop\Application\Model\State as EshopStateModel;
 use OxidEsales\Eshop\Core\Model\BaseModel;
-use OxidEsales\GraphQL\Account\Account\DataType\DeliveryAddress as DeliveryAddressDataType;
-use OxidEsales\GraphQL\Account\Account\Exception\DeliveryAddressMissingFields;
+use OxidEsales\GraphQL\Account\Delivery\DataType\DeliveryAddress as DeliveryAddressDataType;
+use OxidEsales\GraphQL\Account\Delivery\Exception\DeliveryAddressMissingFields;
 use TheCodingMachine\GraphQLite\Types\ID;
 
 final class DeliveryAddressFactory

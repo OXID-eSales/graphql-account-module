@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Account\DataType;
+namespace OxidEsales\GraphQL\Account\Delivery\DataType;
 
 use DateTimeInterface;
 use OxidEsales\Eshop\Application\Model\Address as EshopAddressModel;

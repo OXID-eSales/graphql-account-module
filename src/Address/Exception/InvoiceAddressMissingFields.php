@@ -7,13 +7,13 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Account\Exception;
+namespace OxidEsales\GraphQL\Account\Address\Exception;
 
 use Exception;
 use GraphQL\Error\ClientAware;
 use OxidEsales\GraphQL\Base\Exception\HttpErrorInterface;
 
-final class DeliveryAddressMissingFields extends Exception implements ClientAware, HttpErrorInterface
+final class InvoiceAddressMissingFields extends Exception implements ClientAware, HttpErrorInterface
 {
     public function getHttpStatus(): int
     {
@@ -36,7 +36,7 @@ final class DeliveryAddressMissingFields extends Exception implements ClientAwar
     public static function byFields(array $missingFields): self
     {
         return new self(
-            'Delivery address is missing required fields: ' . implode(', ', $missingFields)
+            'Invoice address is missing required fields: ' . implode(', ', $missingFields)
         );
     }
 }

@@ -7,9 +7,9 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Account\Service;
+namespace OxidEsales\GraphQL\Account\Address\Service;
 
-use OxidEsales\GraphQL\Account\Account\DataType\InvoiceAddress as InvoiceAddressDataType;
+use OxidEsales\GraphQL\Account\Address\DataType\InvoiceAddress as InvoiceAddressDataType;
 use OxidEsales\GraphQL\Base\Exception\InvalidLogin;
 use OxidEsales\GraphQL\Base\Service\Authentication;
 use OxidEsales\GraphQL\Catalogue\Shared\Infrastructure\Repository;

@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Account\DataType;
+namespace OxidEsales\GraphQL\Account\Delivery\DataType;
 
 use OxidEsales\Eshop\Application\Model\DeliverySet as EshopDeliveryProviderModel;
 use OxidEsales\GraphQL\Catalogue\Shared\DataType\DataType;

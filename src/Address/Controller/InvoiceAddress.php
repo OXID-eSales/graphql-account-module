@@ -7,10 +7,10 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Account\Controller;
+namespace OxidEsales\GraphQL\Account\Address\Controller;
 
-use OxidEsales\GraphQL\Account\Account\DataType\InvoiceAddress as InvoiceAddressDataType;
-use OxidEsales\GraphQL\Account\Account\Service\InvoiceAddress as InvoiceAddressService;
+use OxidEsales\GraphQL\Account\Address\DataType\InvoiceAddress as InvoiceAddressDataType;
+use OxidEsales\GraphQL\Account\Address\Service\InvoiceAddress as InvoiceAddressService;
 use TheCodingMachine\GraphQLite\Annotations\Logged;
 use TheCodingMachine\GraphQLite\Annotations\Mutation;
 use TheCodingMachine\GraphQLite\Annotations\Query;

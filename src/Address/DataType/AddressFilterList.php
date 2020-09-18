@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Account\DataType;
+namespace OxidEsales\GraphQL\Account\Address\DataType;
 
 use OxidEsales\GraphQL\Base\DataType\StringFilter;
 use OxidEsales\GraphQL\Catalogue\Shared\DataType\FilterList;

@@ -7,32 +7,38 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Account\Service;
+namespace OxidEsales\GraphQL\Account\Address\Service;
 
-use OxidEsales\GraphQL\Account\Account\DataType\DeliveryAddress as DeliveryAddressDataType;
-use OxidEsales\GraphQL\Account\Account\Infrastructure\DeliveryAddressFactory;
+use OxidEsales\GraphQL\Account\Account\Service\Customer as CustomerService;
+use OxidEsales\GraphQL\Account\Address\DataType\InvoiceAddress;
+use OxidEsales\GraphQL\Account\Address\Infrastructure\InvoiceAddressFactory;
 use OxidEsales\GraphQL\Base\Service\Authentication;
 use TheCodingMachine\GraphQLite\Annotations\Factory;
 use TheCodingMachine\GraphQLite\Types\ID;
 
-final class DeliveryAddressInput
+final class InvoiceAddressInput
 {
-    /** @var DeliveryAddressFactory */
-    private $deliveryAddressFactory;
-
     /** @var Authentication */
     private $authenticationService;
 
+    /** @var CustomerService */
+    private $customerService;
+
+    /** @var InvoiceAddressFactory */
+    private $invoiceAddressFactory;
+
     public function __construct(
-        DeliveryAddressFactory $deliveryAddressFactory,
-        Authentication $authenticationService
+        InvoiceAddressFactory $invoiceAddressFactory,
+        Authentication $authenticationService,
+        CustomerService $customerService
     ) {
-        $this->deliveryAddressFactory = $deliveryAddressFactory;
-        $this->authenticationService  = $authenticationService;
+        $this->invoiceAddressFactory = $invoiceAddressFactory;
+        $this->authenticationService = $authenticationService;
+        $this->customerService       = $customerService;
     }
 
     /**
-     * @Factory(name="DeliveryAddressInput")
+     * @Factory(name="InvoiceAddressInput")
      */
     public function fromUserInput(
         ?string $salutation = null,
@@ -46,11 +52,16 @@ final class DeliveryAddressInput
         ?string $city = null,
         ?ID $countryId = null,
         ?ID $stateId = null,
+        ?string $vatID = null,
         ?string $phone = null,
+        ?string $mobile = null,
         ?string $fax = null
-    ): DeliveryAddressDataType {
-        return $this->deliveryAddressFactory->createValidAddressType(
-            $this->authenticationService->getUserId(),
+    ): InvoiceAddress {
+        $customer = $this->customerService
+            ->customer($this->authenticationService->getUserId());
+
+        return $this->invoiceAddressFactory->createValidInvoiceAddressType(
+            $customer,
             $salutation,
             $firstName,
             $lastName,
@@ -62,7 +73,9 @@ final class DeliveryAddressInput
             $city,
             $countryId,
             $stateId,
+            $vatID,
             $phone,
+            $mobile,
             $fax
         );
     }

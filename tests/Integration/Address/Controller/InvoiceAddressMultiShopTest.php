@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Tests\Integration\Customer\Controller;
+namespace OxidEsales\GraphQL\Account\Tests\Integration\Address\Controller;
 
 use OxidEsales\Eshop\Application\Model\User as EshopUser;
 use OxidEsales\Eshop\Core\Registry as EshopRegistry;
@@ -129,6 +129,7 @@ final class InvoiceAddressMultiShopTest extends MultishopTestCase
     private function assignUserToShop(int $shopid): void
     {
         $user = oxNew(EshopUser::class);
+        /** @var EshopUser $user */
         $user->load(self::OTHER_USER_OXID);
         $user->assign(
             [

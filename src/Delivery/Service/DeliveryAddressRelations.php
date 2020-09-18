@@ -7,14 +7,14 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Account\Service;
+namespace OxidEsales\GraphQL\Account\Delivery\Service;
 
-use OxidEsales\GraphQL\Account\Account\DataType\DeliveryAddress;
 use OxidEsales\GraphQL\Account\Country\DataType\Country;
 use OxidEsales\GraphQL\Account\Country\DataType\State;
 use OxidEsales\GraphQL\Account\Country\Exception\StateNotFound;
 use OxidEsales\GraphQL\Account\Country\Service\Country as CountryService;
 use OxidEsales\GraphQL\Account\Country\Service\State as StateService;
+use OxidEsales\GraphQL\Account\Delivery\DataType\DeliveryAddress;
 use TheCodingMachine\GraphQLite\Annotations\ExtendType;
 use TheCodingMachine\GraphQLite\Annotations\Field;
 

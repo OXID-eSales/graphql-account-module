@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Tests\Integration\Account\Controller;
+namespace OxidEsales\GraphQL\Account\Tests\Integration\Address\Controller;
 
 use OxidEsales\Eshop\Core\Registry as EshopRegistry;
 use OxidEsales\GraphQL\Base\Tests\Integration\TokenTestCase;

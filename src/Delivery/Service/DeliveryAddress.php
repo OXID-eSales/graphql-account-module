@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Account\Service;
+namespace OxidEsales\GraphQL\Account\Delivery\Service;
 
-use OxidEsales\GraphQL\Account\Account\DataType\AddressFilterList;
-use OxidEsales\GraphQL\Account\Account\DataType\DeliveryAddress as DeliveryAddressDataType;
-use OxidEsales\GraphQL\Account\Account\Exception\DeliveryAddressNotFound;
+use OxidEsales\GraphQL\Account\Address\DataType\AddressFilterList;
+use OxidEsales\GraphQL\Account\Delivery\DataType\DeliveryAddress as DeliveryAddressDataType;
+use OxidEsales\GraphQL\Account\Delivery\Exception\DeliveryAddressNotFound;
 use OxidEsales\GraphQL\Base\DataType\StringFilter;
 use OxidEsales\GraphQL\Base\Exception\InvalidLogin;
 use OxidEsales\GraphQL\Base\Exception\NotFound;

@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Account\Exception;
+namespace OxidEsales\GraphQL\Account\Delivery\Exception;
 
 use OxidEsales\GraphQL\Base\Exception\NotFound;
 
