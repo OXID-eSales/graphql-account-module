@@ -7,15 +7,15 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Tests\Unit\Account\DataType;
+namespace OxidEsales\GraphQL\Account\Tests\Unit\Address\DataType;
 
 use OxidEsales\Eshop\Application\Model\User as EshopUserModel;
-use OxidEsales\GraphQL\Account\Account\DataType\InvoiceAddress;
+use OxidEsales\GraphQL\Account\Address\DataType\InvoiceAddress;
 use PHPUnit\Framework\Constraint\IsType;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \OxidEsales\GraphQL\Account\Account\DataType\InvoiceAddress
+ * @covers \OxidEsales\GraphQL\Account\Address\DataType\InvoiceAddress
  */
 final class InvoiceAddressTest extends TestCase
 {

@@ -16,8 +16,8 @@ use OxidEsales\Eshop\Application\Model\State as EshopStateModel;
 use OxidEsales\Eshop\Application\Model\User as EshopUserModel;
 use OxidEsales\Eshop\Core\Model\BaseModel;
 use OxidEsales\GraphQL\Account\Account\DataType\Customer as CustomerDataType;
-use OxidEsales\GraphQL\Account\Account\DataType\InvoiceAddress as InvoiceAddressDataType;
-use OxidEsales\GraphQL\Account\Account\Exception\InvoiceAddressMissingFields;
+use OxidEsales\GraphQL\Account\Address\DataType\InvoiceAddress as InvoiceAddressDataType;
+use OxidEsales\GraphQL\Account\Address\Exception\InvoiceAddressMissingFields;
 use TheCodingMachine\GraphQLite\Types\ID;
 
 final class InvoiceAddressFactory

@@ -10,15 +10,15 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Account\Service;
 
 use OxidEsales\GraphQL\Account\Account\DataType\Customer as CustomerDataType;
-use OxidEsales\GraphQL\Account\Account\DataType\DeliveryAddress;
-use OxidEsales\GraphQL\Account\Account\DataType\InvoiceAddress as InvoiceAddressDataType;
 use OxidEsales\GraphQL\Account\Account\DataType\Order as OrderDataType;
 use OxidEsales\GraphQL\Account\Account\DataType\OrderFile;
 use OxidEsales\GraphQL\Account\Account\Infrastructure\Customer as CustomerInfrastructure;
 use OxidEsales\GraphQL\Account\Account\Infrastructure\Repository as AccountRepository;
-use OxidEsales\GraphQL\Account\Account\Service\InvoiceAddress as InvoiceAddressService;
+use OxidEsales\GraphQL\Account\Address\DataType\InvoiceAddress as InvoiceAddressDataType;
+use OxidEsales\GraphQL\Account\Address\Service\InvoiceAddress as InvoiceAddressService;
 use OxidEsales\GraphQL\Account\Basket\DataType\Basket as BasketDataType;
 use OxidEsales\GraphQL\Account\Basket\Service\Basket as BasketService;
+use OxidEsales\GraphQL\Account\Delivery\DataType\DeliveryAddress;
 use OxidEsales\GraphQL\Account\NewsletterStatus\DataType\NewsletterStatus as NewsletterStatusType;
 use OxidEsales\GraphQL\Account\NewsletterStatus\Exception\NewsletterStatusNotFound;
 use OxidEsales\GraphQL\Account\NewsletterStatus\Service\NewsletterStatus as NewsletterStatusService;
