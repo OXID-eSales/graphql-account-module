@@ -49,22 +49,6 @@ final class CustomerDeliveryAddressValidateStateTest extends TokenTestCase
             $queryPart .= $key . ': "' . $value . '",' . PHP_EOL;
         }
 
-        $query = 'mutation {
-            customerDeliveryAddressAdd(deliveryAddress: {' .
-        $queryPart .
-        '})
-            {
-                country {
-                    title
-                }
-                state {
-                    title
-                }
-            }
-        }';
-
-        print_r($query);
-
         $result = $this->query(
             'mutation {
                 customerDeliveryAddressAdd(deliveryAddress: {' .
