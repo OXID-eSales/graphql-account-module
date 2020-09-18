@@ -10,8 +10,8 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Account\Infrastructure;
 
 use OxidEsales\Eshop\Application\Model\DeliverySet as EshopDeliveryProviderModel;
-use OxidEsales\GraphQL\Account\Account\DataType\DeliveryProvider;
 use OxidEsales\GraphQL\Account\Account\DataType\OrderDelivery as OrderDeliveryDataType;
+use OxidEsales\GraphQL\Account\Delivery\DataType\DeliveryProvider;
 
 final class OrderDelivery
 {

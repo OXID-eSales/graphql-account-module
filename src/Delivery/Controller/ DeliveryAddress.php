@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Account\Controller;
+namespace OxidEsales\GraphQL\Account\Delivery\Controller;
 
 use OxidEsales\GraphQL\Account\Address\DataType\AddressFilterList;
 use OxidEsales\GraphQL\Account\Delivery\DataType\DeliveryAddress as DeliveryAddressDataType;

@@ -11,8 +11,8 @@ namespace OxidEsales\GraphQL\Account\Account\Infrastructure;
 
 use OxidEsales\Eshop\Application\Model\User as EshopUserModel;
 use OxidEsales\GraphQL\Account\Account\DataType\Customer as CustomerDataType;
-use OxidEsales\GraphQL\Account\Account\DataType\DeliveryAddress;
 use OxidEsales\GraphQL\Account\Account\Exception\CustomerNotFound;
+use OxidEsales\GraphQL\Account\Delivery\DataType\DeliveryAddress;
 use OxidEsales\GraphQL\Catalogue\Shared\Infrastructure\Repository as CatalogueRepository;
 
 final class Repository

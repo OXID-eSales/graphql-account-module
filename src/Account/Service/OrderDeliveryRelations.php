@@ -9,9 +9,9 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\Account\Service;
 
-use OxidEsales\GraphQL\Account\Account\DataType\DeliveryProvider;
 use OxidEsales\GraphQL\Account\Account\DataType\OrderDelivery;
 use OxidEsales\GraphQL\Account\Account\Infrastructure\OrderDelivery as OrderDeliveryInfrastructure;
+use OxidEsales\GraphQL\Account\Delivery\DataType\DeliveryProvider;
 use TheCodingMachine\GraphQLite\Annotations\ExtendType;
 use TheCodingMachine\GraphQLite\Annotations\Field;
 
