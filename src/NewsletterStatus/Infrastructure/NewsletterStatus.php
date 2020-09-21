@@ -11,9 +11,9 @@ namespace OxidEsales\GraphQL\Account\NewsletterStatus\Infrastructure;
 
 use OxidEsales\Eshop\Application\Model\NewsSubscribed as EshopNewsletterSubscriptionStatusModel;
 use OxidEsales\Eshop\Application\Model\User as EshopUserModel;
-use OxidEsales\GraphQL\Account\Account\DataType\Customer as CustomerDataType;
-use OxidEsales\GraphQL\Account\Account\Exception\CustomerNotFound;
-use OxidEsales\GraphQL\Account\Account\Infrastructure\Repository as CustomerRepository;
+use OxidEsales\GraphQL\Account\Customer\DataType\Customer as CustomerDataType;
+use OxidEsales\GraphQL\Account\Customer\Exception\CustomerNotFound;
+use OxidEsales\GraphQL\Account\Customer\Infrastructure\Repository as CustomerRepository;
 use OxidEsales\GraphQL\Account\NewsletterStatus\DataType\NewsletterStatus as NewsletterStatusType;
 use OxidEsales\GraphQL\Account\NewsletterStatus\DataType\NewsletterStatusSubscribe as NewsletterStatusSubscribeType;
 use OxidEsales\GraphQL\Account\NewsletterStatus\DataType\Subscriber as SubscriberDataType;

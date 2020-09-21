@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\NewsletterStatus\Service;
 
-use OxidEsales\GraphQL\Account\Account\Exception\InvalidEmail;
+use OxidEsales\GraphQL\Account\Customer\Exception\InvalidEmail;
 use OxidEsales\GraphQL\Account\NewsletterStatus\DataType\NewsletterStatusSubscribe as NewsletterStatusSubscribeType;
 use OxidEsales\GraphQL\Base\Service\Authentication;
 use OxidEsales\GraphQL\Base\Service\Legacy;

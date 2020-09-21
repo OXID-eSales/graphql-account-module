@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\NewsletterStatus\Service;
 
-use OxidEsales\GraphQL\Account\Account\Exception\InvalidEmail;
+use OxidEsales\GraphQL\Account\Customer\Exception\InvalidEmail;
 use OxidEsales\GraphQL\Account\NewsletterStatus\DataType\NewsletterStatusUnsubscribe as NewsletterStatusUnsubscribeType;
 use OxidEsales\GraphQL\Account\NewsletterStatus\Infrastructure\Repository as NewsletterStatusRepository;
 use TheCodingMachine\GraphQLite\Annotations\Factory;

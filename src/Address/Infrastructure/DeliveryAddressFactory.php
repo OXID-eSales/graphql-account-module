@@ -9,24 +9,23 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\Address\Infrastructure;
 
+use OxidEsales\Eshop\Application\Model\Address as EshopAddressModel;
 use OxidEsales\Eshop\Application\Model\Country as EshopCountryModel;
 use OxidEsales\Eshop\Application\Model\RequiredAddressFields;
 use OxidEsales\Eshop\Application\Model\RequiredFieldsValidator;
 use OxidEsales\Eshop\Application\Model\State as EshopStateModel;
-use OxidEsales\Eshop\Application\Model\User as EshopUserModel;
 use OxidEsales\Eshop\Core\Model\BaseModel;
-use OxidEsales\GraphQL\Account\Address\DataType\InvoiceAddress as InvoiceAddressDataType;
-use OxidEsales\GraphQL\Account\Address\Exception\InvoiceAddressMissingFields;
-use OxidEsales\GraphQL\Account\Customer\DataType\Customer as CustomerDataType;
+use OxidEsales\GraphQL\Account\Address\DataType\DeliveryAddress as DeliveryAddressDataType;
+use OxidEsales\GraphQL\Account\Address\Exception\DeliveryAddressMissingFields;
 use TheCodingMachine\GraphQLite\Types\ID;
 
-final class InvoiceAddressFactory
+final class DeliveryAddressFactory
 {
-    public function createValidInvoiceAddressType(
-        CustomerDataType $customerDataType,
+    public function createValidAddressType(
+        string $userid,
         ?string $salutation = null,
-        ?string $firstName = null,
-        ?string $lastName = null,
+        ?string $firstname = null,
+        ?string $lastname = null,
         ?string $company = null,
         ?string $additionalInfo = null,
         ?string $street = null,
@@ -35,40 +34,33 @@ final class InvoiceAddressFactory
         ?string $city = null,
         ?ID $countryId = null,
         ?ID $stateId = null,
-        ?string $vatID = null,
         ?string $phone = null,
-        ?string $mobile = null,
         ?string $fax = null
-    ): InvoiceAddressDataType {
-        /** @var EshopUserModel $customer */
-        $customer = $customerDataType->getEshopModel();
-
-        $customer->assign(
-            [
-                'oxsal'       => $salutation,
-                'oxfname'     => $firstName,
-                'oxlname'     => $lastName,
-                'oxcompany'   => $company ?: $customer->getFieldData('oxcompany'),
-                'oxaddinfo'   => $additionalInfo ?: $customer->getFieldData('oxaddinfo'),
-                'oxstreet'    => $street,
-                'oxstreetnr'  => $streetNumber,
-                'oxzip'       => $zipCode,
-                'oxcity'      => $city,
-                'oxcountryid' => (string) $countryId,
-                'oxstateid'   => (string) $stateId,
-                'oxustid'     => $vatID ?: $customer->getFieldData('oxustid'),
-                'oxprivphone' => $phone ?: $customer->getFieldData('oxprivphone'),
-                'oxmobfone'   => $mobile ?: $customer->getFieldData('oxmobfone'),
-                'oxfax'       => $fax ?: $customer->getFieldData('oxfax'),
-            ]
-        );
+    ): DeliveryAddressDataType {
+        /** @var EshopAddressModel */
+        $address = oxNew(EshopAddressModel::class);
+        $address->assign([
+            'oxsal'       => $salutation,
+            'oxuserid'    => $userid,
+            'oxfname'     => $firstname,
+            'oxlname'     => $lastname,
+            'oxcompany'   => $company,
+            'oxaddinfo'   => $additionalInfo,
+            'oxstreet'    => $street,
+            'oxstreetnr'  => $streetNumber,
+            'oxzip'       => $zipCode,
+            'oxcity'      => $city,
+            'oxcountryid' => (string) $countryId,
+            'oxstateid'   => (string) $stateId,
+            'oxfon'       => $phone,
+            'oxfax'       => $fax,
+        ]);
 
         /** @var RequiredFieldsValidator */
         $validator = oxNew(RequiredFieldsValidator::class);
-
         /** @var RequiredAddressFields */
         $requiredAddressFields = oxNew(RequiredAddressFields::class);
-        $requiredFields        = $requiredAddressFields->getBillingFields();
+        $requiredFields        = $requiredAddressFields->getDeliveryFields();
         $validator->setRequiredFields(
             $requiredFields
         );
@@ -90,24 +82,26 @@ final class InvoiceAddressFactory
                 $object = oxNew($class);
 
                 if (!$object->load($id)) {
-                    $customer->assign([
+                    $address->assign([
                         $field => null,
                     ]);
                 }
             }
         }
 
-        if (!$validator->validateFields($customer)) {
+        if (!$validator->validateFields($address)) {
             $invalidFields = array_map(
                 function ($v) {
-                    return str_replace('oxuser__ox', '', $v);
+                    return str_replace('oxaddress__ox', '', $v);
                 },
                 $validator->getInvalidFields()
             );
 
-            throw InvoiceAddressMissingFields::byFields($invalidFields);
+            throw DeliveryAddressMissingFields::byFields($invalidFields);
         }
 
-        return new InvoiceAddressDataType($customer);
+        return new DeliveryAddressDataType(
+            $address
+        );
     }
 }
