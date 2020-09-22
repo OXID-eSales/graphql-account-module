@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Tests\Integration\Customer\Controller;
+namespace OxidEsales\GraphQL\Account\Tests\Integration\Order\Controller;
 
 use OxidEsales\Eshop\Core\Registry as EshopRegistry;
 use OxidEsales\GraphQL\Base\Tests\Integration\MultishopTestCase;

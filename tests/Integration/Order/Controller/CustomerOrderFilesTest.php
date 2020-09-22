@@ -7,31 +7,25 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Tests\Integration\Customer\Controller;
+namespace OxidEsales\GraphQL\Account\Tests\Integration\Order\Controller;
 
-use OxidEsales\Eshop\Core\Registry as EshopRegistry;
-use OxidEsales\GraphQL\Base\Tests\Integration\MultishopTestCase;
+use OxidEsales\GraphQL\Base\Tests\Integration\TokenTestCase;
 
-final class CustomerOrderFilesMultiShopTest extends MultishopTestCase
+final class CustomerOrderFilesTest extends TokenTestCase
 {
     private const USERNAME = 'user@oxid-esales.com';
 
+    private const OTHER_USERNAME = 'otheruser@oxid-esales.com';
+
     private const PASSWORD = 'useruser';
 
-    public function testCustomerOrderFilesSubShopOnly(): void
+    public function testCustomerOrderFiles(): void
     {
-        $shopId = '2';
-
-        $this->ensureShop((int) $shopId);
-        EshopRegistry::getConfig()->setConfigParam('blMallUsers', false);
-        EshopRegistry::getConfig()->setShopId($shopId);
-        $this->setGETRequestParameter('shp', $shopId);
-
         $this->prepareToken(self::USERNAME, self::PASSWORD);
 
         $result = $this->query(
             'query {
-                customer {
+                customer{
                     files {
                         file {
                             product {
@@ -55,7 +49,7 @@ final class CustomerOrderFilesMultiShopTest extends MultishopTestCase
                     }
                     orders {
                         id
-                        files {
+                        files{
                             file {
                                 product {
                                     id
@@ -88,24 +82,24 @@ final class CustomerOrderFilesMultiShopTest extends MultishopTestCase
 
         $expectedFiles = [
             [
-                'file'             => [
-                    'product'          => [
-                        'id'     => '_test_product_for_basket',
+                'file' => [
+                    'product' => [
+                        'id'     => 'oiaa81b5e002fc2f73b9398c361c0b97',
                         'active' => true,
-                        'title'  => 'Product 621',
+                        'title'  => 'Online-Shops mit OXID eShop',
                     ],
-                    'id'               => '48d949cb0af6076f841aea5cb5b703ed',
-                    'filename'         => 'ch99.pdf',
-                    'onlyPaidDownload' => true,
+                    'id'               => 'oiaad7812ae7127283b8fd6d309ea5d5',
+                    'filename'         => 'ch03.pdf',
+                    'onlyPaidDownload' => false,
                 ],
-                'id'               => '729aafa296783575ddfd8e9527355b9b',
-                'filename'         => 'ch99.pdf',
-                'firstDownload'    => '2020-09-10T09:14:15+02:00',
-                'latestDownload'   => '2020-09-10T09:14:15+02:00',
-                'downloadCount'    => 1,
-                'maxDownloadCount' => 0,
-                'validUntil'       => '2020-09-11T09:14:15+02:00',
-                'valid'            => false,
+                'id'                          => '729aafa296783575ddfd8e9527355b3b',
+                'filename'                    => 'ch03.pdf',
+                'firstDownload'               => '2020-09-10T09:14:15+02:00',
+                'latestDownload'              => '2020-09-10T09:14:15+02:00',
+                'downloadCount'               => 1,
+                'maxDownloadCount'            => 0,
+                'validUntil'                  => '2020-09-11T09:14:15+02:00',
+                'valid'                       => false,
             ],
         ];
 
@@ -115,5 +109,33 @@ final class CustomerOrderFilesMultiShopTest extends MultishopTestCase
 
         $this->assertEquals($customerFiles, $expectedFiles);
         $this->assertEquals($orderFiles, $expectedFiles);
+    }
+
+    public function testCustomerOrderFilesWithNonExistingFile(): void
+    {
+        $this->prepareToken(self::OTHER_USERNAME, self::PASSWORD);
+
+        $result = $this->query(
+            'query {
+                customer {
+                    id
+                    orders {
+                        id
+                        files {
+                            id
+                            file {
+                                id
+                            }
+                        }
+                    }
+                }
+            }'
+        );
+
+        $this->assertResponseStatus(200, $result);
+        $this->assertSame([
+            'id'   => '886deb7e49bb2e51b4fb939f6ed7655c',
+            'file' => null,
+        ], $result['body']['data']['customer']['orders'][0]['files'][0]);
     }
 }
