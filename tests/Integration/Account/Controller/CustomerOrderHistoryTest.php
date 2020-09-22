@@ -194,7 +194,7 @@ final class CustomerOrderHistoryTest extends TokenTestCase
 
     public function testOrderVouchers(): void
     {
-        $this->prepareToken(self::OTHER_USERNAME, self::PASSWORD);
+        $this->prepareToken(self::DIFFERENT_USERNAME, self::PASSWORD);
 
         $result = $this->query('query {
             customer {
@@ -221,7 +221,7 @@ final class CustomerOrderHistoryTest extends TokenTestCase
         $voucher = $vouchers[0];
         $this->assertSame('usedvoucherid', $voucher['id']);
         $this->assertSame('voucher1', $voucher['number']);
-        $this->assertSame(321.6, $voucher['discount']);
+        $this->assertSame(21.6, $voucher['discount']);
         $this->assertStringStartsWith('2020-08-28', $voucher['redeemedAt']);
     }
 
@@ -323,40 +323,36 @@ final class CustomerOrderHistoryTest extends TokenTestCase
     private function assertCost(array $costs): void
     {
         $expected = [
-            'total'        => '220.78',
-            'discount'     => '123.4',
-            'voucher'      => '321.6',
+            'total'        => 220.78,
+            'discount'     => 123.4,
+            'voucher'      => 0.0,
             'productNet'   => [
-                'price' => '178.3',
-                'vat'   => '0.0',
+                'price' => 178.3,
+                'vat'   => 0.0,
             ],
             'productGross' => [
-                'sum'  => '209.38',
+                'sum'  => 209.38,
                 'vats' => [
                     [
-                        'vatRate'  => '19.0',
-                        'vatPrice' => '27.38',
+                        'vatRate'  => 10.0,
+                        'vatPrice' => 2.72,
                     ],
                     [
-                        'vatRate'  => '14',
-                        'vatPrice' => '0.98',
-                    ],
-                    [
-                        'vatRate'  => '10',
-                        'vatPrice' => '2.72',
+                        'vatRate'  => 19.0,
+                        'vatPrice' => 27.38,
                     ],
                 ],
             ],
             'delivery'     => [
-                'price'    => '3.9',
-                'vat'      => '19.0',
+                'price'    => 3.9,
+                'vat'      => 19.0,
                 'currency' => [
                     'name' => 'EUR',
                 ],
             ],
             'payment'      => [
-                'price'    => '7.5',
-                'vat'      => '19.0',
+                'price'    => 7.5,
+                'vat'      => 19.0,
                 'currency' => [
                     'name' => 'EUR',
                 ],
