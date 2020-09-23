@@ -10,13 +10,8 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Account\Infrastructure;
 
 use OxidEsales\Eshop\Application\Model\Order as EshopOrderModel;
-use OxidEsales\Eshop\Application\Model\OrderArticle as EshopOrderProductModel;
-use OxidEsales\Eshop\Core\Model\ListModel;
 use OxidEsales\GraphQL\Account\Account\DataType\OrderProductBruttoSum;
 use OxidEsales\GraphQL\Account\Account\DataType\OrderProductVats;
-
-use function count;
-use function is_iterable;
 
 final class OrderProduct
 {
@@ -28,21 +23,8 @@ final class OrderProduct
         /** @var EshopOrderModel $order */
         $order = $orderProductGross->getEshopModel();
 
-        /** @var ListModel $orderProducts */
-        $orderProducts = $order->getOrderArticles();
-
-        if (!is_iterable($orderProducts) || count($orderProducts) === 0) {
-            return [];
-        }
-
-        $vats = [];
-
-        /** @var EshopOrderProductModel $orderProduct */
-        foreach ($orderProducts as $orderProduct) {
-            $vats[$orderProduct->getFieldData('oxvat')] += (float) $orderProduct->getFieldData('oxvatprice');
-        }
-
         $productVats = [];
+        $vats        = $order->getProductVats(false);
 
         foreach ($vats as $vatRate => $vatPrice) {
             $productVats[] = new OrderProductVats((float) $vatRate, (float) $vatPrice);
