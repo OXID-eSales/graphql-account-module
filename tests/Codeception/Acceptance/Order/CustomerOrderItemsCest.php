@@ -7,13 +7,13 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Tests\Integration\Order\Controller;
+namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Order;
 
-use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
-use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
-use OxidEsales\GraphQL\Base\Tests\Integration\TokenTestCase;
+use Codeception\Util\HttpCode;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setup\Exception\ModuleSetupException;
+use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
-final class CustomerOrderItemsTest extends TokenTestCase
+final class CustomerOrderItemsCest
 {
     private const USERNAME = 'user@oxid-esales.com';
 
@@ -25,11 +25,16 @@ final class CustomerOrderItemsTest extends TokenTestCase
 
     private const ORDER_WITH_DELETED_PRODUCT = '_order_with_deleted_product';
 
-    public function testCustomerOrderItems(): void
+    public function _before(): void
     {
-        $this->prepareToken(self::USERNAME, self::PASSWORD);
+        $this->activateModules();
+    }
 
-        $result = $this->query(
+    public function testCustomerOrderItems(AcceptanceTester $I): void
+    {
+        $I->login(self::USERNAME, self::PASSWORD);
+
+        $I->sendGQLQuery(
             'query {
                 customer {
                     id
@@ -68,11 +73,12 @@ final class CustomerOrderItemsTest extends TokenTestCase
             }'
         );
 
-        $this->assertResponseStatus(200, $result);
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+        $result = $I->grabJsonResponseAsArray();
+        $items  = $result['data']['customer']['orders'][0]['items'];
 
-        $items = $result['body']['data']['customer']['orders'][0]['items'];
-
-        $this->assertCount(6, $items);
+        $I->assertCount(6, $items);
 
         $expectedItems = [
             [
@@ -136,16 +142,16 @@ final class CustomerOrderItemsTest extends TokenTestCase
                     continue;
                 }
 
-                $this->assertSame($item, $expectedItem);
+                $I->assertEquals($item, $expectedItem);
             }
         }
     }
 
-    public function testCustomerOrderItemsWithNonExistingProduct(): void
+    public function testCustomerOrderItemsWithNonExistingProduct(AcceptanceTester $I): void
     {
-        $this->prepareToken(self::OTHER_USERNAME, self::PASSWORD);
+        $I->login(self::OTHER_USERNAME, self::PASSWORD);
 
-        $result = $this->query(
+        $I->sendGQLQuery(
             'query {
                 customer {
                     id
@@ -162,26 +168,27 @@ final class CustomerOrderItemsTest extends TokenTestCase
             }'
         );
 
-        $this->assertResponseStatus(200, $result);
-
-        $orders = $result['body']['data']['customer']['orders'];
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+        $result = $I->grabJsonResponseAsArray();
+        $orders = $result['data']['customer']['orders'];
 
         foreach ($orders as $order) {
             if ($order['id'] != self::ORDER_WITH_NON_EXISTING_PRODUCT) {
                 continue;
             }
 
-            $this->assertNull($order['items'][0]['product']);
+            $I->assertNull($order['items'][0]['product']);
         }
     }
 
-    public function testCustomerOrderItemsWithInactiveProduct(): void
+    public function testCustomerOrderItemsWithInactiveProduct(AcceptanceTester $I): void
     {
-        $this->updateProductActiveStatus('_test_product_for_basket', false);
+        $this->updateProductActiveStatus($I, '_test_product_for_basket', false);
 
-        $this->prepareToken(self::OTHER_USERNAME, self::PASSWORD);
+        $I->login(self::OTHER_USERNAME, self::PASSWORD);
 
-        $result = $this->query(
+        $I->sendGQLQuery(
             'query {
                 customer {
                     id
@@ -198,33 +205,49 @@ final class CustomerOrderItemsTest extends TokenTestCase
             }'
         );
 
-        $this->assertResponseStatus(200, $result);
-
-        $orders = $result['body']['data']['customer']['orders'];
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+        $result = $I->grabJsonResponseAsArray();
+        $orders = $result['data']['customer']['orders'];
 
         foreach ($orders as $order) {
             if ($order['id'] != self::ORDER_WITH_DELETED_PRODUCT) {
                 continue;
             }
 
-            $this->assertNull($order['items'][0]['product']);
+            $I->assertNull($order['items'][0]['product']);
         }
 
-        $this->updateProductActiveStatus('_test_product_for_basket', true);
+        $this->updateProductActiveStatus($I, '_test_product_for_basket', true);
     }
 
-    private function updateProductActiveStatus(string $productId, bool $active): void
+    private function updateProductActiveStatus(AcceptanceTester $I, string $productId, bool $active): void
     {
-        $queryBuilderFactory = ContainerFactory::getInstance()
-            ->getContainer()
-            ->get(QueryBuilderFactoryInterface::class);
-        $queryBuilder = $queryBuilderFactory->create();
+        $I->updateInDatabase(
+            'oxarticles',
+            ['oxactive' => (int) $active],
+            ['oxid'     => $productId]
+        );
+    }
 
-        $queryBuilder
-            ->update('oxarticles')
-            ->set('oxactive', (int) $active)
-            ->where('OXID = :OXID')
-            ->setParameter(':OXID', $productId)
-            ->execute();
+    /**
+     * Activates modules
+     */
+    private function activateModules(int $shopId = 1): void
+    {
+        $testConfig        = new \OxidEsales\TestingLibrary\TestConfig();
+        $modulesToActivate = $testConfig->getModulesToActivate();
+
+        if ($modulesToActivate) {
+            $serviceCaller = new \OxidEsales\TestingLibrary\ServiceCaller();
+            $serviceCaller->setParameter('modulestoactivate', $modulesToActivate);
+
+            try {
+                $serviceCaller->callService('ModuleInstaller', $shopId);
+            } catch (ModuleSetupException $e) {
+                // this may happen if the module is already active,
+                // we can ignore this
+            }
+        }
     }
 }

@@ -28,7 +28,8 @@
         "phpstan/phpstan": "^0.12.26",
         "oxid-esales/oxideshop-ce": "6.5",
         "oxid-esales/oxideshop-unified-namespace-generator": "^2.0",
-        "sensiolabs-de/deptrac-shim": "^0.6.0|^0.8.2"
+        "sensiolabs-de/deptrac-shim": "^0.6.0|^0.8.2",
+        "codeception/module-asserts": "*"
     },
     "prefer-stable": false,
     "autoload": {
