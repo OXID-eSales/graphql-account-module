@@ -89,6 +89,7 @@ final class CustomerOrderPaymentCest extends BaseCest
                     }
                 }
             }',
+            [],
             1
         );
 

@@ -50,6 +50,7 @@ final class CustomerOrderPaymentMultiShopCest extends MultishopBaseCest
                     }
                 }
             }',
+            [],
             $languageId,
             $shopId
         );

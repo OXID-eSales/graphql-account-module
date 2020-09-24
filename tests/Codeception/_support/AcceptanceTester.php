@@ -12,18 +12,21 @@ namespace OxidEsales\GraphQL\Account\Tests\Codeception;
 use InvalidArgumentException;
 use Lcobucci\JWT\Parser;
 use PHPUnit\Framework\AssertionFailedError;
+use OxidEsales\GraphQL\Base\Framework\GraphQLQueryHandler;
+
 
 final class AcceptanceTester extends \Codeception\Actor
 {
     use _generated\AcceptanceTesterActions;
 
-    public function sendGQLQuery(string $query, int $language = 0, int $shopId = 1): void
+    public function sendGQLQuery(string $query, ?array $variables = null, int $language = 0, int $shopId = 1): void
     {
         $I = $this;
 
         $I->haveHTTPHeader('Content-Type', 'application/json');
         $I->sendPOST('/graphql?lang=' . $language . '&shp=' . $shopId, [
             'query' => $query,
+            'variables' => $variables
         ]);
     }
 
@@ -31,9 +34,13 @@ final class AcceptanceTester extends \Codeception\Actor
     {
         $I = $this;
 
-        $query = sprintf('query {token(username:"%s", password:"%s")}', $username, $password);
+        $query = 'query ($username: String!, $password: String!) { token (username: $username, password: $password) }';
+        $variables = [
+            'username' => $username,
+            'password' => $password
+        ];
 
-        $I->sendGQLQuery($query, 0, $shopId);
+        $I->sendGQLQuery($query, $variables, 0, $shopId);
         $I->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
         $I->seeResponseIsJson();
         $I->seeResponseContainsValidJWTToken();
