@@ -88,6 +88,15 @@ final class Basket implements DataType
         return null;
     }
 
+    /**
+     * @Field()
+     */
+    public function getEncodedDeliveryAddress(): string
+    {
+        //we need to have migration to add this new field
+        return (string) $this->basket->getFieldData('oxencodeddelivery');
+    }
+
     public function getUserId(): ID
     {
         return new ID(
