@@ -394,7 +394,7 @@ final class CountryCest extends BaseCest
                     title
                 }
             }
-        }', [],0);
+        }', [], 0);
 
         $I->seeResponseCodeIs(HttpCode::OK);
         $I->seeResponseIsJson();
@@ -428,7 +428,7 @@ final class CountryCest extends BaseCest
                     title
                 }
             }
-        }', [],0);
+        }', [], 0);
 
         $I->seeResponseCodeIs(HttpCode::OK);
         $I->seeResponseIsJson();

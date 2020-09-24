@@ -12,8 +12,6 @@ namespace OxidEsales\GraphQL\Account\Tests\Codeception;
 use InvalidArgumentException;
 use Lcobucci\JWT\Parser;
 use PHPUnit\Framework\AssertionFailedError;
-use OxidEsales\GraphQL\Base\Framework\GraphQLQueryHandler;
-
 
 final class AcceptanceTester extends \Codeception\Actor
 {
@@ -25,8 +23,8 @@ final class AcceptanceTester extends \Codeception\Actor
 
         $I->haveHTTPHeader('Content-Type', 'application/json');
         $I->sendPOST('/graphql?lang=' . $language . '&shp=' . $shopId, [
-            'query' => $query,
-            'variables' => $variables
+            'query'     => $query,
+            'variables' => $variables,
         ]);
     }
 
@@ -34,10 +32,10 @@ final class AcceptanceTester extends \Codeception\Actor
     {
         $I = $this;
 
-        $query = 'query ($username: String!, $password: String!) { token (username: $username, password: $password) }';
+        $query     = 'query ($username: String!, $password: String!) { token (username: $username, password: $password) }';
         $variables = [
             'username' => $username,
-            'password' => $password
+            'password' => $password,
         ];
 
         $I->sendGQLQuery($query, $variables, 0, $shopId);

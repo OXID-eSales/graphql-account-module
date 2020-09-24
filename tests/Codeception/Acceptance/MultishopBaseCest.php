@@ -15,6 +15,10 @@ use OxidEsales\EshopCommunity\Internal\Framework\Module\Setup\Exception\ModuleSe
 use OxidEsales\Facts\Facts;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
+$facts = new Facts();
+
+require_once $facts->getVendorPath() . '/oxid-esales/testing-library/base.php';
+
 abstract class MultishopBaseCest extends BaseCest
 {
     protected const SUBSHOP_ID = 2;

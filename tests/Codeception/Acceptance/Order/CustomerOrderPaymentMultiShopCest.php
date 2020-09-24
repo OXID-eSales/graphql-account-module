@@ -11,13 +11,8 @@ namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Order;
 
 use Codeception\Example;
 use Codeception\Util\HttpCode;
-use OxidEsales\Facts\Facts;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\MultishopBaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
-
-$facts = new Facts();
-
-require_once $facts->getVendorPath() . '/oxid-esales/testing-library/base.php';
 
 final class CustomerOrderPaymentMultiShopCest extends MultishopBaseCest
 {
