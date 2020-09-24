@@ -23,20 +23,22 @@ abstract class MultishopBaseCest extends BaseCest
 {
     protected const SUBSHOP_ID = 2;
 
+    public function _beforeSuite(Scenario $scenario): void
+    {
+        $facts = new Facts();
+
+        if (!$facts->isEnterprise()) {
+            $scenario->skip('Skip EE related tests for CE/PE edition');
+
+            return;
+        }
+    }
+
     public function _before(AcceptanceTester $I): void
     {
         parent::_before($I);
 
-        $facts = new Facts();
-
-        if (!$facts->isEnterprise()) {
-            $this->markTestSkipped('Skip EE related tests for CE/PE edition');
-
-            return;
-        }
-
         $this->ensureSubshop();
-        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
     }
 
     private function ensureSubshop(): void

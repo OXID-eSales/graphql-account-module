@@ -20,6 +20,13 @@ final class CustomerOrderPaymentMultiShopCest extends MultishopBaseCest
 
     private const PASSWORD = 'useruser';
 
+    public function _before(AcceptanceTester $I): void
+    {
+        parent::_before($I);
+
+        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+    }
+
     /**
      * @dataProvider ordersPerShopProvider
      */

@@ -1,6 +1,7 @@
 # suite config
 actor: AcceptanceTester
 path: Acceptance
+bootstrap: _bootstrap.php
 modules:
   enabled:
     - \OxidEsales\GraphQL\Account\Tests\Codeception\Helper\Acceptance
@@ -14,7 +15,7 @@ modules:
         mysql_config: '%MYSQL_CONFIG_PATH%'
         populate: true # run populator before all tests
         cleanup: false # run populator before each test
-        populator: 'mysql --defaults-file=$mysql_config --default-character-set=utf8 $dbname < $dump'
+        populator: '%PHP_BIN% %VENDOR_PATH%/bin/reset-shop && mysql --defaults-file=$mysql_config --default-character-set=utf8 $dbname < $dump'
     - \OxidEsales\Codeception\Module\Database:
         config_key: 'fq45QS09_fqyx09239QQ'
         depends: Db
