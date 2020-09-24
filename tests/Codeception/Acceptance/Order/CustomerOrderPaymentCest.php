@@ -10,10 +10,10 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Order;
 
 use Codeception\Util\HttpCode;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Setup\Exception\ModuleSetupException;
+use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
-final class CustomerOrderPaymentCest
+final class CustomerOrderPaymentCest extends BaseCest
 {
     private const USERNAME = 'user@oxid-esales.com';
 
@@ -22,11 +22,6 @@ final class CustomerOrderPaymentCest
     private const ORDER_NUMBER = 4;
 
     private const PAYMENT_ID = 'oxiddebitnote';
-
-    public function _before(): void
-    {
-        $this->activateModules();
-    }
 
     public function testCustomerOrderPayment(AcceptanceTester $I): void
     {
@@ -295,26 +290,5 @@ final class CustomerOrderPaymentCest
             ['oxid' => $fakePaymentId],
             ['oxid' => $realPaymentId]
         );
-    }
-
-    /**
-     * Activates modules
-     */
-    private function activateModules(int $shopId = 1): void
-    {
-        $testConfig        = new \OxidEsales\TestingLibrary\TestConfig();
-        $modulesToActivate = $testConfig->getModulesToActivate();
-
-        if ($modulesToActivate) {
-            $serviceCaller = new \OxidEsales\TestingLibrary\ServiceCaller();
-            $serviceCaller->setParameter('modulestoactivate', $modulesToActivate);
-
-            try {
-                $serviceCaller->callService('ModuleInstaller', $shopId);
-            } catch (ModuleSetupException $e) {
-                // this may happen if the module is already active,
-                // we can ignore this
-            }
-        }
     }
 }

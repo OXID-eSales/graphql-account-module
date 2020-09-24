@@ -11,37 +11,19 @@ namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Order;
 
 use Codeception\Example;
 use Codeception\Util\HttpCode;
-use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Dao\ShopConfigurationDaoInterface;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Setup\Exception\ModuleSetupException;
 use OxidEsales\Facts\Facts;
+use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\MultishopBaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
 $facts = new Facts();
 
 require_once $facts->getVendorPath() . '/oxid-esales/testing-library/base.php';
 
-final class CustomerOrderPaymentMultiShopCest
+final class CustomerOrderPaymentMultiShopCest extends MultishopBaseCest
 {
     private const USERNAME = 'user@oxid-esales.com';
 
     private const PASSWORD = 'useruser';
-
-    private const SUBSHOP_ID = 2;
-
-    public function _before(AcceptanceTester $I): void
-    {
-        $facts = new Facts();
-
-        if (!$facts->isEnterprise()) {
-            $this->markTestSkipped('Skip EE related tests for CE/PE edition');
-
-            return;
-        }
-
-        $this->ensureSubshop();
-        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
-    }
 
     /**
      * @dataProvider ordersPerShopProvider
@@ -102,45 +84,5 @@ final class CustomerOrderPaymentMultiShopCest
                 'paymentId'   => 'oxidinvoice',
             ],
         ];
-    }
-
-    private function ensureSubshop(): void
-    {
-        $container         = ContainerFactory::getInstance()->getContainer();
-        $shopConfiguration = $container->get(ShopConfigurationDaoInterface::class)->get(1);
-        $container->get(ShopConfigurationDaoInterface::class)->save(
-            $shopConfiguration,
-            self::SUBSHOP_ID
-        );
-
-        $this->regenerateDatabaseViews();
-        $this->activateModules(self::SUBSHOP_ID);
-    }
-
-    /**
-     * Activates modules
-     */
-    private function activateModules(int $shopId): void
-    {
-        $testConfig        = new \OxidEsales\TestingLibrary\TestConfig();
-        $modulesToActivate = $testConfig->getModulesToActivate();
-
-        if ($modulesToActivate) {
-            $serviceCaller = new \OxidEsales\TestingLibrary\ServiceCaller();
-            $serviceCaller->setParameter('modulestoactivate', $modulesToActivate);
-
-            try {
-                $serviceCaller->callService('ModuleInstaller', $shopId);
-            } catch (ModuleSetupException $e) {
-                // this may happen if the module is already active,
-                // we can ignore this
-            }
-        }
-    }
-
-    private function regenerateDatabaseViews(): void
-    {
-        $vendorPath = (new Facts())->getVendorPath();
-        exec($vendorPath . '/bin/oe-eshop-db_views_regenerate');
     }
 }

@@ -10,10 +10,10 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Order;
 
 use Codeception\Util\HttpCode;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Setup\Exception\ModuleSetupException;
+use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
-final class CustomerOrderItemsCest
+final class CustomerOrderItemsCest extends BaseCest
 {
     private const USERNAME = 'user@oxid-esales.com';
 
@@ -24,11 +24,6 @@ final class CustomerOrderItemsCest
     private const ORDER_WITH_NON_EXISTING_PRODUCT = '_order_with_non_existing_product';
 
     private const ORDER_WITH_DELETED_PRODUCT = '_order_with_deleted_product';
-
-    public function _before(): void
-    {
-        $this->activateModules();
-    }
 
     public function testCustomerOrderItems(AcceptanceTester $I): void
     {
@@ -228,26 +223,5 @@ final class CustomerOrderItemsCest
             ['oxactive' => (int) $active],
             ['oxid'     => $productId]
         );
-    }
-
-    /**
-     * Activates modules
-     */
-    private function activateModules(int $shopId = 1): void
-    {
-        $testConfig        = new \OxidEsales\TestingLibrary\TestConfig();
-        $modulesToActivate = $testConfig->getModulesToActivate();
-
-        if ($modulesToActivate) {
-            $serviceCaller = new \OxidEsales\TestingLibrary\ServiceCaller();
-            $serviceCaller->setParameter('modulestoactivate', $modulesToActivate);
-
-            try {
-                $serviceCaller->callService('ModuleInstaller', $shopId);
-            } catch (ModuleSetupException $e) {
-                // this may happen if the module is already active,
-                // we can ignore this
-            }
-        }
     }
 }

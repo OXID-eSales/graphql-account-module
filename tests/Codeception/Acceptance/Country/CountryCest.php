@@ -11,10 +11,10 @@ namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Country;
 
 use Codeception\Example;
 use Codeception\Util\HttpCode;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Setup\Exception\ModuleSetupException;
+use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
-final class CountryCest
+final class CountryCest extends BaseCest
 {
     private const USERNAME = 'admin';
 
@@ -25,11 +25,6 @@ final class CountryCest
     private const INACTIVE_COUNTRY  = 'a7c40f633038cd578.22975442';
 
     private const COUNTRY_WITH_STATES  = '8f241f11096877ac0.98748826';
-
-    public function _before(): void
-    {
-        $this->activateModules();
-    }
 
     public function testGetSingleActiveCountry(AcceptanceTester $I): void
     {
@@ -463,26 +458,5 @@ final class CountryCest
                 'method'    => 'arsort',
             ],
         ];
-    }
-
-    /**
-     * Activates modules
-     */
-    private function activateModules(int $shopId = 1): void
-    {
-        $testConfig        = new \OxidEsales\TestingLibrary\TestConfig();
-        $modulesToActivate = $testConfig->getModulesToActivate();
-
-        if ($modulesToActivate) {
-            $serviceCaller = new \OxidEsales\TestingLibrary\ServiceCaller();
-            $serviceCaller->setParameter('modulestoactivate', $modulesToActivate);
-
-            try {
-                $serviceCaller->callService('ModuleInstaller', $shopId);
-            } catch (ModuleSetupException $e) {
-                // this may happen if the module is already active,
-                // we can ignore this
-            }
-        }
     }
 }
