@@ -9,14 +9,14 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\Basket\Service;
 
-use OxidEsales\GraphQL\Account\Account\DataType\Customer as CustomerDataType;
-use OxidEsales\GraphQL\Account\Account\Exception\CustomerNotFound;
 use OxidEsales\GraphQL\Account\Basket\DataType\Basket as BasketDataType;
 use OxidEsales\GraphQL\Account\Basket\DataType\BasketOwner as BasketOwnerDataType;
 use OxidEsales\GraphQL\Account\Basket\Exception\BasketAccessForbidden;
 use OxidEsales\GraphQL\Account\Basket\Exception\BasketNotFound;
 use OxidEsales\GraphQL\Account\Basket\Infrastructure\Basket as BasketInfraService;
 use OxidEsales\GraphQL\Account\Basket\Infrastructure\Repository as BasketRepository;
+use OxidEsales\GraphQL\Account\Customer\DataType\Customer as CustomerDataType;
+use OxidEsales\GraphQL\Account\Customer\Exception\CustomerNotFound;
 use OxidEsales\GraphQL\Base\Exception\InvalidLogin;
 use OxidEsales\GraphQL\Base\Exception\InvalidToken;
 use OxidEsales\GraphQL\Base\Exception\NotFound;

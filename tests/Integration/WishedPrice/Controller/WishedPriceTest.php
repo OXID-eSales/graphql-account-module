@@ -490,6 +490,7 @@ final class WishedPriceTest extends TokenTestCase
     {
         EshopRegistry::set(Config::class, null);
 
+        /** @var Shop $shop */
         $shop = oxNew(Shop::class);
         $shop->load(1);
         $shop->assign(
