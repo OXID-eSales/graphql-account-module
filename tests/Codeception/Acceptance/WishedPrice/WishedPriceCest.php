@@ -466,9 +466,6 @@ final class WishedPriceCest extends BaseCest
         $I->assertEquals($expectedWishedPrice['currency']['name'], $savedWishedPrice->getPriceAlarmCurrency()->name);
     }
 
-    /**
-     * @group sieg
-     */
     public function testWishedPriceSetFailsToSendNotification(AcceptanceTester $I): void
     {
         $this->setShopOrderMail($I, '');
