@@ -17,6 +17,10 @@ use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
 final class WishedPriceCest extends BaseCest
 {
+    private const ADMIN_USERNAME = 'admin';
+
+    private const ADMIN_PASSWORD = 'admin';
+
     private const USERNAME = 'user@oxid-esales.com';
 
     private const FIRSTNAME = 'Marc';
@@ -178,7 +182,7 @@ final class WishedPriceCest extends BaseCest
      */
     public function testWishedPricesWithAuthorization(AcceptanceTester $I, Example $data): void
     {
-        $I->login(self::USERNAME, self::PASSWORD);
+        $I->login(self::ADMIN_USERNAME, self::ADMIN_PASSWORD);
 
         $I->sendGQLQuery('query{
             wishedPrice(id: "' . $data['id'] . '") {
