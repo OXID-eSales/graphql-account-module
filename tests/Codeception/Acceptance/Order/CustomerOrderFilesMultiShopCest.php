@@ -7,29 +7,25 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Tests\Integration\Order\Controller;
+namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Order;
 
-use OxidEsales\Eshop\Core\Registry as EshopRegistry;
-use OxidEsales\GraphQL\Base\Tests\Integration\MultishopTestCase;
+use Codeception\Util\HttpCode;
+use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\MultishopBaseCest;
+use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
-final class CustomerOrderFilesMultiShopTest extends MultishopTestCase
+final class CustomerOrderFilesMultiShopCest extends MultishopBaseCest
 {
     private const USERNAME = 'user@oxid-esales.com';
 
     private const PASSWORD = 'useruser';
 
-    public function testCustomerOrderFilesSubShopOnly(): void
+    public function testCustomerOrderFilesSubShopOnly(AcceptanceTester $I): void
     {
-        $shopId = '2';
+        $I->updateConfigInDatabase('blMallUsers', false, 'bool');
 
-        $this->ensureShop((int) $shopId);
-        EshopRegistry::getConfig()->setConfigParam('blMallUsers', false);
-        EshopRegistry::getConfig()->setShopId($shopId);
-        $this->setGETRequestParameter('shp', $shopId);
+        $I->login(self::USERNAME, self::PASSWORD, 2);
 
-        $this->prepareToken(self::USERNAME, self::PASSWORD);
-
-        $result = $this->query(
+        $I->sendGQLQuery(
             'query {
                 customer {
                     files {
@@ -78,13 +74,18 @@ final class CustomerOrderFilesMultiShopTest extends MultishopTestCase
                         }
                     }
                 }
-            }'
+            }',
+            null,
+            0,
+            2
         );
 
-        $this->assertResponseStatus(200, $result);
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+        $result = $I->grabJsonResponseAsArray();
 
-        $customerFiles = $result['body']['data']['customer']['files'];
-        $orderFiles    = $result['body']['data']['customer']['orders'][0]['files'];
+        $customerFiles = $result['data']['customer']['files'];
+        $orderFiles    = $result['data']['customer']['orders'][0]['files'];
 
         $expectedFiles = [
             [
@@ -109,11 +110,11 @@ final class CustomerOrderFilesMultiShopTest extends MultishopTestCase
             ],
         ];
 
-        $this->assertRegExp('/https?:\/\/.*\..*sorderfileid=' . $expectedFiles[0]['id'] . '/', $customerFiles[0]['url']);
-        $this->assertRegExp('/https?:\/\/.*\..*sorderfileid=' . $expectedFiles[0]['id'] . '/', $orderFiles[0]['url']);
+        $I->assertRegExp('/https?:\/\/.*\..*sorderfileid=' . $expectedFiles[0]['id'] . '/', $customerFiles[0]['url']);
+        $I->assertRegExp('/https?:\/\/.*\..*sorderfileid=' . $expectedFiles[0]['id'] . '/', $orderFiles[0]['url']);
         unset($customerFiles[0]['url'], $orderFiles[0]['url']);
 
-        $this->assertEquals($customerFiles, $expectedFiles);
-        $this->assertEquals($orderFiles, $expectedFiles);
+        $I->assertEquals($customerFiles, $expectedFiles);
+        $I->assertEquals($orderFiles, $expectedFiles);
     }
 }

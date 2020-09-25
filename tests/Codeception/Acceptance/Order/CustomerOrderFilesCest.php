@@ -7,11 +7,13 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Tests\Integration\Order\Controller;
+namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Order;
 
-use OxidEsales\GraphQL\Base\Tests\Integration\TokenTestCase;
+use Codeception\Util\HttpCode;
+use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
+use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
-final class CustomerOrderFilesTest extends TokenTestCase
+final class CustomerOrderFilesCest extends BaseCest
 {
     private const USERNAME = 'user@oxid-esales.com';
 
@@ -19,11 +21,11 @@ final class CustomerOrderFilesTest extends TokenTestCase
 
     private const PASSWORD = 'useruser';
 
-    public function testCustomerOrderFiles(): void
+    public function testCustomerOrderFiles(AcceptanceTester $I): void
     {
-        $this->prepareToken(self::USERNAME, self::PASSWORD);
+        $I->login(self::USERNAME, self::PASSWORD);
 
-        $result = $this->query(
+        $I->sendGQLQuery(
             'query {
                 customer{
                     files {
@@ -75,10 +77,12 @@ final class CustomerOrderFilesTest extends TokenTestCase
             }'
         );
 
-        $this->assertResponseStatus(200, $result);
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+        $result = $I->grabJsonResponseAsArray();
 
-        $customerFiles = $result['body']['data']['customer']['files'];
-        $orderFiles    = $result['body']['data']['customer']['orders'][0]['files'];
+        $customerFiles = $result['data']['customer']['files'];
+        $orderFiles    = $result['data']['customer']['orders'][0]['files'];
 
         $expectedFiles = [
             [
@@ -103,19 +107,19 @@ final class CustomerOrderFilesTest extends TokenTestCase
             ],
         ];
 
-        $this->assertRegExp('/https?:\/\/.*\..*sorderfileid=' . $expectedFiles[0]['id'] . '/', $customerFiles[0]['url']);
-        $this->assertRegExp('/https?:\/\/.*\..*sorderfileid=' . $expectedFiles[0]['id'] . '/', $orderFiles[0]['url']);
+        $I->assertRegExp('/https?:\/\/.*\..*sorderfileid=' . $expectedFiles[0]['id'] . '/', $customerFiles[0]['url']);
+        $I->assertRegExp('/https?:\/\/.*\..*sorderfileid=' . $expectedFiles[0]['id'] . '/', $orderFiles[0]['url']);
         unset($customerFiles[0]['url'], $orderFiles[0]['url']);
 
-        $this->assertEquals($customerFiles, $expectedFiles);
-        $this->assertEquals($orderFiles, $expectedFiles);
+        $I->assertEquals($customerFiles, $expectedFiles);
+        $I->assertEquals($orderFiles, $expectedFiles);
     }
 
-    public function testCustomerOrderFilesWithNonExistingFile(): void
+    public function testCustomerOrderFilesWithNonExistingFile(AcceptanceTester $I): void
     {
-        $this->prepareToken(self::OTHER_USERNAME, self::PASSWORD);
+        $I->login(self::OTHER_USERNAME, self::PASSWORD);
 
-        $result = $this->query(
+        $I->sendGQLQuery(
             'query {
                 customer {
                     id
@@ -132,10 +136,13 @@ final class CustomerOrderFilesTest extends TokenTestCase
             }'
         );
 
-        $this->assertResponseStatus(200, $result);
-        $this->assertSame([
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+        $result = $I->grabJsonResponseAsArray();
+
+        $I->assertSame([
             'id'   => '886deb7e49bb2e51b4fb939f6ed7655c',
             'file' => null,
-        ], $result['body']['data']['customer']['orders'][0]['files'][0]);
+        ], $result['data']['customer']['orders'][0]['files'][0]);
     }
 }
