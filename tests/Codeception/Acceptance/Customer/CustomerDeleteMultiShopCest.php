@@ -13,9 +13,6 @@ use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\MultishopBaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
-/**
- * @group WIP
- */
 final class CustomerDeleteMultiShopCest extends MultishopBaseCest
 {
     private const USERNAME = 'tempuser@oxid-esales.com';
@@ -28,8 +25,9 @@ final class CustomerDeleteMultiShopCest extends MultishopBaseCest
 
     public function testCustomerDeleteOnlyFromSubShop(AcceptanceTester $I): void
     {
-        $I->updateConfigInDatabase('blAllowUsersToDeleteTheirAccount', true, 'bool');
         $I->updateConfigInDatabase('blMallUsers', false, 'bool');
+        //false in shop 1, shop 2 has true via test fixtures
+        $I->updateConfigInDatabase('blAllowUsersToDeleteTheirAccount', true, 'bool');
 
         $I->login(self::USERNAME, self::PASSWORD, 2);
 
@@ -46,10 +44,11 @@ final class CustomerDeleteMultiShopCest extends MultishopBaseCest
         $I->seeResponseIsJson();
         $result = $I->grabJsonResponseAsArray();
 
-        $I->assertTrue($result['body']['data']['customerDelete']);
+        $I->assertTrue($result['data']['customerDelete']);
 
         $this->checkUserInShop($I, 2, self::USERNAME, self::PASSWORD, HttpCode::UNAUTHORIZED);
 
+        //can still log in to shop 1, because it is another row in database with different oxid
         $this->checkUserInShop($I, 1, self::USERNAME, self::PASSWORD, HttpCode::OK);
     }
 
@@ -82,6 +81,8 @@ final class CustomerDeleteMultiShopCest extends MultishopBaseCest
 
     protected function checkUserInShop(AcceptanceTester $I, int $shopId, string $username, string $password, int $expectedCode): void
     {
+        $I->logout();
+
         $query     = 'query ($username: String!, $password: String!) { token (username: $username, password: $password) }';
         $variables = [
             'username' => $username,
@@ -91,8 +92,7 @@ final class CustomerDeleteMultiShopCest extends MultishopBaseCest
 
         $I->seeResponseCodeIs($expectedCode);
         $I->seeResponseIsJson();
-        $result = $I->grabJsonResponseAsArray();
 
-        $I->assertResponseStatus($expectedCode, $result['data']);
+        $I->logout();
     }
 }

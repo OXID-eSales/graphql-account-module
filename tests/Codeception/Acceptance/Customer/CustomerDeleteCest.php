@@ -15,7 +15,7 @@ use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
 final class CustomerDeleteCest extends BaseCest
 {
-    private const USERNAME = 'tempuser@oxid-esales.com';
+    private const USERNAME = 'tobedeleted@oxid-esales.com';
 
     private const PASSWORD = 'useruser';
 
