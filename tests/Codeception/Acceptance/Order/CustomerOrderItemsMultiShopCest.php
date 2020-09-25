@@ -7,12 +7,13 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Tests\Integration\Order\Controller;
+namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Order;
 
-use OxidEsales\Eshop\Core\Registry as EshopRegistry;
-use OxidEsales\GraphQL\Base\Tests\Integration\MultishopTestCase;
+use Codeception\Util\HttpCode;
+use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\MultishopBaseCest;
+use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
-final class CustomerOrderItemsMultiShopTest extends MultishopTestCase
+final class CustomerOrderItemsMultiShopCest extends MultishopBaseCest
 {
     private const USER_SHOP_2 = 'user@oxid-esales.com';
 
@@ -23,19 +24,15 @@ final class CustomerOrderItemsMultiShopTest extends MultishopTestCase
     /**
      * User from shop 2, has created an order in shop 2 with product which belongs to shop 1.
      */
-    public function testCustomerOrderItems(): void
+    public function testCustomerOrderItems(AcceptanceTester $I): void
     {
-        EshopRegistry::getConfig()->setShopId(2);
-        $this->setGETRequestParameter('shp', '2');
-        $this->prepareToken(self::USER_SHOP_2, self::PASSWORD);
+        $I->updateConfigInDatabase('blMallUsers', false, 'bool');
+        $I->login(self::USER_SHOP_2, self::PASSWORD, 2);
 
-        $result = $this->queryCustomerOrderItems();
+        $result = $this->queryCustomerOrderItems($I);
+        $items  = $result['data']['customer']['orders'][0]['items'];
 
-        $this->assertResponseStatus(200, $result);
-
-        $items = $result['body']['data']['customer']['orders'][0]['items'];
-
-        $this->assertCount(1, $items);
+        $I->assertCount(1, $items);
 
         $expectedItem = [
             'id'               => '677688370a4a64d8336107bcf174fdeb',
@@ -65,26 +62,22 @@ final class CustomerOrderItemsMultiShopTest extends MultishopTestCase
             'bundle'           => false,
         ];
 
-        $this->assertSame($expectedItem, $items[0]);
+        $I->assertEquals($expectedItem, $items[0]);
     }
 
     /**
      * User from shop 1, has created an order in shop 2 with product which belongs to shop 1.
      */
-    public function testCustomerOrderItemsMallUsers(): void
+    public function testCustomerOrderItemsMallUsers(AcceptanceTester $I): void
     {
-        EshopRegistry::getConfig()->setConfigParam('blMallUsers', true);
-        EshopRegistry::getConfig()->setShopId(2);
-        $this->setGETRequestParameter('shp', '2');
+        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
 
-        $this->prepareToken(self::USER_SHOP_1, self::PASSWORD);
+        $I->login(self::USER_SHOP_1, self::PASSWORD, 2);
 
-        $result = $this->queryCustomerOrderItems();
-
-        $this->assertResponseStatus(200, $result);
+        $result = $this->queryCustomerOrderItems($I);
 
         $items  = [];
-        $orders = $result['body']['data']['customer']['orders'];
+        $orders = $result['data']['customer']['orders'];
 
         foreach ($orders as $order) {
             if ($order['orderNumber'] == '7') {
@@ -94,7 +87,7 @@ final class CustomerOrderItemsMultiShopTest extends MultishopTestCase
             }
         }
 
-        $this->assertCount(1, $items);
+        $I->assertCount(1, $items);
 
         $expectedItem = [
             'id'               => '677688370a4a64d8336107bcf174fde1',
@@ -124,12 +117,12 @@ final class CustomerOrderItemsMultiShopTest extends MultishopTestCase
             'bundle'           => false,
         ];
 
-        $this->assertSame($expectedItem, $items[0]);
+        $I->assertEquals($expectedItem, $items[0]);
     }
 
-    private function queryCustomerOrderItems(): array
+    private function queryCustomerOrderItems(AcceptanceTester $I): array
     {
-        return $this->query(
+        $I->sendGQLQuery(
             'query {
                 customer {
                     id
@@ -165,7 +158,15 @@ final class CustomerOrderItemsMultiShopTest extends MultishopTestCase
                         }
                     }
                 }
-            }'
+            }',
+            null,
+            0,
+            2
         );
+
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+
+        return $I->grabJsonResponseAsArray();
     }
 }
