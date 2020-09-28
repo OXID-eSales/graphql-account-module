@@ -32,6 +32,13 @@ final class ReviewMultiShopCest extends MultishopBaseCest
 
     private $createdReviews = [];
 
+    public function _before(AcceptanceTester $I): void
+    {
+        parent::_before($I);
+
+        $I->updateConfigInDatabase('blMallUsers', false, 'bool');
+    }
+
     public function _after(AcceptanceTester $I): void
     {
         foreach ($this->createdReviews as $oneReview) {
@@ -57,8 +64,8 @@ final class ReviewMultiShopCest extends MultishopBaseCest
 
         if (isset($result['data']['reviewSet']['id'])) {
             $this->createdReviews[] = [
-                'id' => $result['data']['reviewSet']['id'],
-                'shopId' => $shopId
+                'id'     => $result['data']['reviewSet']['id'],
+                'shopId' => $shopId,
             ];
         }
     }
@@ -67,28 +74,28 @@ final class ReviewMultiShopCest extends MultishopBaseCest
     {
         return [
             'shop1' => [
-                'shopId' => 1,
-                'productId' => self::PRODUCT_ID_SHOP_1,
+                'shopId'         => 1,
+                'productId'      => self::PRODUCT_ID_SHOP_1,
                 'expectedStatus' => 200,
-                'retryStatus' => 400,
+                'retryStatus'    => 400,
             ],
             'shop2' => [
-                'shopId' => 2,
-                'productId' => self::PRODUCT_ID_SHOP_2,
+                'shopId'         => 2,
+                'productId'      => self::PRODUCT_ID_SHOP_2,
                 'expectedStatus' => 200,
-                'retryStatus' => 400,
+                'retryStatus'    => 400,
             ],
             'shop1_with_shop2product' => [
-                'shopId' => 1,
-                'productId' => self::PRODUCT_ID_SHOP_2,
+                'shopId'         => 1,
+                'productId'      => self::PRODUCT_ID_SHOP_2,
                 'expectedStatus' => 404,
-                'retryStatus' => 404,
+                'retryStatus'    => 404,
             ],
             'shop2_with_inheritedproduct' => [
-                'shopId' => 2,
-                'productId' => self::PRODUCT_ID_BOTH_SHOPS,
+                'shopId'         => 2,
+                'productId'      => self::PRODUCT_ID_BOTH_SHOPS,
                 'expectedStatus' => 200,
-                'retryStatus' => 400,
+                'retryStatus'    => 400,
             ],
         ];
     }
@@ -98,45 +105,47 @@ final class ReviewMultiShopCest extends MultishopBaseCest
      */
     public function testMallUserReview(AcceptanceTester $I): void
     {
+        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+
         $I->login(self::OTHER_USERNAME, self::PASSWORD, 1);
 
         $result = $this->reviewSet($I, self::PRODUCT_ID_SHOP_1);
         $I->seeResponseCodeIs(HttpCode::OK);
         $reviewIdWithShop1Product = $result['data']['reviewSet']['id'];
         $this->createdReviews[]   = [
-            'id' => $reviewIdWithShop1Product,
-            'shopId' => 1
+            'id'     => $reviewIdWithShop1Product,
+            'shopId' => 1,
         ];
 
         $result = $this->reviewSet($I, self::PRODUCT_ID_BOTH_SHOPS);
         $I->seeResponseCodeIs(HttpCode::OK);
         $this->createdReviews[]   = [
-            'id' => $result['data']['reviewSet']['id'],
-            'shopId' => 1
+            'id'     => $result['data']['reviewSet']['id'],
+            'shopId' => 1,
         ];
 
         //let mall user set a review for same product in subshop
         $I->login(self::OTHER_USERNAME, self::PASSWORD, 2);
 
         //user already did give a review in subshop 1 so he cannot add a another one for same product
-        $this->reviewSet($I,self::PRODUCT_ID_BOTH_SHOPS, 2);
+        $this->reviewSet($I, self::PRODUCT_ID_BOTH_SHOPS, 2);
         $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
 
         //review another product
-        $result = $this->reviewSet($I,self::PRODUCT_ID_SHOP_2, 2);
+        $result = $this->reviewSet($I, self::PRODUCT_ID_SHOP_2, 2);
         $I->seeResponseCodeIs(HttpCode::OK);
         $this->createdReviews[]   = [
-            'id' => $result['data']['reviewSet']['id'],
-            'shopId' => 2
+            'id'     => $result['data']['reviewSet']['id'],
+            'shopId' => 2,
         ];
 
         //get reviews for subshop
-        $allReviews = $this->getReviews($I,false);
+        $allReviews = $this->getReviews($I, false);
         $I->seeResponseCodeIs(HttpCode::OK);
         $I->assertEquals(3, count($allReviews['data']['customer']['reviews']));
 
         //Here we have the case, that one of the products is not available in the subshop
-        $allReviews = $this->getReviews($I,true);
+        $allReviews = $this->getReviews($I, true);
         $I->seeResponseCodeIs(HttpCode::OK);
 
         $reviews = $this->restructureResult($allReviews['data']['customer']['reviews']);
@@ -170,6 +179,8 @@ final class ReviewMultiShopCest extends MultishopBaseCest
 
     private function reviewDelete(AcceptanceTester $I, string $id, int $shopId = 1): void
     {
+        $I->login(self::OTHER_USERNAME, self::PASSWORD, $shopId);
+
         $I->sendGQLQuery(
             'mutation {
                  reviewDelete(id: "' . $id . '")
@@ -180,7 +191,6 @@ final class ReviewMultiShopCest extends MultishopBaseCest
         );
         $I->seeResponseCodeIs(HttpCode::OK);
     }
-
 
     private function getReviews(AcceptanceTester $I, bool $queryProducts)
     {
@@ -200,6 +210,7 @@ final class ReviewMultiShopCest extends MultishopBaseCest
             }';
 
         $I->sendGQLQuery($query);
+
         return $I->grabJsonResponseAsArray();
     }
 
