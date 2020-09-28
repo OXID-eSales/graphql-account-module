@@ -239,8 +239,11 @@ REPLACE INTO `oxorderarticles` (`OXID`, `OXORDERID`, `OXAMOUNT`, `OXARTID`, `OXA
 
 REPLACE into `oxconfig` (`OXID`, `OXSHOPID`, `OXVARNAME`, `OXVARTYPE`,`OXVARVALUE`) VALUES
 ('_allow_shop_delaccount', 1, 'blAllowUsersToDeleteTheirAccount', 'bool', ENCODE(true, 'fq45QS09_fqyx09239QQ')),
-('_allow_subshop_delaccount', 2, 'blAllowUsersToDeleteTheirAccount', 'bool', ENCODE(true, 'fq45QS09_fqyx09239QQ'));
-
+('_allow_subshop_delaccount', 2, 'blAllowUsersToDeleteTheirAccount', 'bool', ENCODE(true, 'fq45QS09_fqyx09239QQ')),
+('_allow_shop_managereviews', 1, 'blAllowUsersToManageTheirReviews', 'bool', ENCODE(true, 'fq45QS09_fqyx09239QQ')),
+('_allow_subshop_managereviews', 2, 'blAllowUsersToManageTheirReviews', 'bool', ENCODE(true, 'fq45QS09_fqyx09239QQ')),
+('_allow_shop_mallusers', 1, 'blMallUsers', 'bool', ENCODE(true, 'fq45QS09_fqyx09239QQ')),
+('_allow_subshop_mallusers', 2, 'blMallUsers', 'bool', ENCODE(true, 'fq45QS09_fqyx09239QQ'));
 
 REPLACE INTO  `oxnewssubscribed` ( `OXID`,  `OXUSERID`,  `OXDBOPTIN`,  `OXSHOPID`) VALUES
 ('_newssubscribed_1', '245ad3b5380202966df6ff128e9eecaq', 1, 1),
