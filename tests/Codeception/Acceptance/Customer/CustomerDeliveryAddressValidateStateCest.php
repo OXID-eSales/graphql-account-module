@@ -7,11 +7,13 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Tests\Integration\Customer\Controller;
+namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Customer;
 
-use OxidEsales\GraphQL\Base\Tests\Integration\TokenTestCase;
+use Codeception\Util\HttpCode;
+use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
+use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
-final class CustomerDeliveryAddressValidateStateTest extends TokenTestCase
+final class CustomerDeliveryAddressValidateStateCest extends BaseCest
 {
     private const USERNAME = 'user@oxid-esales.com';
 
@@ -22,10 +24,9 @@ final class CustomerDeliveryAddressValidateStateTest extends TokenTestCase
      * The validation should be part of the shop itself.
      * That's why this test is separated from the others.
      */
-    public function testAddDeliveryAddressForLoggedInUserInvalidStateId(): void
+    public function testAddDeliveryAddressForLoggedInUserInvalidStateId(AcceptanceTester $I): void
     {
-        $this->setGETRequestParameter('lang', '1');
-        $this->prepareToken(self::USERNAME, self::PASSWORD);
+        $I->login(self::USERNAME, self::PASSWORD);
 
         $inputFields =  [
             'salutation'     => 'MR',
@@ -49,7 +50,7 @@ final class CustomerDeliveryAddressValidateStateTest extends TokenTestCase
             $queryPart .= $key . ': "' . $value . '",' . PHP_EOL;
         }
 
-        $result = $this->query(
+        $I->sendGQLQuery(
             'mutation {
                 customerDeliveryAddressAdd(deliveryAddress: {' .
             $queryPart .
@@ -62,15 +63,19 @@ final class CustomerDeliveryAddressValidateStateTest extends TokenTestCase
                         title
                     }
                 }
-            }'
+            }',
+            null,
+            1
         );
 
-        $this->assertResponseStatus(200, $result);
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+        $result = $I->grabJsonResponseAsArray();
 
-        $country = $result['body']['data']['customerDeliveryAddressAdd']['country'];
-        $this->assertSame('Germany', $country['title']);
+        $country = $result['data']['customerDeliveryAddressAdd']['country'];
+        $I->assertSame('Germany', $country['title']);
 
-        $state = $result['body']['data']['customerDeliveryAddressAdd']['state'];
-        $this->assertSame('New York', $state['title']);
+        $state = $result['data']['customerDeliveryAddressAdd']['state'];
+        $I->assertSame('New York', $state['title']);
     }
 }
