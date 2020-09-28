@@ -7,10 +7,10 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Voucher\DataType;
+namespace OxidEsales\GraphQL\Account\Basket\DataType;
 
 use DateTimeInterface;
-use OxidEsales\Eshop\Application\Model\Voucher as EshopVoucherModel;
+use OxidEsales\Eshop\Application\Model\VoucherSerie as EshopVoucherModel;
 use OxidEsales\GraphQL\Base\DataType\DateTimeImmutableFactory;
 use OxidEsales\GraphQL\Catalogue\Shared\DataType\DataType;
 use TheCodingMachine\GraphQLite\Annotations\Field;
@@ -20,19 +20,20 @@ use TheCodingMachine\GraphQLite\Types\ID;
 /**
  * @Type()
  */
-final class Voucher implements DataType
+final class VoucherSeries implements DataType
 {
     /** @var EshopVoucherModel */
-    private $voucherModel;
+    private $voucherSeriesModel;
 
-    public function __construct(EshopVoucherModel $voucherModel)
-    {
-        $this->voucherModel = $voucherModel;
+    public function __construct(
+        EshopVoucherModel $voucherSeriesModel
+    ) {
+        $this->voucherSeriesModel = $voucherSeriesModel;
     }
 
     public function getEshopModel(): EshopVoucherModel
     {
-        return $this->voucherModel;
+        return $this->voucherSeriesModel;
     }
 
     /**
@@ -46,26 +47,36 @@ final class Voucher implements DataType
     /**
      * @Field
      */
-    public function voucher(): string
+    public function title(): string
     {
-        return $this->getEshopModel()->getFieldData('OXVOUCHERNR');
+        return (string) $this->getEshopModel()->getFieldData('OXSERIENR');
     }
 
     /**
      * @Field
      */
-    public function number(): string
+    public function description(): string
     {
-        return (string) $this->getEshopModel()->getFieldData('OXVOUCHERNR');
+        return (string) $this->getEshopModel()->getFieldData('OXSERIEDESCRIPTION');
     }
 
     /**
      * @Field
      */
-    public function reserved(): ?DateTimeInterface
+    public function validFrom(): ?DateTimeInterface
     {
         return DateTimeImmutableFactory::fromString(
-            (string) $this->getEshopModel()->getFieldData('OXRESERVED')
+            (string) $this->getEshopModel()->getFieldData('OXBEGINDATE')
+        );
+    }
+
+    /**
+     * @Field
+     */
+    public function validTo(): ?DateTimeInterface
+    {
+        return DateTimeImmutableFactory::fromString(
+            (string) $this->getEshopModel()->getFieldData('OXENDDATE')
         );
     }
 
@@ -78,13 +89,11 @@ final class Voucher implements DataType
     }
 
     /**
-     * @Field()
+     * @Field
      */
-    public function redeemedAt(): ?DateTimeInterface
+    public function discountType(): string
     {
-        return DateTimeImmutableFactory::fromString(
-            (string) $this->getEshopModel()->getFieldData('OXDATEUSED')
-        );
+        return (string) $this->getEshopModel()->getFieldData('OXDISCOUNTTYPE');
     }
 
     public static function getModelClass(): string
