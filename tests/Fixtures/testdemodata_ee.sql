@@ -240,3 +240,8 @@ REPLACE INTO `oxorderarticles` (`OXID`, `OXORDERID`, `OXAMOUNT`, `OXARTID`, `OXA
 REPLACE into `oxconfig` (`OXID`, `OXSHOPID`, `OXVARNAME`, `OXVARTYPE`,`OXVARVALUE`) VALUES
 ('_allow_shop_delaccount', 1, 'blAllowUsersToDeleteTheirAccount', 'bool', ENCODE(true, 'fq45QS09_fqyx09239QQ')),
 ('_allow_subshop_delaccount', 2, 'blAllowUsersToDeleteTheirAccount', 'bool', ENCODE(true, 'fq45QS09_fqyx09239QQ'));
+
+
+REPLACE INTO  `oxnewssubscribed` ( `OXID`,  `OXUSERID`,  `OXDBOPTIN`,  `OXSHOPID`) VALUES
+('_newssubscribed_1', '245ad3b5380202966df6ff128e9eecaq', 1, 1),
+('_newssubscribed_2', '245ad3b5380202966df6ff128e9eecaq', 2, 2);
