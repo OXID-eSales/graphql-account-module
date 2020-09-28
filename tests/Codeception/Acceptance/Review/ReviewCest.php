@@ -93,32 +93,32 @@ final class ReviewCest extends BaseCest
         $I->seeResponseCodeIs(HttpCode::OK);
 
         $reviewData = $result['data']['reviewSet'];
-        $id = $reviewData['id'];
+        $id         = $reviewData['id'];
 
         $I->assertIsString('%s', $id);
         $I->assertSame(self::TEST_PRODUCT_ID, $reviewData['product']['id']);
         $I->assertEquals($data['text'], $reviewData['text']);
-        $I->assertEquals((int)$data['rating'], $reviewData['rating']);
+        $I->assertEquals((int) $data['rating'], $reviewData['rating']);
 
         $result = $this->queryReview($I, $id);
         $I->assertEquals($data['text'], $result['data']['review']['text']);
-        $I->assertEquals((int)$data['rating'], $result['data']['review']['rating']);
+        $I->assertEquals((int) $data['rating'], $result['data']['review']['rating']);
     }
 
     public function setReviewDataProvider()
     {
         return [
             'text_only' => [
-                'text' => self::TEXT,
+                'text'   => self::TEXT,
                 'rating' => '',
             ],
             'rating_only' => [
-                'text' => '',
+                'text'   => '',
                 'rating' => '5',
 
             ],
             'text_and_rating' => [
-                'text' => self::TEXT,
+                'text'   => self::TEXT,
                 'rating' => '5',
             ],
         ];
@@ -282,13 +282,13 @@ final class ReviewCest extends BaseCest
         $I->login(self::USERNAME, self::PASSWORD);
 
         //Add review without rating
-        $result = $this->reviewSet($I,self::TEST_PRODUCT_ID, self::TEXT, null);
+        $result = $this->reviewSet($I, self::TEST_PRODUCT_ID, self::TEXT, null);
         $I->seeResponseCodeIs(HttpCode::OK);
         $review = $result['data']['reviewSet'];
         $I->assertSame(0, $review['rating']);
 
         //Make sure the product is without rating
-        $result = $this->queryProduct($I,self::TEST_PRODUCT_ID);
+        $result = $this->queryProduct($I, self::TEST_PRODUCT_ID);
         $I->seeResponseCodeIs(HttpCode::OK);
         $productRating = $result['data']['product']['rating'];
         $I->assertSame(0, $productRating['count']);
@@ -298,13 +298,13 @@ final class ReviewCest extends BaseCest
         $I->login(self::OTHER_USERNAME, self::OTHER_PASSWORD);
 
         //Add review with rating
-        $result = $this->reviewSet($I,self::TEST_PRODUCT_ID, self::TEXT, '5');
+        $result = $this->reviewSet($I, self::TEST_PRODUCT_ID, self::TEXT, '5');
         $I->seeResponseCodeIs(HttpCode::OK);
         $review = $result['data']['reviewSet'];
         $I->assertSame(5, $review['rating']);
 
         //Check product's average rating
-        $result = $this->queryProduct($I,self::TEST_PRODUCT_ID);
+        $result = $this->queryProduct($I, self::TEST_PRODUCT_ID);
         $I->seeResponseCodeIs(HttpCode::OK);
         $productRating = $result['data']['product']['rating'];
         $I->assertSame(1, $productRating['count']);
@@ -323,7 +323,7 @@ final class ReviewCest extends BaseCest
     public function testDeleteReviewByOtherUser(AcceptanceTester $I): void
     {
         $I->login(self::DIFFERENT_USERNAME, self::DIFFERENT_USER_PASSWORD);
-        $result = $this->reviewSet($I,self::PRODUCT_ID, self::REVIEW_TEXT, '4');
+        $result = $this->reviewSet($I, self::PRODUCT_ID, self::REVIEW_TEXT, '4');
         $I->seeResponseCodeIs(HttpCode::OK);
         $reviewId = $result['data']['reviewSet']['id'];
 
@@ -350,7 +350,7 @@ final class ReviewCest extends BaseCest
     public function testDeleteFailsIfManageFlagSetToFalse(AcceptanceTester $I): void
     {
         $I->login(self::USERNAME, self::PASSWORD);
-        $result = $this->reviewSet($I,self::TEST_PRODUCT_ID, self::REVIEW_TEXT, '4');
+        $result = $this->reviewSet($I, self::TEST_PRODUCT_ID, self::REVIEW_TEXT, '4');
         $I->seeResponseCodeIs(HttpCode::OK);
         $reviewId = $result['data']['reviewSet']['id'];
 
@@ -370,7 +370,7 @@ final class ReviewCest extends BaseCest
         $I->login(self::USERNAME, self::PASSWORD);
 
         //Add review without rating
-        $result = $this->reviewSet($I,self::TEST_PRODUCT_ID, self::TEXT, null);
+        $result = $this->reviewSet($I, self::TEST_PRODUCT_ID, self::TEXT, null);
         $I->seeResponseCodeIs(HttpCode::OK);
         $review = $result['data']['reviewSet'];
         $I->assertSame(0, $review['rating']);

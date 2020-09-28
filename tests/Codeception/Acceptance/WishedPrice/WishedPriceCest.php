@@ -79,7 +79,7 @@ final class WishedPriceCest extends BaseCest
         $I->seeResponseCodeIs(HttpCode::OK);
         $I->seeResponseIsJson();
 
-        $result = $I->grabJsonResponseAsArray();
+        $result      = $I->grabJsonResponseAsArray();
         $wishedPrice = $result['data']['wishedPrice'];
 
         $I->assertEquals($wishedPrice['product']['title'], 'Kuyichi Ledergürtel JEVER');
@@ -114,7 +114,7 @@ final class WishedPriceCest extends BaseCest
         $I->seeResponseCodeIs(HttpCode::OK);
         $I->seeResponseIsJson();
 
-        $result = $I->grabJsonResponseAsArray();
+        $result      = $I->grabJsonResponseAsArray();
         $wishedPrice = $result['data']['wishedPrice'];
 
         $I->assertNotNull($wishedPrice['notificationDate']);
@@ -151,28 +151,28 @@ final class WishedPriceCest extends BaseCest
     {
         return [
             [
-                'id' => self::WISHED_PRICE_WITHOUT_USER,
-                'status' => HttpCode::UNAUTHORIZED
+                'id'     => self::WISHED_PRICE_WITHOUT_USER,
+                'status' => HttpCode::UNAUTHORIZED,
             ],
             [
-                'id' => self::WISHED_PRICE_ASSIGNED_TO_OTHER_USER,
-                'status' => HttpCode::UNAUTHORIZED
+                'id'     => self::WISHED_PRICE_ASSIGNED_TO_OTHER_USER,
+                'status' => HttpCode::UNAUTHORIZED,
             ],
             [
-                'id' => self::WISHED_PRICE_WITH_INACTIVE_PRODUCT,
-                'status' => HttpCode::UNAUTHORIZED
+                'id'     => self::WISHED_PRICE_WITH_INACTIVE_PRODUCT,
+                'status' => HttpCode::UNAUTHORIZED,
             ],
             [
-                'id' => self::WISHED_PRICE_WITH_DISABLED_WISHED_PRICE_FOR_PRODUCT,
-                'status' => HttpCode::NOT_FOUND
+                'id'     => self::WISHED_PRICE_WITH_DISABLED_WISHED_PRICE_FOR_PRODUCT,
+                'status' => HttpCode::NOT_FOUND,
             ],
             [
-                'id' => self::WISHED_PRICE_WITH_NON_EXISTING_PRODUCT,
-                'status' => HttpCode::NOT_FOUND
+                'id'     => self::WISHED_PRICE_WITH_NON_EXISTING_PRODUCT,
+                'status' => HttpCode::NOT_FOUND,
             ],
             [
-                'id' => self::WISHED_PRICE_WITH_NON_EXISTING_USER,
-                'status' => HttpCode::UNAUTHORIZED
+                'id'     => self::WISHED_PRICE_WITH_NON_EXISTING_USER,
+                'status' => HttpCode::UNAUTHORIZED,
             ],
         ];
     }
@@ -197,19 +197,19 @@ final class WishedPriceCest extends BaseCest
     {
         return [
             [
-                'id' => self::WISHED_PRICE_WITHOUT_USER
+                'id' => self::WISHED_PRICE_WITHOUT_USER,
             ],
             [
-                'id' => self::WISHED_PRICE_ASSIGNED_TO_OTHER_USER
+                'id' => self::WISHED_PRICE_ASSIGNED_TO_OTHER_USER,
             ],
             [
-                'id' => self::WISHED_PRICE_WITH_INACTIVE_PRODUCT
+                'id' => self::WISHED_PRICE_WITH_INACTIVE_PRODUCT,
             ],
             [
-                'id' => self::WISHED_PRICE_WITH_DISABLED_WISHED_PRICE_FOR_PRODUCT
+                'id' => self::WISHED_PRICE_WITH_DISABLED_WISHED_PRICE_FOR_PRODUCT,
             ],
             [
-                'id' => self::WISHED_PRICE_WITH_NON_EXISTING_USER
+                'id' => self::WISHED_PRICE_WITH_NON_EXISTING_USER,
             ],
         ];
     }
@@ -262,19 +262,19 @@ final class WishedPriceCest extends BaseCest
             'admin' => [
                 'username' => 'admin',
                 'password' => 'admin',
-                'oxid' => self::WISHED_PRICE_TO_BE_DELETED . '1_',
+                'oxid'     => self::WISHED_PRICE_TO_BE_DELETED . '1_',
                 'expected' => 200,
             ],
             'user' => [
                 'username' => 'user@oxid-esales.com',
                 'password' => 'useruser',
-                'oxid' => self::WISHED_PRICE_TO_BE_DELETED . '2_',
+                'oxid'     => self::WISHED_PRICE_TO_BE_DELETED . '2_',
                 'expected' => 200,
             ],
             'otheruser' => [
                 'username' => 'otheruser@oxid-esales.com',
                 'password' => 'useruser',
-                'oxid' => self::WISHED_PRICE_TO_BE_DELETED . '3_',
+                'oxid'     => self::WISHED_PRICE_TO_BE_DELETED . '3_',
                 'expected' => 401,
             ],
         ];
@@ -321,12 +321,12 @@ final class WishedPriceCest extends BaseCest
             'admin' => [
                 'username' => 'admin',
                 'password' => 'admin',
-                'count' => 0,
+                'count'    => 0,
             ],
             'user' => [
                 'username' => 'user@oxid-esales.com',
                 'password' => 'useruser',
-                'count' => 7,
+                'count'    => 7,
             ],
         ];
     }
@@ -378,38 +378,38 @@ final class WishedPriceCest extends BaseCest
         return [
             'not_existing_product' => [
                 'productId' => 'DOES-NOT-EXIST',
-                'currency' => 'EUR',
-                'price' => '15.0',
-                'message' => 'Product was not found by id: DOES-NOT-EXIST',
-                'status' => HttpCode::NOT_FOUND
+                'currency'  => 'EUR',
+                'price'     => '15.0',
+                'message'   => 'Product was not found by id: DOES-NOT-EXIST',
+                'status'    => HttpCode::NOT_FOUND,
             ],
             'not_existing_currency' => [
                 'productId' => self::PRODUCT_ID,
-                'currency' => 'ABC',
-                'price' => '15.0',
-                'message' => 'Currency "ABC" was not found',
-                'status' => HttpCode::NOT_FOUND
+                'currency'  => 'ABC',
+                'price'     => '15.0',
+                'message'   => 'Currency "ABC" was not found',
+                'status'    => HttpCode::NOT_FOUND,
             ],
             'wished_price_disabled' => [
                 'productId' => self::WISHED_PRICE_WITH_DISABLED_WISHED_PRICE_FOR_PRODUCT,
-                'currency' => 'EUR',
-                'price' => '15.0',
-                'message' => 'Product was not found by id: ' . self::WISHED_PRICE_WITH_DISABLED_WISHED_PRICE_FOR_PRODUCT,
-                'status' => HttpCode::NOT_FOUND
+                'currency'  => 'EUR',
+                'price'     => '15.0',
+                'message'   => 'Product was not found by id: ' . self::WISHED_PRICE_WITH_DISABLED_WISHED_PRICE_FOR_PRODUCT,
+                'status'    => HttpCode::NOT_FOUND,
             ],
             'invalid_price' => [
                 'productId' => self::PRODUCT_ID,
-                'currency' => 'EUR',
-                'price' => 'this_is_not_a_vald_price',
-                'message' => 'Field "wishedPriceSet" argument "wishedPrice" requires type Float!, found this_is_not_a_vald_price.',
-                'status' => HttpCode::BAD_REQUEST
+                'currency'  => 'EUR',
+                'price'     => 'this_is_not_a_vald_price',
+                'message'   => 'Field "wishedPriceSet" argument "wishedPrice" requires type Float!, found this_is_not_a_vald_price.',
+                'status'    => HttpCode::BAD_REQUEST,
             ],
             'negative_price' => [
                 'productId' => self::PRODUCT_ID,
-                'currency' => 'EUR',
-                'price' => -123,
-                'message' => 'Wished price must be positive, was: -123',
-                'status' => HttpCode::BAD_REQUEST
+                'currency'  => 'EUR',
+                'price'     => -123,
+                'message'   => 'Wished price must be positive, was: -123',
+                'status'    => HttpCode::BAD_REQUEST,
             ],
         ];
     }
@@ -496,10 +496,10 @@ final class WishedPriceCest extends BaseCest
         $I->updateInDatabase(
             'oxshops',
             [
-                'oxorderemail' => $value
+                'oxorderemail' => $value,
             ],
             [
-                'oxid' => 1
+                'oxid' => 1,
             ]
         );
     }
