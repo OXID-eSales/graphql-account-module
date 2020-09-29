@@ -39,6 +39,8 @@ abstract class MultishopBaseCest extends BaseCest
         parent::_before($I);
 
         $this->ensureSubshop();
+
+        $I->updateConfigInDatabase('blMallUsers', false, 'bool');
     }
 
     private function ensureSubshop(): void
