@@ -7,12 +7,14 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Tests\Integration\Basket\Controller;
+namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Basket;
 
-use OxidEsales\Eshop\Core\Registry as EshopRegistry;
-use OxidEsales\GraphQL\Base\Tests\Integration\MultishopTestCase;
+use Codeception\Example;
+use Codeception\Util\HttpCode;
+use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\MultishopBaseCest;
+use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
-final class BasketAddProductMultishopTest extends MultishopTestCase
+final class BasketAddProductMultishopCest extends MultishopBaseCest
 {
     private const USERNAME = 'user@oxid-esales.com';
 
@@ -30,33 +32,18 @@ final class BasketAddProductMultishopTest extends MultishopTestCase
 
     private const SHOP_2_PRODUCT_ID = '_test_product_5_';
 
-    public function dataProviderAddProductToBasketPerShop()
-    {
-        return [
-            'shop_1' => [
-                'shopId'    => '1',
-                'basketId'  => self::PUBLIC_BASKET,
-                'productId' => self::SHOP_1_PRODUCT_ID,
-            ],
-            'shop_2' => [
-                'shopId'    => '2',
-                'basketId'  => '_test_shop2_basket_public',
-                'productId' => self::SHOP_2_PRODUCT_ID,
-            ],
-        ];
-    }
-
     /**
      * @dataProvider dataProviderAddProductToBasketPerShop
      */
-    public function testAddProductToBasketPerShop(string $shopId, string $basketId, string $productId): void
+    public function testAddProductToBasketPerShop(AcceptanceTester $I, Example $data): void
     {
-        EshopRegistry::getConfig()->setShopId($shopId);
-        $this->setGETRequestParameter('shp', $shopId);
+        $shopId    = $data['shopId'];
+        $basketId  = $data['basketId'];
+        $productId = $data['productId'];
 
-        $this->prepareToken(self::USERNAME, self::PASSWORD);
+        $I->login(self::USERNAME, self::PASSWORD, $shopId);
 
-        $result = $this->query(
+        $I->sendGQLQuery(
             'mutation {
                  basketAddProduct(
                     basketId: "' . $basketId . '"
@@ -71,12 +58,17 @@ final class BasketAddProductMultishopTest extends MultishopTestCase
                         amount
                     }
                 }
-            }'
+            }',
+            null,
+            0,
+            $shopId
         );
 
-        $this->assertResponseStatus(200, $result);
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+        $result = $I->grabJsonResponseAsArray();
 
-        $this->assertSame(
+        $I->assertSame(
             [
                 'id'    => $basketId,
                 'items' => [
@@ -93,19 +85,16 @@ final class BasketAddProductMultishopTest extends MultishopTestCase
                     ],
                 ],
             ],
-            $result['body']['data']['basketAddProduct']
+            $result['data']['basketAddProduct']
         );
     }
 
-    public function testAddProductToBasketFromOtherSubshop(): void
+    public function testAddProductToBasketFromOtherSubshop(AcceptanceTester $I): void
     {
-        EshopRegistry::getConfig()->setConfigParam('blMallUsers', true);
-        EshopRegistry::getConfig()->setShopId(2);
-        $this->setGETRequestParameter('shp', '2');
+        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+        $I->login(self::OTHER_USERNAME, self::OTHER_PASSWORD, 2);
 
-        $this->prepareToken(self::OTHER_USERNAME, self::OTHER_PASSWORD);
-
-        $result = $this->query(
+        $I->sendGQLQuery(
             'mutation {
                  basketAddProduct(
                     basketId: "' . self:: PRIVATE_BASKET . '"
@@ -120,12 +109,17 @@ final class BasketAddProductMultishopTest extends MultishopTestCase
                         amount
                     }
                 }
-            }'
+            }',
+            null,
+            0,
+            2
         );
 
-        $this->assertResponseStatus(200, $result);
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+        $result = $I->grabJsonResponseAsArray();
 
-        $this->assertSame(
+        $I->assertSame(
             [
                 'id'    => self:: PRIVATE_BASKET,
                 'items' => [
@@ -142,7 +136,23 @@ final class BasketAddProductMultishopTest extends MultishopTestCase
                     ],
                 ],
             ],
-            $result['body']['data']['basketAddProduct']
+            $result['data']['basketAddProduct']
         );
+    }
+
+    protected function dataProviderAddProductToBasketPerShop()
+    {
+        return [
+            'shop_1' => [
+                'shopId'    => 1,
+                'basketId'  => self::PUBLIC_BASKET,
+                'productId' => self::SHOP_1_PRODUCT_ID,
+            ],
+            'shop_2' => [
+                'shopId'    => 2,
+                'basketId'  => '_test_shop2_basket_public',
+                'productId' => self::SHOP_2_PRODUCT_ID,
+            ],
+        ];
     }
 }
