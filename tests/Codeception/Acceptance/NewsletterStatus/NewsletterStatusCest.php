@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Contact;
+namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\NewsletterStatus;
 
 use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
@@ -30,10 +30,8 @@ final class NewsletterStatusCest extends BaseCest
 
     private const SUBSCRIPTION_ID = '_othertestuser';
 
-    public function _before(AcceptanceTester $I): void
+    public function _after(AcceptanceTester $I): void
     {
-        parent::_before($I);
-
         $I->deleteFromDatabase(
             'oxnewssubscribed',
             [
