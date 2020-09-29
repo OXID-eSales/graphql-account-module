@@ -14,6 +14,9 @@ use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\MultishopBaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
+/**
+ * @group address
+ */
 final class DeliveryAddressMultiShopCest extends MultishopBaseCest
 {
     private const USERNAME = 'user@oxid-esales.com';
@@ -33,18 +36,6 @@ final class DeliveryAddressMultiShopCest extends MultishopBaseCest
         parent::_before($I);
 
         $I->updateConfigInDatabase('blMallUsers', false, 'bool');
-    }
-
-    public function dataProviderDeliveryAddressPerShop()
-    {
-        return [
-            'shop_1' => [
-                'shopId'   => 1,
-            ],
-            'shop_2' => [
-                'shopId'   => 2,
-            ],
-        ];
     }
 
     /**
@@ -156,6 +147,18 @@ final class DeliveryAddressMultiShopCest extends MultishopBaseCest
         $this->deleteCustomerDeliveryAddressMutation($I, $addressId, 2);
 
         $I->seeResponseCodeIs(HttpCode::OK);
+    }
+
+    protected function dataProviderDeliveryAddressPerShop()
+    {
+        return [
+            'shop_1' => [
+                'shopId'   => 1,
+            ],
+            'shop_2' => [
+                'shopId'   => 2,
+            ],
+        ];
     }
 
     protected function deliveryAddressesDataProviderPerShop()

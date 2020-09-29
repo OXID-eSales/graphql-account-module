@@ -14,6 +14,9 @@ use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\MultishopBaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
+/**
+ * @group country
+ */
 final class CountryEnterpriseCest extends MultishopBaseCest
 {
     private const ACTIVE_COUNTRY = 'a7c40f631fc920687.20179984';

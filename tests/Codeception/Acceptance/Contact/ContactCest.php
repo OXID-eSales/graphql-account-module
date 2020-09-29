@@ -13,6 +13,9 @@ use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
+/**
+ * @group contact
+ */
 final class ContactCest extends BaseCest
 {
     public function testContactRequest(AcceptanceTester $I): void

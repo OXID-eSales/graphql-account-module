@@ -14,6 +14,9 @@ use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
+/**
+ * @group country
+ */
 final class CountryCest extends BaseCest
 {
     private const USERNAME = 'admin';

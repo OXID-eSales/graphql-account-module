@@ -13,6 +13,9 @@ use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
+/**
+ * @group customer
+ */
 final class PasswordCest extends BaseCest
 {
     public function testChangePasswordWithoutToken(AcceptanceTester $I): void

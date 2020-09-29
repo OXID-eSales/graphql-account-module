@@ -16,6 +16,9 @@ use OxidEsales\Facts\Facts;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
+/**
+ * @group order
+ */
 final class CustomerOrderHistoryCest extends BaseCest
 {
     private const EXAMPLE_USERNAME = 'exampleuser@oxid-esales.com';

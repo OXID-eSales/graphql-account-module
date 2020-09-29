@@ -15,6 +15,9 @@ use OxidEsales\Eshop\Application\Model\PriceAlarm;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
+/**
+ * @group wishedprice
+ */
 final class WishedPriceCest extends BaseCest
 {
     private const ADMIN_USERNAME = 'admin';

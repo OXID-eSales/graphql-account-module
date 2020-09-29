@@ -13,6 +13,9 @@ use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
+/**
+ * @group basket
+ */
 final class BasketRemoveProductCest extends BaseCest
 {
     private const OTHER_USERNAME = 'otheruser@oxid-esales.com';

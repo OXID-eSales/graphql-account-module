@@ -13,6 +13,9 @@ use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
+/**
+ * @group order
+ */
 final class CustomerOrderPaymentCest extends BaseCest
 {
     private const USERNAME = 'user@oxid-esales.com';

@@ -13,6 +13,9 @@ use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
+/**
+ * @group newsletter
+ */
 final class NewsletterStatusCest extends BaseCest
 {
     private const USERNAME = 'user@oxid-esales.com';
@@ -34,7 +37,7 @@ final class NewsletterStatusCest extends BaseCest
         $I->deleteFromDatabase(
             'oxnewssubscribed',
             [
-                'OXID LIKE' => '_%'
+                'OXID LIKE' => '_%',
             ]
         );
     }
@@ -128,7 +131,7 @@ final class NewsletterStatusCest extends BaseCest
 
     public function testNewsletterStatusUnsubscribe(AcceptanceTester $I): void
     {
-        $this->prepareTestData($I,1);
+        $this->prepareTestData($I, 1);
 
         $I->sendGQLQuery(
             'mutation {
@@ -145,8 +148,8 @@ final class NewsletterStatusCest extends BaseCest
         $I->canSeeInDatabase(
             'oxnewssubscribed',
             [
-                'OXID' => self::SUBSCRIPTION_ID,
-                'OXDBOPTIN' => 0
+                'OXID'      => self::SUBSCRIPTION_ID,
+                'OXDBOPTIN' => 0,
             ]
         );
     }
@@ -190,7 +193,7 @@ final class NewsletterStatusCest extends BaseCest
 
     public function testNewsletterStatusUnsubscribePreferInputOverToken(AcceptanceTester $I): void
     {
-        $this->prepareTestData($I,1);
+        $this->prepareTestData($I, 1);
         $I->login(self::USERNAME, self::PASSWORD);
 
         $I->sendGQLQuery('mutation {
@@ -207,8 +210,8 @@ final class NewsletterStatusCest extends BaseCest
         $I->canSeeInDatabase(
             'oxnewssubscribed',
             [
-                'OXID' => self::SUBSCRIPTION_ID,
-                'OXDBOPTIN' => 0
+                'OXID'      => self::SUBSCRIPTION_ID,
+                'OXDBOPTIN' => 0,
             ]
         );
     }
@@ -218,21 +221,21 @@ final class NewsletterStatusCest extends BaseCest
         $I->haveInDatabase(
             'oxnewssubscribed',
             [
-                'OXID' => self::SUBSCRIPTION_ID
+                'OXID' => self::SUBSCRIPTION_ID,
             ]
         );
 
         $I->updateInDatabase(
             'oxnewssubscribed',
             [
-                'OXUSERID' => self::OTHER_USER_OXID,
+                'OXUSERID'  => self::OTHER_USER_OXID,
                 'OXDBOPTIN' => $optin,
-                'OXEMAIL' => self::OTHER_USERNAME,
-                'OXFNAME' => 'Marc',
-                'OXLNAME' => 'Muster',
+                'OXEMAIL'   => self::OTHER_USERNAME,
+                'OXFNAME'   => 'Marc',
+                'OXLNAME'   => 'Muster',
             ],
             [
-                'OXID' => self::SUBSCRIPTION_ID
+                'OXID' => self::SUBSCRIPTION_ID,
             ]
         );
     }

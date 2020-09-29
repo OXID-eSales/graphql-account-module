@@ -15,6 +15,9 @@ use Datetime;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\MultishopBaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
+/**
+ * @group customer
+ */
 final class CustomerMultiShopCest extends MultishopBaseCest
 {
     private const USERNAME = 'user@oxid-esales.com';

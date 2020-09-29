@@ -15,6 +15,9 @@ use OxidEsales\Eshop\Application\Model\PriceAlarm;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\MultishopBaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
+/**
+ * @group wishedprice
+ */
 final class WishedPriceMultiShopCest extends MultishopBaseCest
 {
     private const USERNAME = 'user@oxid-esales.com';

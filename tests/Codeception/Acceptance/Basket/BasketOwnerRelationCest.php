@@ -14,7 +14,7 @@ use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
 /**
- * @group WIP
+ * @group basket
  */
 final class BasketOwnerRelationCest extends BaseCest
 {

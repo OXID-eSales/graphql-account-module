@@ -15,6 +15,9 @@ use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInt
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
+/**
+ * @group address
+ */
 final class DeliveryAddressRelationsCest extends BaseCest
 {
     private const USERNAME = 'user@oxid-esales.com';

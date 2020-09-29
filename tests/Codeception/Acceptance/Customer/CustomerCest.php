@@ -18,6 +18,9 @@ use OxidEsales\Eshop\Application\Model\NewsSubscribed as EshopNewsSubscribed;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
+/**
+ * @group customer
+ */
 final class CustomerCest extends BaseCest
 {
     private const USERNAME = 'user@oxid-esales.com';

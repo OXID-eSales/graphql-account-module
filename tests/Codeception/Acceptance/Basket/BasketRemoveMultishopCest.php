@@ -13,6 +13,9 @@ use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\MultishopBaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
+/**
+ * @group basket
+ */
 final class BasketRemoveMultishopCest extends MultishopBaseCest
 {
     private const OTHER_USERNAME = 'otheruser@oxid-esales.com';
