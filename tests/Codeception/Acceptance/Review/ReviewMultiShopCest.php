@@ -42,7 +42,9 @@ final class ReviewMultiShopCest extends MultishopBaseCest
     public function _after(AcceptanceTester $I): void
     {
         foreach ($this->createdReviews as $oneReview) {
-            $this->reviewDelete($I, $oneReview['id'], $oneReview['shopId']);
+            $I->logout();
+            $this->reviewDelete($I, $oneReview['id'], $oneReview['shopId'], $oneReview['user']);
+            $I->logout();
         }
 
         $this->createdReviews = [];
@@ -66,11 +68,65 @@ final class ReviewMultiShopCest extends MultishopBaseCest
             $this->createdReviews[] = [
                 'id'     => $result['data']['reviewSet']['id'],
                 'shopId' => $shopId,
+                'user'   => self::USERNAME,
             ];
         }
     }
 
-    public function dataProviderReviewPerShop(): array
+    public function testMallUserReview(AcceptanceTester $I): void
+    {
+        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+
+        $I->login(self::OTHER_USERNAME, self::PASSWORD, 1);
+
+        $result = $this->reviewSet($I, self::PRODUCT_ID_SHOP_1);
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $reviewIdWithShop1Product = $result['data']['reviewSet']['id'];
+        $this->createdReviews[]   = [
+            'id'     => $reviewIdWithShop1Product,
+            'shopId' => 1,
+            'user'   => self::OTHER_USERNAME,
+        ];
+
+        $result = $this->reviewSet($I, self::PRODUCT_ID_BOTH_SHOPS);
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $this->createdReviews[]   = [
+            'id'     => $result['data']['reviewSet']['id'],
+            'shopId' => 1,
+            'user'   => self::OTHER_USERNAME,
+        ];
+
+        //let mall user set a review for same product in subshop
+        $I->logout();
+        $I->login(self::OTHER_USERNAME, self::PASSWORD, 2);
+
+        //user already did give a review in subshop 1 so he cannot add a another one for same product
+        $this->reviewSet($I, self::PRODUCT_ID_BOTH_SHOPS, 2);
+        $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
+
+        //review another product
+        $result = $this->reviewSet($I, self::PRODUCT_ID_SHOP_2, 2);
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $this->createdReviews[]   = [
+            'id'     => $result['data']['reviewSet']['id'],
+            'shopId' => 2,
+            'user'   => self::OTHER_USERNAME,
+        ];
+
+        //get reviews for subshop
+        $allReviews = $this->getReviews($I, false, 2);
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->assertEquals(3, count($allReviews['data']['customer']['reviews']));
+
+        //Here we have the case, that one of the products is not available in the subshop
+        $allReviews = $this->getReviews($I, true, 2);
+        $I->seeResponseCodeIs(HttpCode::OK);
+
+        $reviews = $this->restructureResult($allReviews['data']['customer']['reviews']);
+        $I->assertNull($reviews[$reviewIdWithShop1Product]['product']);
+    }
+
+    protected function dataProviderReviewPerShop(): array
     {
         return [
             'shop1' => [
@@ -100,58 +156,6 @@ final class ReviewMultiShopCest extends MultishopBaseCest
         ];
     }
 
-    /**
-     * @group sieg
-     */
-    public function testMallUserReview(AcceptanceTester $I): void
-    {
-        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
-
-        $I->login(self::OTHER_USERNAME, self::PASSWORD, 1);
-
-        $result = $this->reviewSet($I, self::PRODUCT_ID_SHOP_1);
-        $I->seeResponseCodeIs(HttpCode::OK);
-        $reviewIdWithShop1Product = $result['data']['reviewSet']['id'];
-        $this->createdReviews[]   = [
-            'id'     => $reviewIdWithShop1Product,
-            'shopId' => 1,
-        ];
-
-        $result = $this->reviewSet($I, self::PRODUCT_ID_BOTH_SHOPS);
-        $I->seeResponseCodeIs(HttpCode::OK);
-        $this->createdReviews[]   = [
-            'id'     => $result['data']['reviewSet']['id'],
-            'shopId' => 1,
-        ];
-
-        //let mall user set a review for same product in subshop
-        $I->login(self::OTHER_USERNAME, self::PASSWORD, 2);
-
-        //user already did give a review in subshop 1 so he cannot add a another one for same product
-        $this->reviewSet($I, self::PRODUCT_ID_BOTH_SHOPS, 2);
-        $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
-
-        //review another product
-        $result = $this->reviewSet($I, self::PRODUCT_ID_SHOP_2, 2);
-        $I->seeResponseCodeIs(HttpCode::OK);
-        $this->createdReviews[]   = [
-            'id'     => $result['data']['reviewSet']['id'],
-            'shopId' => 2,
-        ];
-
-        //get reviews for subshop
-        $allReviews = $this->getReviews($I, false);
-        $I->seeResponseCodeIs(HttpCode::OK);
-        $I->assertEquals(3, count($allReviews['data']['customer']['reviews']));
-
-        //Here we have the case, that one of the products is not available in the subshop
-        $allReviews = $this->getReviews($I, true);
-        $I->seeResponseCodeIs(HttpCode::OK);
-
-        $reviews = $this->restructureResult($allReviews['data']['customer']['reviews']);
-        $I->assertNull($reviews[$reviewIdWithShop1Product]['product']);
-    }
-
     private function reviewSet(AcceptanceTester $I, string $productId, int $shopId = 1): array
     {
         $I->sendGQLQuery(
@@ -177,9 +181,9 @@ final class ReviewMultiShopCest extends MultishopBaseCest
         return $I->grabJsonResponseAsArray();
     }
 
-    private function reviewDelete(AcceptanceTester $I, string $id, int $shopId = 1): void
+    private function reviewDelete(AcceptanceTester $I, string $id, int $shopId = 1, string $user = self::OTHER_USERNAME): void
     {
-        $I->login(self::OTHER_USERNAME, self::PASSWORD, $shopId);
+        $I->login($user, self::PASSWORD, $shopId);
 
         $I->sendGQLQuery(
             'mutation {
@@ -192,7 +196,7 @@ final class ReviewMultiShopCest extends MultishopBaseCest
         $I->seeResponseCodeIs(HttpCode::OK);
     }
 
-    private function getReviews(AcceptanceTester $I, bool $queryProducts)
+    private function getReviews(AcceptanceTester $I, bool $queryProducts, int $shopId = 1)
     {
         $query = 'query {
                 customer {
@@ -209,7 +213,7 @@ final class ReviewMultiShopCest extends MultishopBaseCest
                 }
             }';
 
-        $I->sendGQLQuery($query);
+        $I->sendGQLQuery($query, null, 0, $shopId);
 
         return $I->grabJsonResponseAsArray();
     }
