@@ -28,8 +28,6 @@ final class DeliveryAddressMultiShopCest extends MultishopBaseCest
 
     private const OTHER_PASSWORD = 'useruser';
 
-    private const OTHER_USER_OXID = '245ad3b5380202966df6ff128e9eecaq';
-
     public function _before(AcceptanceTester $I): void
     {
         parent::_before($I);
@@ -152,6 +150,7 @@ final class DeliveryAddressMultiShopCest extends MultishopBaseCest
         $result    = $this->executeMutation($I, 1);
         $addressId = $result['data']['customerDeliveryAddressAdd']['id'];
 
+        $I->logout();
         $I->login(self::OTHER_USERNAME, self::OTHER_PASSWORD, 2);
 
         $this->deleteCustomerDeliveryAddressMutation($I, $addressId, 2);
