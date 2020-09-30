@@ -29,8 +29,7 @@ final class CustomerDeleteMultiShopCest extends MultishopBaseCest
     public function testCustomerDeleteOnlyFromSubShop(AcceptanceTester $I): void
     {
         $I->updateConfigInDatabaseForShops('blMallUsers', false, 'bool', [1, 2]);
-        //false in shop 1, shop 2 has true via test fixtures
-        $I->updateConfigInDatabase('blAllowUsersToDeleteTheirAccount', true, 'bool');
+        $I->updateConfigInDatabaseForShops('blAllowUsersToDeleteTheirAccount', true, 'bool', [1, 2]);
 
         $I->login(self::USERNAME, self::PASSWORD, 2);
 
