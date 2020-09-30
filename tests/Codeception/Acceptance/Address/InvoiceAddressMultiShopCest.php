@@ -32,7 +32,7 @@ final class InvoiceAddressMultiShopCest extends MultishopBaseCest
     {
         parent::_before($I);
 
-        $I->updateConfigInDatabase('blMallUsers', false, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', false, 'bool', [1, 2]);
     }
 
     public function testCustomerInvoiceAddressSet(AcceptanceTester $I): void
@@ -97,7 +97,7 @@ final class InvoiceAddressMultiShopCest extends MultishopBaseCest
 
     public function testInvoiceAddressForMallUserFromOtherSubshop(AcceptanceTester $I): void
     {
-        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
 
         $I->login(self::OTHER_USERNAME, self::OTHER_USER_PASSWORD, 2);
 

@@ -42,7 +42,7 @@ final class CustomerMultiShopCest extends MultishopBaseCest
         $shopId   = $data['shopId'];
         $expected = $data['expected'];
 
-        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
         $I->login(self::OTHER_USERNAME, self::OTHER_PASSWORD, $shopId);
 
         $I->sendGQLQuery(
@@ -67,7 +67,7 @@ final class CustomerMultiShopCest extends MultishopBaseCest
 
     public function testCustomerExistingInBothShopsLoggedIntoSecondaryShop(AcceptanceTester $I): void
     {
-        $I->updateConfigInDatabase('blMallUsers', false, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', false, 'bool', [1, 2]);
 
         $I->login(self::PRIMARY_SHOP_USERNAME, self::PRIMARY_SHOP_PASSWORD, 2);
 
@@ -114,7 +114,7 @@ final class CustomerMultiShopCest extends MultishopBaseCest
      */
     public function testCustomerRegister(AcceptanceTester $I, Example $data): void
     {
-        $I->updateConfigInDatabase('blMallUsers', false, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', false, 'bool', [1, 2]);
 
         $shopId         = $data['shopId'];
         $expectedStatus = $data['expectedStatus'];
@@ -193,7 +193,7 @@ final class CustomerMultiShopCest extends MultishopBaseCest
         $expectedStatus = $data['expectedStatus'];
         $expectedError  = $data['expectedError'];
 
-        $I->updateConfigInDatabase('blMallUsers', false, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', false, 'bool', [1, 2]);
 
         $I->login('existinguser@oxid-esales.com', 'useruser', $shopId);
 
@@ -229,7 +229,7 @@ final class CustomerMultiShopCest extends MultishopBaseCest
     {
         $shopId = 2;
 
-        $I->updateConfigInDatabase('blMallUsers', false, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', false, 'bool', [1, 2]);
 
         $I->login(self::USERNAME, self::PASSWORD, $shopId);
 
@@ -267,7 +267,7 @@ final class CustomerMultiShopCest extends MultishopBaseCest
     {
         $shopId = $data['shopId'];
 
-        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
 
         $I->login(self::USERNAME, self::PASSWORD, $shopId);
 

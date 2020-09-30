@@ -39,8 +39,8 @@ final class ReviewMultiShopCest extends MultishopBaseCest
     {
         parent::_before($I);
 
-        $I->updateConfigInDatabase('blMallUsers', false, 'bool');
-        $I->updateConfigInDatabase('blAllowUsersToManageTheirReviews', true, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', false, 'bool', [1, 2]);
+        $I->updateConfigInDatabaseForShops('blAllowUsersToManageTheirReviews', true, 'bool', [1, 2]);
     }
 
     public function _after(AcceptanceTester $I): void
@@ -79,7 +79,7 @@ final class ReviewMultiShopCest extends MultishopBaseCest
 
     public function testMallUserReview(AcceptanceTester $I): void
     {
-        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
 
         $I->login(self::OTHER_USERNAME, self::PASSWORD, 1);
 

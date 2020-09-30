@@ -94,7 +94,7 @@ final class BasketAddProductMultishopCest extends MultishopBaseCest
 
     public function testAddProductToBasketFromOtherSubshop(AcceptanceTester $I): void
     {
-        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
         $I->login(self::OTHER_USERNAME, self::OTHER_PASSWORD, 2);
 
         $I->sendGQLQuery(

@@ -29,7 +29,7 @@ final class CustomerOrderItemsMultiShopCest extends MultishopBaseCest
      */
     public function testCustomerOrderItems(AcceptanceTester $I): void
     {
-        $I->updateConfigInDatabase('blMallUsers', false, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', false, 'bool', [1, 2]);
         $I->login(self::USER_SHOP_2, self::PASSWORD, 2);
 
         $result = $this->queryCustomerOrderItems($I);
@@ -73,7 +73,7 @@ final class CustomerOrderItemsMultiShopCest extends MultishopBaseCest
      */
     public function testCustomerOrderItemsMallUsers(AcceptanceTester $I): void
     {
-        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
 
         $I->login(self::USER_SHOP_1, self::PASSWORD, 2);
 

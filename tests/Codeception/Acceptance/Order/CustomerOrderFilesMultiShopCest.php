@@ -24,7 +24,7 @@ final class CustomerOrderFilesMultiShopCest extends MultishopBaseCest
 
     public function testCustomerOrderFilesSubShopOnly(AcceptanceTester $I): void
     {
-        $I->updateConfigInDatabase('blMallUsers', false, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', false, 'bool', [1, 2]);
 
         $I->login(self::USERNAME, self::PASSWORD, 2);
 

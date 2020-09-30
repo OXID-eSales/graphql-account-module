@@ -242,14 +242,6 @@ REPLACE INTO `oxorderarticles` (`OXID`, `OXORDERID`, `OXAMOUNT`, `OXARTID`, `OXA
 ('c5b7fd8dff99f066c168cd720212075a','8c726d3f42ff1a6ea2828d5f309de881',1,'oiaa81b5e002fc2f73b9398c361c0b97','10101','Online shops with OXID eShop','','',0,0,0,10,'',0,0,0,'','','','','','oxid_book_cover_1.jpg','','','','',0,600,'0000-00-00','2012-04-25','2020-09-10 09:13:36',0,0,0,'','','','',1,'','',0,1,0),
 ('4ad5c368c9c7715ac800adb27e079ebe','7f0b6ef39c4e76c04a0f75232489bb65',1,'oiaa81b5e002fc2f73b9398c361c0b97','10101','Online shops with OXID eShop','','',0,0,0,10,'',0,0,0,'','','','','','oxid_book_cover_1.jpg','','','','',0,600,'0000-00-00','2012-04-25','2020-09-10 09:13:36',0,0,0,'','','','',1,'','',0,1,0);
 
-REPLACE into `oxconfig` (`OXID`, `OXSHOPID`, `OXVARNAME`, `OXVARTYPE`,`OXVARVALUE`) VALUES
-('_allow_shop_delaccount', 1, 'blAllowUsersToDeleteTheirAccount', 'bool', ENCODE(true, 'fq45QS09_fqyx09239QQ')),
-('_allow_subshop_delaccount', 2, 'blAllowUsersToDeleteTheirAccount', 'bool', ENCODE(true, 'fq45QS09_fqyx09239QQ')),
-('_allow_shop_managereviews', 1, 'blAllowUsersToManageTheirReviews', 'bool', ENCODE(true, 'fq45QS09_fqyx09239QQ')),
-('_allow_subshop_managereviews', 2, 'blAllowUsersToManageTheirReviews', 'bool', ENCODE(true, 'fq45QS09_fqyx09239QQ')),
-('_allow_shop_mallusers', 1, 'blMallUsers', 'bool', ENCODE(true, 'fq45QS09_fqyx09239QQ')),
-('_allow_subshop_mallusers', 2, 'blMallUsers', 'bool', ENCODE(true, 'fq45QS09_fqyx09239QQ'));
-
 REPLACE INTO  `oxnewssubscribed` ( `OXID`,  `OXUSERID`,  `OXDBOPTIN`,  `OXSHOPID`) VALUES
 ('_newssubscribed_1', '245ad3b5380202966df6ff128e9eecaq', 1, 1),
 ('_newssubscribed_2', '245ad3b5380202966df6ff128e9eecaq', 2, 2);

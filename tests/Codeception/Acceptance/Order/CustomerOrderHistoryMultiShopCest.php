@@ -27,7 +27,7 @@ final class CustomerOrderHistoryMultiShopCest extends MultishopBaseCest
     {
         parent::_before($I);
 
-        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
     }
 
     /**

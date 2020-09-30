@@ -41,7 +41,7 @@ final class DeliveryAddressMultiShopCest extends MultishopBaseCest
     {
         parent::_before($I);
 
-        $I->updateConfigInDatabase('blMallUsers', false, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', false, 'bool', [1, 2]);
     }
 
     /**
@@ -49,7 +49,7 @@ final class DeliveryAddressMultiShopCest extends MultishopBaseCest
      */
     public function testAddDeliveryAddressPerShopForMallUser(AcceptanceTester $I, Example $data): void
     {
-        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
 
         $shopId = $data['shopId'];
         $I->login(self::OTHER_USERNAME, self::OTHER_PASSWORD, $shopId);
@@ -141,7 +141,7 @@ final class DeliveryAddressMultiShopCest extends MultishopBaseCest
 
     public function testDeliveryAddressDeletionFromOtherSubshopForMallUser(AcceptanceTester $I): void
     {
-        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
 
         $I->login(self::OTHER_USERNAME, self::OTHER_PASSWORD, 1);
 

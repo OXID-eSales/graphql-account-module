@@ -29,7 +29,7 @@ final class NewsletterStatusSubscribeMultiShopCest extends MultishopBaseCest
     {
         parent::_before($I);
 
-        $I->updateConfigInDatabase('blOrderOptInEmail', true, 'bool');
+        $I->updateConfigInDatabaseForShops('blOrderOptInEmail', true, 'bool', [1, 2]);
     }
 
     public function _after(AcceptanceTester $I): void
@@ -74,7 +74,7 @@ final class NewsletterStatusSubscribeMultiShopCest extends MultishopBaseCest
 
     public function testNewsletterStatusMallUserSubscribeFromToken(AcceptanceTester $I): void
     {
-        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
 
         $this->prepareTestdata($I, 1, 0);
 
@@ -111,7 +111,7 @@ final class NewsletterStatusSubscribeMultiShopCest extends MultishopBaseCest
         $flag           = $data['flag'];
         $expectSameUser = $data['sameuser'];
 
-        $I->updateConfigInDatabase('blMallUsers', $flag, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', $flag, 'bool', [1, 2]);
         $this->prepareTestdata($I, 1, 0);
 
         $I->sendGQLQuery(

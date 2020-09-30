@@ -112,7 +112,7 @@ final class NewsletterStatusMultiShopCest extends MultishopBaseCest
      */
     public function testNewsletterOptInForMallUserFromOtherSubshop(AcceptanceTester $I, Example $data): void
     {
-        $I->updateConfigInDatabase('blMallUsers', $data['flag'], 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', $data['flag'], 'bool', [1, 2]);
 
         $this->prepareTestdata($I, 2);
         $this->assignUserToShop($I, 1);
@@ -145,7 +145,7 @@ final class NewsletterStatusMultiShopCest extends MultishopBaseCest
      */
     public function testNewsletterUbsubcribeForMallUserFromOtherSubshop(AcceptanceTester $I, Example $data): void
     {
-        $I->updateConfigInDatabase('blMallUsers', $data['flag'], 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', $data['flag'], 'bool', [1, 2]);
 
         $this->prepareTestdata($I, 2);
         $this->assignUserToShop($I, 1);
@@ -185,7 +185,7 @@ final class NewsletterStatusMultiShopCest extends MultishopBaseCest
 
     public function testNewsletterStatusMallUserUnsubscribeFromToken(AcceptanceTester $I): void
     {
-        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
 
         $this->prepareTestdata($I, 1);
         $this->prepareTestdata($I, 2);
@@ -226,7 +226,7 @@ final class NewsletterStatusMultiShopCest extends MultishopBaseCest
 
     public function testNewsletterStatusMallUserUnsubscribePreferInputOverToken(AcceptanceTester $I): void
     {
-        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
 
         // otheruser belongs to subshop 2
         $this->prepareTestdata($I, 2);

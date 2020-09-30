@@ -69,7 +69,7 @@ final class BasketRemoveMultishopCest extends MultishopBaseCest
 
     public function testRemoveBasketFromDifferentShopWithTokenForMallUser(AcceptanceTester $I): void
     {
-        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
 
         $I->login(self::OTHER_USERNAME, self::OTHER_PASSWORD, 2);
 

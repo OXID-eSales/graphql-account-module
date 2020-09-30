@@ -42,7 +42,7 @@ final class BasketsMultishopCest extends MultishopBaseCest
     public function testGetBasketsPerShopsWithMallUser(AcceptanceTester $I, Example $data): void
     {
         $shopId = $data[0];
-        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
 
         $response = $this->basketsQuery($I, self::USERNAME, $shopId);
         $I->seeResponseCodeIs(HttpCode::OK);

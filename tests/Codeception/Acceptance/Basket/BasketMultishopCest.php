@@ -48,7 +48,7 @@ final class BasketMultishopCest extends MultishopBaseCest
 
     public function testGetPrivateBasketFromDifferentShopWithTokenForMallUser(AcceptanceTester $I): void
     {
-        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
 
         $I->login(self::EXISTING_USERNAME, self::PASSWORD, 2);
 
@@ -89,7 +89,7 @@ final class BasketMultishopCest extends MultishopBaseCest
 
     public function testCreatePrivateBasketFromDifferentShopForMallUser(AcceptanceTester $I): void
     {
-        $I->updateConfigInDatabase('blMallUsers', true, 'bool');
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
 
         $I->login(self::USERNAME, self::PASSWORD);
 
