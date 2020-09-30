@@ -16,6 +16,8 @@ use OxidEsales\GraphQL\Account\Basket\DataType\BasketItemFilterList;
 use OxidEsales\GraphQL\Account\Basket\DataType\BasketOwner;
 use OxidEsales\GraphQL\Account\Basket\Service\Basket as BasketService;
 use OxidEsales\GraphQL\Account\Basket\Service\BasketItem as BasketItemService;
+use OxidEsales\GraphQL\Account\Basket\Service\BasketVoucher as BasketVoucherService;
+use OxidEsales\GraphQL\Account\Voucher\DataType\Voucher;
 use OxidEsales\GraphQL\Base\DataType\IDFilter;
 use OxidEsales\GraphQL\Base\DataType\PaginationFilter;
 use TheCodingMachine\GraphQLite\Annotations\ExtendType;
@@ -32,12 +34,17 @@ final class BasketRelationService
     /** @var BasketService */
     private $basketService;
 
+    /** @var BasketVoucherService */
+    private $basketVoucherService;
+
     public function __construct(
         BasketItemService $basketItemService,
-        BasketService $basketService
+        BasketService $basketService,
+        BasketVoucherService $basketVoucherService
     ) {
-        $this->basketItemService  = $basketItemService;
-        $this->basketService      = $basketService;
+        $this->basketItemService    = $basketItemService;
+        $this->basketService        = $basketService;
+        $this->basketVoucherService = $basketVoucherService;
     }
 
     /**
@@ -71,5 +78,19 @@ final class BasketRelationService
     public function cost(Basket $basket): BasketCost
     {
         return $this->basketService->basketCost($basket);
+    }
+
+    /**
+     * @Field()
+     *
+     * @return Voucher[]
+     */
+    public function vouchers(Basket $basket): array
+    {
+        return $this->basketVoucherService->basketVouchers(
+            new BasketItemFilterList(
+                new IDFilter($basket->id())
+            )
+        );
     }
 }

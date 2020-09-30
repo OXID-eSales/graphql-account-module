@@ -64,17 +64,17 @@ final class Voucher implements DataType
      */
     public function reserved(): ?DateTimeInterface
     {
-        return DateTimeImmutableFactory::fromString(
-            (string) $this->getEshopModel()->getFieldData('OXRESERVED')
+        return DateTimeImmutableFactory::fromTimeStamp(
+            (int) $this->getEshopModel()->getFieldData('OXRESERVED')
         );
     }
 
     /**
      * @Field
      */
-    public function discount(): float
+    public function discount(): ?float
     {
-        return (float) $this->getEshopModel()->getFieldData('OXDISCOUNT');
+        return $this->getEshopModel()->getFieldData('OXORDERID') ? (float) $this->getEshopModel()->getFieldData('OXDISCOUNT') : null;
     }
 
     /**
@@ -85,6 +85,11 @@ final class Voucher implements DataType
         return DateTimeImmutableFactory::fromString(
             (string) $this->getEshopModel()->getFieldData('OXDATEUSED')
         );
+    }
+
+    public function seriesId(): ID
+    {
+        return new ID($this->getEshopModel()->getFieldData('OXVOUCHERSERIEID'));
     }
 
     public static function getModelClass(): string

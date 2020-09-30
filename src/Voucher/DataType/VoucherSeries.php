@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Basket\DataType;
+namespace OxidEsales\GraphQL\Account\Voucher\DataType;
 
 use DateTimeInterface;
 use OxidEsales\Eshop\Application\Model\VoucherSerie as EshopVoucherModel;

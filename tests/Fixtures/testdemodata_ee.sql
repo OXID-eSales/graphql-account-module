@@ -252,3 +252,9 @@ REPLACE INTO `oxorderarticles` (`OXID`, `OXORDERID`, `OXAMOUNT`, `OXARTID`, `OXA
 REPLACE INTO  `oxnewssubscribed` ( `OXID`,  `OXUSERID`,  `OXDBOPTIN`,  `OXSHOPID`) VALUES
 ('_newssubscribed_1', '245ad3b5380202966df6ff128e9eecaq', 1, 1),
 ('_newssubscribed_2', '245ad3b5380202966df6ff128e9eecaq', 2, 2);
+
+REPLACE INTO `oxvoucherseries2shop` (`OXSHOPID`, `OXMAPOBJECTID`) VALUES
+('1', '1'),
+('1', '2'),
+('1', '3');
+                                                                         ;
