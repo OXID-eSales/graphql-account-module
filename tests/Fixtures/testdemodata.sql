@@ -57,6 +57,7 @@ REPLACE INTO `oxuserbaskets` (`OXID`, `OXUSERID`, `OXTITLE`, `OXPUBLIC`) VALUES
 ('_test_basket_public', 'e7af1c3b786fd02906ccd75698f4e6b9', 'buy_these', true),
 ('_test_wish_list_private', '245ad3b5380202966df6ff128e9eecaq', 'wishlist', false),
 ('_test_basket_private', '245ad3b5380202966df6ff128e9eecaq', 'buy_these_later', false),
+('_test_basket_private_ex', '309db395b6c85c3881fcb9b437a73dd6', 'buy_these_later', false),
 ('_test_noticelist_public', '_678d3b5380202966df6ff128e9eecaq', 'noticelist', true),
 ('_test_savedbasket_public', 'e7af1c3b786fd02906ccd75698f4e6b9', 'savedbasket', true),
 ('_test_savedbasket_private', 'e7af1c3b786fd02906ccd75698f4e6b9', 'savedbasket', false);

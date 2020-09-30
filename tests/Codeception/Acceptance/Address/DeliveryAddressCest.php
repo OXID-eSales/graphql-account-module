@@ -330,9 +330,11 @@ final class DeliveryAddressCest extends BaseCest
 
     public function testDeliveryAddressDeletionFromAdmin(AcceptanceTester $I): void
     {
+        $this->testAddDeliveryAddressForLoggedInUserAllInputSet($I);
+
         $I->login('admin', 'admin');
 
-        $this->deleteCustomerDeliveryAddressMutation($I, self::DEFAULT_DELIVERY_ADDRESS_ID);
+        $this->deleteCustomerDeliveryAddressMutation($I, $this->deliveryAddressId);
 
         $I->seeResponseCodeIs(HttpCode::OK);
     }
@@ -400,7 +402,6 @@ final class DeliveryAddressCest extends BaseCest
 
         $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
         $I->seeResponseIsJson();
-        $result = $I->grabJsonResponseAsArray();
     }
 
     private function deleteCustomerDeliveryAddressMutation(AcceptanceTester $I, string $deliveryAddressId): array

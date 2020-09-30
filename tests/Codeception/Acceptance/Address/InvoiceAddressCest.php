@@ -23,6 +23,8 @@ final class InvoiceAddressCest extends BaseCest
 
     private const PASSWORD = 'useruser';
 
+    private const USER_OXID = 'e7af1c3b786fd02906ccd75698f4e6b9';
+
     public function _after(AcceptanceTester $I): void
     {
         $default = 'a:14:{i:0;s:15:"oxuser__oxfname";i:1;s:15:"oxuser__oxlname";i:2;s:16:"oxuser__oxstreet";' .
@@ -31,6 +33,24 @@ final class InvoiceAddressCest extends BaseCest
                    'i:9;s:19:"oxaddress__oxstreet";i:10;s:21:"oxaddress__oxstreetnr";i:11;s:16:"oxaddress__oxzip";' .
                    'i:12;s:17:"oxaddress__oxcity";i:13;s:22:"oxaddress__oxcountryid";}';
         $I->updateConfigInDatabase('aMustFillFields', $default, 'arr');
+
+        $I->updateInDatabase(
+            'oxuser',
+            [
+                'OXSAL'       => 'MR',
+                'OXFNAME'     => 'Marc',
+                'OXLNAME'     => 'Muster',
+                'OXSTREET'    => 'Hauptstr.',
+                'OXSTREETNR'  => '13',
+                'OXZIP'       => '79098',
+                'OXCITY'      => 'Freiburg',
+                'OXCOUNTRYID' => 'a7c40f631fc920687.20179984',
+                'OXSTATEID'   => ''
+            ],
+            [
+                'OXID' => self::USER_OXID
+            ]
+        );
     }
 
     public function testInvoiceAddressForNotLoggedInUser(AcceptanceTester $I): void

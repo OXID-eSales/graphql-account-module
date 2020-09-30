@@ -27,7 +27,13 @@ final class DeliveryAddressMultiShopCest extends MultishopBaseCest
 
     private const DELIVERY_ADDRESS_SHOP_2 = 'test_delivery_address_shop_2';
 
+    private const DELETE_DELIVERY_ADDRESS_SHOP_1 = '_delete_delivery_address';
+
+    private const DELETE_DELIVERY_ADDRESS_SHOP_2 = '_delete_delivery_address_2';
+
     private const OTHER_USERNAME = 'otheruser@oxid-esales.com';
+
+    private const DELETE_USERNAME = 'multishopuser@oxid-esales.com';
 
     private const OTHER_PASSWORD = 'useruser';
 
@@ -93,11 +99,11 @@ final class DeliveryAddressMultiShopCest extends MultishopBaseCest
         return [
             'set1' => [
                 'shopId'    => 1,
-                'addressId' => self::DELIVERY_ADDRESS_SHOP_1,
+                'addressId' => self::DELETE_DELIVERY_ADDRESS_SHOP_1,
             ],
             'set2' => [
                 'shopId'    => 2,
-                'addressId' => self::DELIVERY_ADDRESS_SHOP_2,
+                'addressId' => self::DELETE_DELIVERY_ADDRESS_SHOP_2,
             ],
         ];
     }
@@ -110,7 +116,8 @@ final class DeliveryAddressMultiShopCest extends MultishopBaseCest
         $shopId            = $data['shopId'];
         $deliveryAddressId = $data['addressId'];
 
-        $I->login(self::USERNAME, self::PASSWORD, $shopId);
+        //subshop user has same username but different oxid
+        $I->login(self::DELETE_USERNAME, self::PASSWORD, $shopId);
 
         $this->deleteCustomerDeliveryAddressMutation($I, $deliveryAddressId, $shopId);
 
@@ -200,11 +207,11 @@ final class DeliveryAddressMultiShopCest extends MultishopBaseCest
         return [
             'set1' => [
                 'shopId'    => 1,
-                'addressId' => self::DELIVERY_ADDRESS_SHOP_2,
+                'addressId' => self::DELETE_DELIVERY_ADDRESS_SHOP_2,
             ],
             'set2' => [
                 'shopId'    => 2,
-                'addressId' => self::DELIVERY_ADDRESS_SHOP_1, ],
+                'addressId' => self::DELETE_DELIVERY_ADDRESS_SHOP_1, ],
         ];
     }
 

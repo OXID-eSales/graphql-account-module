@@ -32,6 +32,8 @@ final class AcceptanceTester extends \Codeception\Actor
     {
         $I = $this;
 
+        $this->logout();
+
         $query     = 'query ($username: String!, $password: String!) { token (username: $username, password: $password) }';
         $variables = [
             'username' => $username,
