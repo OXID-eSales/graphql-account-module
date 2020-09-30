@@ -7,16 +7,16 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Customer;
+namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Address;
 
 use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
 /**
- * @group customer
+ * @group address
  */
-final class CustomerDeliveryAddressValidateStateCest extends BaseCest
+final class DeliveryAddressValidateStateCest extends BaseCest
 {
     private const USERNAME = 'user@oxid-esales.com';
 
@@ -59,6 +59,7 @@ final class CustomerDeliveryAddressValidateStateCest extends BaseCest
             $queryPart .
             '})
                 {
+                    id
                     country {
                         title
                     }
@@ -74,6 +75,16 @@ final class CustomerDeliveryAddressValidateStateCest extends BaseCest
         $I->seeResponseCodeIs(HttpCode::OK);
         $I->seeResponseIsJson();
         $result = $I->grabJsonResponseAsArray();
+
+        $I->sendGQLQuery(
+            'mutation {
+                customerDeliveryAddressDelete(id: "' . $result['data']['customerDeliveryAddressAdd']['id'] . '")
+            }',
+            null,
+            0
+        );
+
+        $I->seeResponseCodeIs(HttpCode::OK);
 
         $country = $result['data']['customerDeliveryAddressAdd']['country'];
         $I->assertSame('Germany', $country['title']);

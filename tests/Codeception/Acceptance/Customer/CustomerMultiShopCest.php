@@ -329,7 +329,7 @@ final class CustomerMultiShopCest extends MultishopBaseCest
             [
                 'shopId'         => 1,
                 'variables'      => [
-                    'email'    => 'testUser1@oxid-esales.com',
+                    'email'    => 'testUserEE@oxid-esales.com',
                     'password' => 'useruser',
                 ],
                 'expectedStatus' => 200,
@@ -338,7 +338,7 @@ final class CustomerMultiShopCest extends MultishopBaseCest
             [
                 'shopId'         => 2,
                 'variables'      => [
-                    'email'    => 'testUser1@oxid-esales.com',
+                    'email'    => 'testUserEE@oxid-esales.com',
                     'password' => 'useruser',
                 ],
                 'expectedStatus' => 200,

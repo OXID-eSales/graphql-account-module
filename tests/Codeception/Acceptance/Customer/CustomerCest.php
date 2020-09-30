@@ -14,7 +14,6 @@ use Codeception\Util\HttpCode;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
-use OxidEsales\Eshop\Application\Model\NewsSubscribed as EshopNewsSubscribed;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
@@ -29,15 +28,25 @@ final class CustomerCest extends BaseCest
 
     private const USER_OXID = 'e7af1c3b786fd02906ccd75698f4e6b9';
 
-    private const OTHER_USERNAME = 'otheruser@oxid-esales.com';
+    private const EXISTING_USERNAME = 'existinguser@oxid-esales.com';
 
     private const OTHER_PASSWORD = 'useruser';
 
-    private const OTHER_USER_OXID = '245ad3b5380202966df6ff128e9eecaq';
+    private const EXISTING_USER_ID = '9119cc8cd9593c214be93ee558235f3c';
+
+    private const SUBSCRIPTION_ID = '_subscription_id';
 
     public function _after(AcceptanceTester $I): void
     {
         $I->logout();
+
+        $I->deleteFromDatabase(
+            'oxnewssubscribed',
+            [
+                'OXID LIKE' => '_%',
+                'OXUSERID'  => self::EXISTING_USERNAME,
+            ]
+        );
     }
 
     public function testCustomerForNotLoggedInUser(AcceptanceTester $I): void
@@ -95,7 +104,7 @@ final class CustomerCest extends BaseCest
 
     public function testCustomerNewsletterStatusNoEntryInDatabase(AcceptanceTester $I): void
     {
-        $I->login(self::OTHER_USERNAME, self::OTHER_PASSWORD);
+        $I->login(self::EXISTING_USERNAME, self::OTHER_PASSWORD);
 
         $I->sendGQLQuery(
             'query {
@@ -113,23 +122,18 @@ final class CustomerCest extends BaseCest
         $I->seeResponseIsJson();
         $result = $I->grabJsonResponseAsArray();
 
-        $I->assertSame('Marc', $result['data']['customer']['firstName']);
+        $I->assertSame('Eleanor', $result['data']['customer']['firstName']);
         $I->assertNull($result['data']['customer']['newsletterStatus']);
     }
 
+    /**
+     * @group foo
+     */
     public function testCustomerNewsletterStatusInvalidEntryInDatabase(AcceptanceTester $I): void
     {
-        $subscription = oxNew(EshopNewsSubscribed::class);
-        $subscription->setId('_othertestuser');
-        $subscription->assign(
-            [
-                'oxuserid'  => self::OTHER_USER_OXID,
-                'oxdboptin' => 6,
-            ]
-        );
-        $subscription->save();
+        $this->prepareTestData($I);
 
-        $I->login(self::OTHER_USERNAME, self::OTHER_PASSWORD);
+        $I->login(self::EXISTING_USERNAME, self::OTHER_PASSWORD);
 
         $I->sendGQLQuery(
             'query {
@@ -503,10 +507,34 @@ final class CustomerCest extends BaseCest
                 'expectedError'  => "This e-mail address 'someuser' is invalid!",
             ],
             [
-                'email'          => 'newUser@oxid-esales.com',
+                'email'          => 'newCustUser@oxid-esales.com',
                 'expectedStatus' => 200,
                 'expectedError'  => null,
             ],
         ];
+    }
+
+    private function prepareTestData(AcceptanceTester $I, int $optin = 2): void
+    {
+        $I->haveInDatabase(
+            'oxnewssubscribed',
+            [
+                'OXID' => self::SUBSCRIPTION_ID,
+            ]
+        );
+
+        $I->updateInDatabase(
+            'oxnewssubscribed',
+            [
+                'OXUSERID'  => self::EXISTING_USER_ID,
+                'OXDBOPTIN' => 6,
+                'OXEMAIL'   => self::EXISTING_USERNAME,
+                'OXFNAME'   => 'Marc',
+                'OXLNAME'   => 'Muster',
+            ],
+            [
+                'OXID' => self::SUBSCRIPTION_ID,
+            ]
+        );
     }
 }
