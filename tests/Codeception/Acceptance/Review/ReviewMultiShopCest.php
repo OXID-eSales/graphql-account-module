@@ -40,6 +40,7 @@ final class ReviewMultiShopCest extends MultishopBaseCest
         parent::_before($I);
 
         $I->updateConfigInDatabase('blMallUsers', false, 'bool');
+        $I->updateConfigInDatabase('blAllowUsersToManageTheirReviews', true, 'bool');
     }
 
     public function _after(AcceptanceTester $I): void
