@@ -50,6 +50,26 @@ final class BasketCest extends BaseCest
 
     public function testGetPublicBasket(AcceptanceTester $I): void
     {
+        $I->updateInDatabase(
+            'oxuserbaskets',
+            [
+                'oxupdate' => null,
+            ],
+            [
+                'OXID' => self::PRIVATE_BASKET,
+            ]
+        );
+
+        $I->updateInDatabase(
+            'oxuserbaskets',
+            [
+                'oxupdate' => null,
+            ],
+            [
+                'OXID' => self::PUBLIC_BASKET,
+            ]
+        );
+
         $I->sendGQLQuery(
             'query{
                 basket(id: "' . self::PUBLIC_BASKET . '") {

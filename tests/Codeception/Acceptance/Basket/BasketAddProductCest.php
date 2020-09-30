@@ -33,6 +33,17 @@ final class BasketAddProductCest extends BaseCest
 
     private const PRODUCT_FOR_PRIVATE_BASKET = '_test_product_for_wish_list';
 
+    public function _after(AcceptanceTester $I): void
+    {
+        $I->deleteFromDatabase(
+            'oxuserbasketitems',
+            [
+                'OXARTID'    => self::PRODUCT_ID,
+                'OXBASKETID' => self::PUBLIC_BASKET,
+            ]
+        );
+    }
+
     public function testAddProductToBasketNoToken(AcceptanceTester $I): void
     {
         $this->basketAddProductMutation($I, self::PUBLIC_BASKET, self::PRODUCT_ID);
@@ -73,6 +84,8 @@ final class BasketAddProductCest extends BaseCest
             ],
         ], $basketData['items']);
         $I->assertNotNull($basketData['lastUpdateDate']);
+
+        $this->basketAddProductMutation($I, self::PUBLIC_BASKET, self::PRODUCT_ID, 0);
     }
 
     public function testAddNonExistingProductToBasket(AcceptanceTester $I): void

@@ -35,6 +35,25 @@ final class BasketAddProductMultishopCest extends MultishopBaseCest
 
     private const SHOP_2_PRODUCT_ID = '_test_product_5_';
 
+    public function _after(AcceptanceTester $I): void
+    {
+        $I->logout();
+
+        $I->deleteFromDatabase(
+            'oxuserbasketitems',
+            [
+                'OXARTID'    => self::SHOP_1_PRODUCT_ID,
+            ]
+        );
+
+        $I->deleteFromDatabase(
+            'oxuserbasketitems',
+            [
+                'OXARTID'    => self::SHOP_2_PRODUCT_ID,
+            ]
+        );
+    }
+
     /**
      * @dataProvider dataProviderAddProductToBasketPerShop
      */
