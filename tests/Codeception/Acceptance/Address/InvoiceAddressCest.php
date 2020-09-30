@@ -45,10 +45,10 @@ final class InvoiceAddressCest extends BaseCest
                 'OXZIP'       => '79098',
                 'OXCITY'      => 'Freiburg',
                 'OXCOUNTRYID' => 'a7c40f631fc920687.20179984',
-                'OXSTATEID'   => ''
+                'OXSTATEID'   => '',
             ],
             [
-                'OXID' => self::USER_OXID
+                'OXID' => self::USER_OXID,
             ]
         );
     }

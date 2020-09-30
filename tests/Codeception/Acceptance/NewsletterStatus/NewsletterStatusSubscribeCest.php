@@ -14,6 +14,9 @@ use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
+/**
+ * @group newsletterstatus
+ */
 final class NewsletterStatusSubscribeCest extends BaseCest
 {
     private const USERNAME = 'user@oxid-esales.com';
@@ -40,10 +43,9 @@ final class NewsletterStatusSubscribeCest extends BaseCest
         $I->deleteFromDatabase(
             'oxnewssubscribed',
             [
-                'OXID LIKE' => '_%'
+                'OXID LIKE' => '_%',
             ]
         );
-
     }
 
     public function testNewsletterSubscribeMissingInputData(AcceptanceTester $I): void
@@ -60,7 +62,7 @@ final class NewsletterStatusSubscribeCest extends BaseCest
 
     public function testNewsletterSubscribeMissingInputDataButToken(AcceptanceTester $I): void
     {
-        $this->prepareTestData($I,0);
+        $this->prepareTestData($I, 0);
         $I->login(self::OTHER_USERNAME, self::OTHER_USER_PASSWORD);
 
         $I->sendGQLQuery('mutation {
@@ -74,14 +76,14 @@ final class NewsletterStatusSubscribeCest extends BaseCest
         $result = $I->grabJsonResponseAsArray();
 
         $I->assertEquals('MISSING_DOUBLE_OPTIN', $result['data']['newsletterSubscribe']['status']);
-        $this->assertSubscriptionStatus($I,'MISSING_DOUBLE_OPTIN');
+        $this->assertSubscriptionStatus($I, 'MISSING_DOUBLE_OPTIN');
 
         $this->assertSubscriptionHasNoEmailErrors($I, self::OTHER_USERNAME);
     }
 
     public function testNewsletterSubscribeExistingUserWithoutToken(AcceptanceTester $I): void
     {
-        $this->prepareTestData($I,0);
+        $this->prepareTestData($I, 0);
 
         $I->sendGQLQuery('mutation {
             newsletterSubscribe(newsletterStatus: {
@@ -95,14 +97,14 @@ final class NewsletterStatusSubscribeCest extends BaseCest
         $result = $I->grabJsonResponseAsArray();
 
         $I->assertEquals('MISSING_DOUBLE_OPTIN', $result['data']['newsletterSubscribe']['status']);
-        $this->assertSubscriptionStatus($I,'MISSING_DOUBLE_OPTIN');
+        $this->assertSubscriptionStatus($I, 'MISSING_DOUBLE_OPTIN');
 
         $this->assertSubscriptionHasNoEmailErrors($I, self::OTHER_USERNAME);
     }
 
     public function testNewsletterSubscribeExistingSubcribedUser(AcceptanceTester $I): void
     {
-        $this->prepareTestData($I,1);
+        $this->prepareTestData($I, 1);
 
         $I->sendGQLQuery('mutation {
             newsletterSubscribe(newsletterStatus: {
@@ -116,14 +118,14 @@ final class NewsletterStatusSubscribeCest extends BaseCest
         $result = $I->grabJsonResponseAsArray();
 
         $I->assertEquals('MISSING_DOUBLE_OPTIN', $result['data']['newsletterSubscribe']['status']);
-        $this->assertSubscriptionStatus($I,'MISSING_DOUBLE_OPTIN');
+        $this->assertSubscriptionStatus($I, 'MISSING_DOUBLE_OPTIN');
 
         $this->assertSubscriptionHasNoEmailErrors($I, self::OTHER_USERNAME);
     }
 
     public function testNewsletterSubscribeExistingSubcribedUserByToken(AcceptanceTester $I): void
     {
-        $this->prepareTestData($I,1);
+        $this->prepareTestData($I, 1);
         $I->login(self::OTHER_USERNAME, self::OTHER_USER_PASSWORD);
 
         $I->sendGQLQuery('mutation {
@@ -137,7 +139,7 @@ final class NewsletterStatusSubscribeCest extends BaseCest
         $result = $I->grabJsonResponseAsArray();
 
         $I->assertEquals('SUBSCRIBED', $result['data']['newsletterSubscribe']['status']);
-        $this->assertSubscriptionStatus($I,'SUBSCRIBED');
+        $this->assertSubscriptionStatus($I, 'SUBSCRIBED');
     }
 
     /**
@@ -267,7 +269,7 @@ final class NewsletterStatusSubscribeCest extends BaseCest
 
     public function testNewsletterSubscribeExistingUserDifferentInputGetsIgnored(AcceptanceTester $I): void
     {
-        $this->prepareTestData($I,0);
+        $this->prepareTestData($I, 0);
 
         $I->sendGQLQuery('mutation {
             newsletterSubscribe(newsletterStatus: {
@@ -295,14 +297,14 @@ final class NewsletterStatusSubscribeCest extends BaseCest
             'status'     => 'MISSING_DOUBLE_OPTIN',
         ];
         $I->assertEquals($expected, $result['data']['newsletterSubscribe']);
-        $this->assertSubscriptionStatus($I,'MISSING_DOUBLE_OPTIN');
+        $this->assertSubscriptionStatus($I, 'MISSING_DOUBLE_OPTIN');
 
         $this->assertSubscriptionHasNoEmailErrors($I, self::OTHER_USERNAME);
     }
 
     public function testNewsletterSubscribePreferInputOverToken(AcceptanceTester $I): void
     {
-        $this->prepareTestData($I,0);
+        $this->prepareTestData($I, 0);
         $I->login(self::USERNAME, self::PASSWORD);
 
         $I->sendGQLQuery('mutation {
@@ -341,21 +343,21 @@ final class NewsletterStatusSubscribeCest extends BaseCest
         $I->haveInDatabase(
             'oxnewssubscribed',
             [
-                'OXID' => self::SUBSCRIPTION_ID
+                'OXID' => self::SUBSCRIPTION_ID,
             ]
         );
 
         $I->updateInDatabase(
             'oxnewssubscribed',
             [
-                'OXUSERID' => self::OTHER_USER_OXID,
+                'OXUSERID'  => self::OTHER_USER_OXID,
                 'OXDBOPTIN' => $optin,
-                'OXEMAIL' => self::OTHER_USERNAME,
-                'OXFNAME' => 'Marc',
-                'OXLNAME' => 'Muster',
+                'OXEMAIL'   => self::OTHER_USERNAME,
+                'OXFNAME'   => 'Marc',
+                'OXLNAME'   => 'Muster',
             ],
             [
-                'OXID' => self::SUBSCRIPTION_ID
+                'OXID' => self::SUBSCRIPTION_ID,
             ]
         );
     }
@@ -384,8 +386,8 @@ final class NewsletterStatusSubscribeCest extends BaseCest
         $I->canSeeInDatabase(
             'oxnewssubscribed',
             [
-                'OXEMAIL' => $email,
-                'OXEMAILFAILED' => 0
+                'OXEMAIL'       => $email,
+                'OXEMAILFAILED' => 0,
             ]
         );
     }

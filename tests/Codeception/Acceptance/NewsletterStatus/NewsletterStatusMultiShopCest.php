@@ -14,6 +14,9 @@ use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\MultishopBaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
+/**
+ * @group newsletterstatus
+ */
 final class NewsletterStatusMultiShopCest extends MultishopBaseCest
 {
     private const OTHER_USERNAME = 'otheruser@oxid-esales.com';
@@ -111,8 +114,8 @@ final class NewsletterStatusMultiShopCest extends MultishopBaseCest
     {
         $I->updateConfigInDatabase('blMallUsers', $data['flag'], 'bool');
 
-        $this->prepareTestdata($I,2);
-        $this->assignUserToShop($I,1);
+        $this->prepareTestdata($I, 2);
+        $this->assignUserToShop($I, 1);
 
         $I->sendGQLQuery(
             'mutation{
@@ -144,8 +147,8 @@ final class NewsletterStatusMultiShopCest extends MultishopBaseCest
     {
         $I->updateConfigInDatabase('blMallUsers', $data['flag'], 'bool');
 
-        $this->prepareTestdata($I,2);
-        $this->assignUserToShop($I,1);
+        $this->prepareTestdata($I, 2);
+        $this->assignUserToShop($I, 1);
 
         $I->sendGQLQuery(
             'mutation{
@@ -184,9 +187,9 @@ final class NewsletterStatusMultiShopCest extends MultishopBaseCest
     {
         $I->updateConfigInDatabase('blMallUsers', true, 'bool');
 
-        $this->prepareTestdata($I,1);
-        $this->prepareTestdata($I,2);
-        $this->assignUserToShop($I,1);
+        $this->prepareTestdata($I, 1);
+        $this->prepareTestdata($I, 2);
+        $this->assignUserToShop($I, 1);
 
         $I->login(self::OTHER_USERNAME, self::OTHER_USER_PASSWORD, 2);
 
@@ -226,8 +229,8 @@ final class NewsletterStatusMultiShopCest extends MultishopBaseCest
         $I->updateConfigInDatabase('blMallUsers', true, 'bool');
 
         // otheruser belongs to subshop 2
-        $this->prepareTestdata($I,2);
-        $this->assignUserToShop($I,2);
+        $this->prepareTestdata($I, 2);
+        $this->assignUserToShop($I, 2);
 
         $I->login(self::USERNAME, self::PASSWORD, 2);
 
@@ -285,7 +288,7 @@ final class NewsletterStatusMultiShopCest extends MultishopBaseCest
         $I->updateInDatabase(
             'oxuser',
             [
-                'oxshopid' => $shopid
+                'oxshopid' => $shopid,
             ],
             [
                 'OXID' => self::OTHER_USER_OXID,
