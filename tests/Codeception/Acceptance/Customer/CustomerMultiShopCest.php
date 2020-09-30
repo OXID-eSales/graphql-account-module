@@ -34,6 +34,8 @@ final class CustomerMultiShopCest extends MultishopBaseCest
 
     private const PRIMARY_SHOP_USER_OXID = '123ad3b5380202966df6ff128e9eecaq';
 
+    private const USERNAME_FOR_EMAIL_CHANGE = 'foremailchange@oxid-esales.com';
+
     /**
      * @dataProvider dataProviderCustomerNewsletterPerShop
      */
@@ -169,14 +171,14 @@ final class CustomerMultiShopCest extends MultishopBaseCest
             [
                 'shopId'         => 2,
                 'email'          => 'otheruser@oxid-esales.com',
-                'userId'         => '309db395b6c85c3881fcb9b437a73dd6',
+                'userId'         => '309db395b6c85c3881fcb9b437a73ddx',
                 'expectedStatus' => 200,
                 'expectedError'  => null,
             ],
             [
                 'shopId'         => 1,
                 'email'          => 'newUser@oxid-esales.com',
-                'userId'         => '9119cc8cd9593c214be93ee558235f3c',
+                'userId'         => '9119cc8cd9593c214be93ee558235f3x',
                 'expectedStatus' => 200,
                 'expectedError'  => null,
             ],
@@ -195,7 +197,7 @@ final class CustomerMultiShopCest extends MultishopBaseCest
 
         $I->updateConfigInDatabaseForShops('blMallUsers', false, 'bool', [1, 2]);
 
-        $I->login('existinguser@oxid-esales.com', 'useruser', $shopId);
+        $I->login(self::USERNAME_FOR_EMAIL_CHANGE, 'useruser', $shopId);
 
         $I->sendGQLQuery(
             'mutation ($email: String!) {
