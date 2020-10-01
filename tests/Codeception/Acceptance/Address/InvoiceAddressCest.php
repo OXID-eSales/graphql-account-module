@@ -19,7 +19,7 @@ use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
  */
 final class InvoiceAddressCest extends BaseCest
 {
-    private const USERNAME = 'user@oxid-esales.com';
+    private const USERNAME = 'dodo@oxid-esales.com';
 
     private const PASSWORD = 'useruser';
 

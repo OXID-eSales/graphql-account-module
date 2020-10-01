@@ -19,9 +19,9 @@ use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
  */
 final class NewsletterStatusMultiShopCest extends MultishopBaseCest
 {
-    private const OTHER_USERNAME = 'otheruser@oxid-esales.com';
+    private const OTHER_USERNAME = 'newsletter@oxid-esales.com';
 
-    private const OTHER_USER_OXID = '245ad3b5380202966df6ff128e9eecaq';
+    private const OTHER_USER_OXID = '_678b395b6c85c3881fcb9b437a73hh9';
 
     private const OTHER_USER_OXPASSALT = 'b186f117054b700a89de929ce90c6aef';
 
@@ -33,12 +33,16 @@ final class NewsletterStatusMultiShopCest extends MultishopBaseCest
 
     public function _after(AcceptanceTester $I): void
     {
+        $this->assignUserToShop($I, 2);
+
         $I->deleteFromDatabase(
             'oxnewssubscribed',
             [
                 'OXID LIKE' => '_%',
             ]
         );
+
+        parent::_after($I);
     }
 
     /**
@@ -143,7 +147,7 @@ final class NewsletterStatusMultiShopCest extends MultishopBaseCest
     /**
      * @dataProvider providerNewsletterStatusMallUser
      */
-    public function testNewsletterUbsubcribeForMallUserFromOtherSubshop(AcceptanceTester $I, Example $data): void
+    public function testNewsletterUnsubcribeForMallUserFromOtherSubshop(AcceptanceTester $I, Example $data): void
     {
         $I->updateConfigInDatabaseForShops('blMallUsers', $data['flag'], 'bool', [1, 2]);
 
@@ -262,6 +266,14 @@ final class NewsletterStatusMultiShopCest extends MultishopBaseCest
     private function prepareTestdata(AcceptanceTester $I, int $shopid): void
     {
         $oxid = '_othertestuser' . $shopid;
+
+        $I->deleteFromDatabase(
+            'oxnewssubscribed',
+            [
+                'OXID' => $oxid,
+            ]
+        );
+
         $I->haveInDatabase(
             'oxnewssubscribed',
             [

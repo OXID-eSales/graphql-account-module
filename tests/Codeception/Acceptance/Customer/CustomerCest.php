@@ -36,6 +36,8 @@ final class CustomerCest extends BaseCest
 
     private const SUBSCRIPTION_ID = '_subscription_id';
 
+    private const USERNAME_FOR_EMAIL_CHANGE = 'foremailchangeCE@oxid-esales.com';
+
     public function _after(AcceptanceTester $I): void
     {
         $I->logout();
@@ -284,7 +286,7 @@ final class CustomerCest extends BaseCest
         $expectedStatus = $data['expectedStatus'];
         $expectedError  = $data['expectedError'];
 
-        $I->login('differentuser@oxid-esales.com', 'useruser');
+        $I->login(self::USERNAME_FOR_EMAIL_CHANGE, 'useruser');
 
         $I->sendGQLQuery(
             'mutation {

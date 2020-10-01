@@ -40,6 +40,8 @@ final class NewsletterStatusSubscribeMultiShopCest extends MultishopBaseCest
                 'OXUSERID LIKE' => '_%',
             ]
         );
+
+        parent::_after($I);
     }
 
     /**

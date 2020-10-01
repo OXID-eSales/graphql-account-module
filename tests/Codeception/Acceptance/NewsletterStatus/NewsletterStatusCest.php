@@ -30,16 +30,6 @@ final class NewsletterStatusCest extends BaseCest
 
     private const SUBSCRIPTION_ID = '_othertestuser';
 
-    public function _after(AcceptanceTester $I): void
-    {
-        $I->deleteFromDatabase(
-            'oxnewssubscribed',
-            [
-                'OXID LIKE' => '_%',
-            ]
-        );
-    }
-
     public function testNewsletterOptInNoDatabaseEntry(AcceptanceTester $I): void
     {
         $I->sendGQLQuery('mutation{
@@ -146,7 +136,7 @@ final class NewsletterStatusCest extends BaseCest
         $I->canSeeInDatabase(
             'oxnewssubscribed',
             [
-                'OXID'      => self::SUBSCRIPTION_ID,
+                'OXUSERID'  => self::OTHER_USER_OXID,
                 'OXDBOPTIN' => 0,
             ]
         );
@@ -208,7 +198,7 @@ final class NewsletterStatusCest extends BaseCest
         $I->canSeeInDatabase(
             'oxnewssubscribed',
             [
-                'OXID'      => self::SUBSCRIPTION_ID,
+                'OXUSERID'  => self::OTHER_USER_OXID,
                 'OXDBOPTIN' => 0,
             ]
         );

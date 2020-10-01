@@ -330,7 +330,7 @@ final class ReviewCest extends BaseCest
         $I->seeResponseCodeIs(HttpCode::OK);
         $reviewId = $result['data']['reviewSet']['id'];
 
-        $I->login(self::OTHER_USERNAME, self::OTHER_PASSWORD);
+        $I->login(self::USERNAME, self::PASSWORD);
 
         $I->sendGQLQuery('mutation {
             reviewDelete(id: "' . $reviewId . '")

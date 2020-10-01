@@ -22,7 +22,7 @@ final class BasketOwnerRelationCest extends BaseCest
 
     private const USER_ID = '309db395b6c85c3881fcb9b437a73ff5';
 
-    private const OTHER_USERNAME = 'otheruser@oxid-esales.com';
+    private const OTHER_USERNAME = 'user@oxid-esales.com';
 
     private const PASSWORD = 'useruser';
 

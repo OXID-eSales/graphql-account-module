@@ -16,7 +16,7 @@ use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
 /**
- * @group wishedprice
+ * @group wishedpricefoo
  */
 final class WishedPriceCest extends BaseCest
 {
@@ -465,8 +465,8 @@ final class WishedPriceCest extends BaseCest
 
         $I->assertTrue($savedWishedPrice->isLoaded());
 
-        $I->assertEquals($expectedWishedPrice['product']['id'], $savedWishedPrice->getArticle()->getId());
-        $I->assertEquals($expectedWishedPrice['currency']['name'], $savedWishedPrice->getPriceAlarmCurrency()->name);
+        $I->assertEquals($expectedWishedPrice['product']['id'], $savedWishedPrice->getFieldData('OXARTID'));
+        $I->assertEquals($expectedWishedPrice['currency']['name'], $savedWishedPrice->getFieldData('OXCURRENCY'));
     }
 
     public function testWishedPriceSetFailsToSendNotification(AcceptanceTester $I): void

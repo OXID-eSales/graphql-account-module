@@ -52,6 +52,8 @@ final class ReviewMultiShopCest extends MultishopBaseCest
         }
 
         $this->createdReviews = [];
+
+        parent::_after($I);
     }
 
     /**
