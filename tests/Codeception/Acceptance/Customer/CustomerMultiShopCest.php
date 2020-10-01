@@ -28,11 +28,11 @@ final class CustomerMultiShopCest extends MultishopBaseCest
 
     private const OTHER_PASSWORD = 'useruser';
 
-    private const PRIMARY_SHOP_USERNAME = 'user@oxid-esales.com';
+    private const BOTH_SHOPS_USERNAME = 'multishopuser@oxid-esales.com';
 
     private const PRIMARY_SHOP_PASSWORD = 'useruser';
 
-    private const PRIMARY_SHOP_USER_OXID = '123ad3b5380202966df6ff128e9eecaq';
+    private const SUBSHOP_USER_ID = '_09db395b6c85c3881fcb9b437a73hh9';
 
     private const USERNAME_FOR_EMAIL_CHANGE = 'foremailchange@oxid-esales.com';
 
@@ -71,7 +71,7 @@ final class CustomerMultiShopCest extends MultishopBaseCest
     {
         $I->updateConfigInDatabaseForShops('blMallUsers', false, 'bool', [1, 2]);
 
-        $I->login(self::PRIMARY_SHOP_USERNAME, self::PRIMARY_SHOP_PASSWORD, 2);
+        $I->login(self::BOTH_SHOPS_USERNAME, self::PRIMARY_SHOP_PASSWORD, 2);
 
         $I->sendGQLQuery(
             'query {
@@ -99,10 +99,10 @@ final class CustomerMultiShopCest extends MultishopBaseCest
 
         $customerData = $result['data']['customer'];
 
-        $I->assertEquals(self::PRIMARY_SHOP_USER_OXID, $customerData['id']);
+        $I->assertEquals(self::SUBSHOP_USER_ID, $customerData['id']);
         $I->assertEquals('Marc', $customerData['firstName']);
         $I->assertEquals('Muster', $customerData['lastName']);
-        $I->assertEquals(self::PRIMARY_SHOP_USERNAME, $customerData['email']);
+        $I->assertEquals(self::BOTH_SHOPS_USERNAME, $customerData['email']);
         $I->assertEquals('8', $customerData['customerNumber']);
         $I->assertSame(0, $customerData['points']);
         $I->assertSame('1984-12-22T00:00:00+01:00', $customerData['birthdate']);

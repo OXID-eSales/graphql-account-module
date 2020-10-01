@@ -126,9 +126,6 @@ final class CustomerCest extends BaseCest
         $I->assertNull($result['data']['customer']['newsletterStatus']);
     }
 
-    /**
-     * @group foo
-     */
     public function testCustomerNewsletterStatusInvalidEntryInDatabase(AcceptanceTester $I): void
     {
         $this->prepareTestData($I);

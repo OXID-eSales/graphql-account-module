@@ -26,15 +26,28 @@ final class BasketOwnerRelationCest extends BaseCest
 
     private const PASSWORD = 'useruser';
 
+    /** @var string */
+    private $basketId;
+
+    public function _after(AcceptanceTester $I): void
+    {
+        $I->deleteFromDatabase(
+            'oxuserbaskets',
+            [
+                'OXID' => $this->basketId,
+            ]
+        );
+    }
+
     public function testGetPublicBasketWhichOwnerDoesNotExist(AcceptanceTester $I): void
     {
-        $basketId = $this->createPublicBasket($I);
+        $this->basketId = $this->createPublicBasket($I);
         $this->deleteUser($I, self::USER_ID);
 
         $I->login(self::OTHER_USERNAME, self::PASSWORD);
         $I->sendGQLQuery(
             'query {
-                basket(id: "' . $basketId . '") {
+                basket(id: "' . $this->basketId . '") {
                     id
                     owner {
                         firstName

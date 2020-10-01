@@ -39,7 +39,7 @@ final class BasketsCest extends BaseCest
 
         $baskets = $response['data']['baskets'];
 
-        $I->assertSame(4, count($baskets));
+        $I->assertSame(3, count($baskets));
     }
 
     public function testGetOnlyPublicBaskets(AcceptanceTester $I): void
@@ -52,7 +52,7 @@ final class BasketsCest extends BaseCest
         $I->seeResponseCodeIs(HttpCode::OK);
 
         $baskets = $response['data']['baskets'];
-        $I->assertSame(3, count($baskets));
+        $I->assertSame(2, count($baskets));
 
         // restore database
         $I->login(self::USERNAME, self::PASSWORD);
@@ -87,7 +87,7 @@ final class BasketsCest extends BaseCest
         $I->seeResponseCodeIs(HttpCode::OK);
 
         $baskets = $response['data']['baskets'];
-        $I->assertSame(6, count($baskets));
+        $I->assertSame(5, count($baskets));
     }
 
     private function basketsQuery(AcceptanceTester $I, string $owner): array
