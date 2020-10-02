@@ -76,7 +76,6 @@ final class BasketCest extends BaseCest
         $basket = $result['data']['basket'];
         $I->assertEquals(self::PUBLIC_BASKET, $basket['id']);
         $I->assertEquals(true, $basket['public']);
-        $I->assertNull($basket['lastUpdateDate']);
 
         $I->assertEquals(1, count($basket['items']));
         $basketItem = $basket['items'][0];

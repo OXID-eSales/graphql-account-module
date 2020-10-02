@@ -343,7 +343,8 @@ final class NewsletterStatusSubscribeCest extends BaseCest
         $I->haveInDatabase(
             'oxnewssubscribed',
             [
-                'OXID' => self::SUBSCRIPTION_ID,
+                'OXID'         => self::SUBSCRIPTION_ID,
+                'OXSUBSCRIBED' => '2020-04-01 14:14:14',
             ]
         );
 
