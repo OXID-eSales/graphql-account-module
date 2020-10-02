@@ -43,7 +43,11 @@ abstract class MultishopBaseCest extends BaseCest
 
     public function _after(AcceptanceTester $I): void
     {
-        $I->updateConfigInDatabaseForShops('blMallUsers', false, 'bool', [1, 2]);
+        $facts = new Facts();
+
+        if ($facts->isEnterprise()) {
+            $I->updateConfigInDatabaseForShops('blMallUsers', false, 'bool', [1, 2]);
+        }
     }
 
     private function ensureSubshop(): void
