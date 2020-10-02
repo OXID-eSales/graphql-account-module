@@ -195,10 +195,11 @@ final class NewsletterStatusSubscribeMultiShopCest extends MultishopBaseCest
         $I->updateInDatabase(
             'oxnewssubscribed',
             [
-                'oxuserid'  => self::DIFFERENT_USER_OXID,
-                'oxemail'   => self::DIFFERENT_USERNAME,
-                'oxdboptin' => $optin,
-                'oxshopid'  => $shopid,
+                'oxuserid'     => self::DIFFERENT_USER_OXID,
+                'oxemail'      => self::DIFFERENT_USERNAME,
+                'oxdboptin'    => $optin,
+                'oxshopid'     => $shopid,
+                'oxsubscribed' => '2020-04-01 15:15:15',
             ],
             [
                 'OXID' => $oxid,

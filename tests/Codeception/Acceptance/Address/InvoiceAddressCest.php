@@ -471,6 +471,11 @@ final class InvoiceAddressCest extends BaseCest
             'set3' => [
                 'invoiceData' => [
                     'salutation'     => 'Mrs.',
+                    'firstName'      => null,
+                    'lastName'       => null,
+                    'street'         => null,
+                    'streetNumber'   => null,
+                    'zipCode'        => null,
                     'company'        => '',
                     'additionalInfo' => '',
                     'city'           => 'Another invoice city',

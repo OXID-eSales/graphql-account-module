@@ -184,7 +184,7 @@ final class CustomerOrderHistoryCest extends BaseCest
         $I->assertEquals(1, count($result['data']['customer']['orders']));
 
         $I->assertSame(1, $result['data']['customer']['orders'][0]['orderNumber']);
-        $I->assertNull($result['data']['customer']['orders']['deliveryAddress']);
+        $I->assertNull($result['data']['customer']['orders'][0]['deliveryAddress']);
     }
 
     public function testCustomerOrders(AcceptanceTester $I): void

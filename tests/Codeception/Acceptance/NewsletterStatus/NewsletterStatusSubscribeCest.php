@@ -350,11 +350,12 @@ final class NewsletterStatusSubscribeCest extends BaseCest
         $I->updateInDatabase(
             'oxnewssubscribed',
             [
-                'OXUSERID'  => self::OTHER_USER_OXID,
-                'OXDBOPTIN' => $optin,
-                'OXEMAIL'   => self::OTHER_USERNAME,
-                'OXFNAME'   => 'Marc',
-                'OXLNAME'   => 'Muster',
+                'OXUSERID'     => self::OTHER_USER_OXID,
+                'OXDBOPTIN'    => $optin,
+                'OXEMAIL'      => self::OTHER_USERNAME,
+                'OXFNAME'      => 'Marc',
+                'OXLNAME'      => 'Muster',
+                'OXSUBSCRIBED' => '2020-04-01 14:14:14',
             ],
             [
                 'OXID' => self::SUBSCRIPTION_ID,

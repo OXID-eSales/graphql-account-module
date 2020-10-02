@@ -384,8 +384,8 @@ final class CustomerCest extends BaseCest
         $I->seeResponseCodeIs(HttpCode::OK);
         $I->seeResponseIsJson();
         $resultBasketCreate = $I->grabJsonResponseAsArray();
-
-        $noticeListId = $resultBasketCreate['basketCreate']['id'];
+        var_export($resultBasketCreate);
+        $noticeListId = $resultBasketCreate['data']['basketCreate']['id'];
 
         $I->sendGQLQuery(
             'query {
@@ -525,11 +525,12 @@ final class CustomerCest extends BaseCest
         $I->updateInDatabase(
             'oxnewssubscribed',
             [
-                'OXUSERID'  => self::EXISTING_USER_ID,
-                'OXDBOPTIN' => 6,
-                'OXEMAIL'   => self::EXISTING_USERNAME,
-                'OXFNAME'   => 'Marc',
-                'OXLNAME'   => 'Muster',
+                'OXUSERID'     => self::EXISTING_USER_ID,
+                'OXDBOPTIN'    => 6,
+                'OXEMAIL'      => self::EXISTING_USERNAME,
+                'OXFNAME'      => 'Marc',
+                'OXLNAME'      => 'Muster',
+                'OXSUBSCRIBED' => '2020-04-01 12:12:12',
             ],
             [
                 'OXID' => self::SUBSCRIPTION_ID,

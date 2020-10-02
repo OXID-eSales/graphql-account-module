@@ -410,7 +410,8 @@ final class ReviewCest extends BaseCest
         $I->sendGQLQuery($query);
         $result = $I->grabJsonResponseAsArray();
 
-        if ($newId = $result['data']['reviewSet']['id']) {
+        if (isset($result['data'])) {
+            $newId                        = $result['data']['reviewSet']['id'];
             $this->createdReviews[$newId] = $newId;
         }
 
