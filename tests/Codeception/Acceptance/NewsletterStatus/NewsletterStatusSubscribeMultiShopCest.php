@@ -188,8 +188,9 @@ final class NewsletterStatusSubscribeMultiShopCest extends MultishopBaseCest
         $I->haveInDatabase(
             'oxnewssubscribed',
             [
-                'OXID'         => $oxid,
-                'oxsubscribed' => '2020-04-01 15:15:15',
+                'OXID'           => $oxid,
+                'oxsubscribed'   => '2020-04-01 15:15:15',
+                'oxunsubscribed' => '1980-01-01 00:00:00',
             ]
         );
 
