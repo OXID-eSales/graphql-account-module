@@ -520,6 +520,7 @@ final class CustomerCest extends BaseCest
             [
                 'OXID'         => self::SUBSCRIPTION_ID,
                 'OXSUBSCRIBED' => '2020-04-01 12:12:12',
+                'OXUNSUBSCRIBED' => '1980-01-01 00:00:00'
             ]
         );
 
