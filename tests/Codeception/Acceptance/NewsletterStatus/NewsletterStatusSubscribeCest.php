@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\NewsletterStatus;
 
 use Codeception\Example;
+use Codeception\Scenario;
 use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
@@ -31,9 +32,9 @@ final class NewsletterStatusSubscribeCest extends BaseCest
 
     private const OTHER_USER_PASSWORD = 'useruser';
 
-    public function _before(AcceptanceTester $I): void
+    public function _before(AcceptanceTester $I, Scenario $scenario): void
     {
-        parent::_before($I);
+        parent::_before($I, $scenario);
 
         $I->updateConfigInDatabase('blOrderOptInEmail', true, 'bool');
     }

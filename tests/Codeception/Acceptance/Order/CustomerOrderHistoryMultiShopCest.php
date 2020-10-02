@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Order;
 
 use Codeception\Example;
+use Codeception\Scenario;
 use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\MultishopBaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
@@ -23,9 +24,9 @@ final class CustomerOrderHistoryMultiShopCest extends MultishopBaseCest
 
     private const PASSWORD = 'useruser';
 
-    public function _before(AcceptanceTester $I): void
+    public function _before(AcceptanceTester $I, Scenario $scenario): void
     {
-        parent::_before($I);
+        parent::_before($I, $scenario);
 
         $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
     }

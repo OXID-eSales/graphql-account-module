@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Address;
 
+use Codeception\Scenario;
 use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\MultishopBaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
@@ -26,9 +27,9 @@ final class InvoiceAddressMultiShopCest extends MultishopBaseCest
 
     private const OTHER_USER_PASSWORD = 'useruser';
 
-    public function _before(AcceptanceTester $I): void
+    public function _before(AcceptanceTester $I, Scenario $scenario): void
     {
-        parent::_before($I);
+        parent::_before($I, $scenario);
 
         $I->updateConfigInDatabaseForShops('blMallUsers', false, 'bool', [1, 2]);
     }

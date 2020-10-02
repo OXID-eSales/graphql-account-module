@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\WishedPrice;
 
 use Codeception\Example;
+use Codeception\Scenario;
 use Codeception\Util\HttpCode;
 use OxidEsales\Eshop\Application\Model\PriceAlarm;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\MultishopBaseCest;
@@ -34,9 +35,9 @@ final class WishedPriceMultiShopCest extends MultishopBaseCest
 
     private const PRODUCT_ID_SHOP_2 = '_test_product_wp2_';
 
-    public function _before(AcceptanceTester $I): void
+    public function _before(AcceptanceTester $I, Scenario $scenario): void
     {
-        parent::_before($I);
+        parent::_before($I, $scenario);
 
         $I->updateInDatabase(
             'oxshops',

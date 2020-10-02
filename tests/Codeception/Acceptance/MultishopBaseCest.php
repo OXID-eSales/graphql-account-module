@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance;
 
+use Codeception\Scenario;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Dao\ShopConfigurationDaoInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Setup\Exception\ModuleSetupException;
@@ -23,8 +24,10 @@ abstract class MultishopBaseCest extends BaseCest
 {
     protected const SUBSHOP_ID = 2;
 
-    public function _beforeSuite(Scenario $scenario): void
+    public function _before(AcceptanceTester $I, Scenario $scenario): void
     {
+        parent::_before($I, $scenario);
+
         $facts = new Facts();
 
         if (!$facts->isEnterprise()) {
@@ -32,11 +35,6 @@ abstract class MultishopBaseCest extends BaseCest
 
             return;
         }
-    }
-
-    public function _before(AcceptanceTester $I): void
-    {
-        parent::_before($I);
 
         $this->ensureSubshop();
 

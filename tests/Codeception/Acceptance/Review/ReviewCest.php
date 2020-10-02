@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Review;
 
 use Codeception\Example;
+use Codeception\Scenario;
 use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
@@ -47,9 +48,9 @@ final class ReviewCest extends BaseCest
 
     private $createdReviews = [];
 
-    public function _before(AcceptanceTester $I): void
+    public function _before(AcceptanceTester $I, Scenario $scenario): void
     {
-        parent::_before($I);
+        parent::_before($I, $scenario);
 
         $I->updateConfigInDatabase('blAllowUsersToManageTheirReviews', true, 'bool');
     }

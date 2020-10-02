@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Order;
 
 use Codeception\Example;
+use Codeception\Scenario;
 use Codeception\Util\HttpCode;
 use OxidEsales\Eshop\Core\Registry as EshopRegistry;
 use OxidEsales\Facts\Facts;
@@ -37,9 +38,9 @@ final class CustomerOrderHistoryCest extends BaseCest
 
     private $originalParcelService = '';
 
-    public function _before(AcceptanceTester $I): void
+    public function _before(AcceptanceTester $I, Scenario $scenario): void
     {
-        parent::_before($I);
+        parent::_before($I, $scenario);
 
         $this->originalParcel = EshopRegistry::getConfig()->getConfigParam('sParcelService');
         $I->updateConfigInDatabase('sParcelService', self::PARCEL_SERVICE_LINK, 'string');

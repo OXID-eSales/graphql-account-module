@@ -9,12 +9,13 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance;
 
+use Codeception\Scenario;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Setup\Exception\ModuleSetupException;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
 abstract class BaseCest
 {
-    public function _before(AcceptanceTester $I): void
+    public function _before(AcceptanceTester $I, Scenario $scenario): void
     {
         $this->activateModules();
     }
