@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Basket\Service;
 
 use OxidEsales\GraphQL\Account\Basket\DataType\Basket as BasketDataType;
+use OxidEsales\GraphQL\Account\Basket\DataType\BasketCost;
 use OxidEsales\GraphQL\Account\Basket\DataType\BasketOwner as BasketOwnerDataType;
 use OxidEsales\GraphQL\Account\Basket\Exception\BasketAccessForbidden;
 use OxidEsales\GraphQL\Account\Basket\Exception\BasketNotFound;
@@ -17,6 +18,8 @@ use OxidEsales\GraphQL\Account\Basket\Infrastructure\Basket as BasketInfraServic
 use OxidEsales\GraphQL\Account\Basket\Infrastructure\Repository as BasketRepository;
 use OxidEsales\GraphQL\Account\Customer\DataType\Customer as CustomerDataType;
 use OxidEsales\GraphQL\Account\Customer\Exception\CustomerNotFound;
+use OxidEsales\GraphQL\Account\Customer\Service\Customer as CustomerService;
+use OxidEsales\GraphQL\Account\Shared\Infrastructure\Basket as SharedInfrastructure;
 use OxidEsales\GraphQL\Base\Exception\InvalidLogin;
 use OxidEsales\GraphQL\Base\Exception\InvalidToken;
 use OxidEsales\GraphQL\Base\Exception\NotFound;
@@ -49,6 +52,12 @@ final class Basket
     /** @var ProductService */
     private $productService;
 
+    /** @var SharedInfrastructure */
+    private $sharedInfrastructure;
+
+    /** @var CustomerService */
+    private $customerService;
+
     public function __construct(
         Repository $repository,
         BasketRepository $basketRepository,
@@ -56,7 +65,9 @@ final class Basket
         Authorization $authorizationService,
         Legacy $legacyService,
         BasketInfraService $basketInfraService,
-        ProductService $productService
+        ProductService $productService,
+        SharedInfrastructure $sharedInfrastructure,
+        CustomerService $customerService
     ) {
         $this->repository            = $repository;
         $this->basketRepository      = $basketRepository;
@@ -65,6 +76,8 @@ final class Basket
         $this->legacyService         = $legacyService;
         $this->basketInfraService    = $basketInfraService;
         $this->productService        = $productService;
+        $this->sharedInfrastructure  = $sharedInfrastructure;
+        $this->customerService       = $customerService;
     }
 
     /**
@@ -210,5 +223,20 @@ final class Basket
         $this->basketInfraService->makePrivate($basket);
 
         return $basket;
+    }
+
+    public function basketCost(BasketDataType $basket): BasketCost
+    {
+        $userId = $this->authenticationService->getUserId();
+
+        if (!$basket->belongsToUser($userId)) {
+            throw new InvalidLogin('Unauthorized');
+        }
+
+        /** @var CustomerDataType $customer */
+        $customer    = $this->customerService->customer($userId);
+        $basketModel = $this->sharedInfrastructure->getBasket($basket->getEshopModel(), $customer->getEshopModel());
+
+        return new BasketCost($basketModel);
     }
 }

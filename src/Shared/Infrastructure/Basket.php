@@ -32,8 +32,8 @@ final class Basket
         //Populate basket with products
         $savedItems = $userBasket->getItems();
 
-        foreach ($savedItems as $savedItem) {
-            $this->basketModel->addProductToBasket($savedItem);
+        foreach ($savedItems as $key => $savedItem) {
+            $this->basketModel->addProductToBasket($savedItem, $key);
         }
 
         //Set user to basket otherwise delivery cost will not be calculated

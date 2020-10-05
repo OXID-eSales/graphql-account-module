@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Basket\Service;
 
 use OxidEsales\GraphQL\Account\Basket\DataType\Basket;
+use OxidEsales\GraphQL\Account\Basket\DataType\BasketCost;
 use OxidEsales\GraphQL\Account\Basket\DataType\BasketItem;
 use OxidEsales\GraphQL\Account\Basket\DataType\BasketItemFilterList;
 use OxidEsales\GraphQL\Account\Basket\DataType\BasketOwner;
@@ -62,5 +63,13 @@ final class BasketRelationService
             ),
             $pagination
         );
+    }
+
+    /**
+     * @Field()
+     */
+    public function cost(Basket $basket): BasketCost
+    {
+        return $this->basketService->basketCost($basket);
     }
 }

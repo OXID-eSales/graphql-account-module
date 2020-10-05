@@ -24,9 +24,9 @@ final class Basket extends EshopBasketModel
     /**
      * Add product to basket without doing any check.
      */
-    public function addProductToBasket(UserBasketItem $basketItem): void
+    public function addProductToBasket(UserBasketItem $basketItem, string $key): void
     {
-        $this->_aBasketContents[] = $this->convertUserBasketItemToBasketItem($basketItem);
+        $this->_aBasketContents[$key] = $this->convertUserBasketItemToBasketItem($basketItem);
     }
 
     /**
