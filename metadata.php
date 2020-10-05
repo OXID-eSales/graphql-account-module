@@ -39,4 +39,7 @@ $aModule = [
     ],
     'settings'    => [
     ],
+    'events' => [
+        'onActivate' => 'OxidEsales\\GraphQL\\Account\\Framework\\ModuleSetup::onActivate'
+    ]
 ];

@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\Basket\Service;
 
-use OxidEsales\GraphQL\Account\Basket\DataType\BasketItemFilterList;
+use OxidEsales\GraphQL\Account\Basket\DataType\BasketVoucherFilterList;
 use OxidEsales\GraphQL\Account\Voucher\DataType\Sorting;
 use OxidEsales\GraphQL\Account\Voucher\DataType\Voucher as VoucherDataType;
 use OxidEsales\GraphQL\Base\DataType\PaginationFilter;
@@ -28,7 +28,7 @@ final class BasketVoucher
     /**
      * @return VoucherDataType[]
      */
-    public function basketVouchers(BasketItemFilterList $filter): array
+    public function basketVouchers(BasketVoucherFilterList $filter): array
     {
         return $this->repository->getList(
             VoucherDataType::class,

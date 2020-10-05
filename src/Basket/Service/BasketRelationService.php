@@ -14,6 +14,7 @@ use OxidEsales\GraphQL\Account\Basket\DataType\BasketCost;
 use OxidEsales\GraphQL\Account\Basket\DataType\BasketItem;
 use OxidEsales\GraphQL\Account\Basket\DataType\BasketItemFilterList;
 use OxidEsales\GraphQL\Account\Basket\DataType\BasketOwner;
+use OxidEsales\GraphQL\Account\Basket\DataType\BasketVoucherFilterList;
 use OxidEsales\GraphQL\Account\Basket\Service\Basket as BasketService;
 use OxidEsales\GraphQL\Account\Basket\Service\BasketItem as BasketItemService;
 use OxidEsales\GraphQL\Account\Basket\Service\BasketVoucher as BasketVoucherService;
@@ -88,7 +89,7 @@ final class BasketRelationService
     public function vouchers(Basket $basket): array
     {
         return $this->basketVoucherService->basketVouchers(
-            new BasketItemFilterList(
+            new BasketVoucherFilterList(
                 new IDFilter($basket->id())
             )
         );

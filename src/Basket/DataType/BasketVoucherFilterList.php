@@ -26,13 +26,13 @@ final class BasketVoucherFilterList extends FilterList
 
     /**
      * @return array{
-     *                oxbasketid: ?IDFilter,
+     *                oegql_basketid: ?IDFilter,
      *                }
      */
     public function getFilters(): array
     {
         return [
-            'oxbasketid' => $this->basket,
+            'oegql_basketid' => $this->basket,
         ];
     }
 }
