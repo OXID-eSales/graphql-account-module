@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Address;
 
 use Codeception\Example;
+use Codeception\Scenario;
 use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
@@ -32,18 +33,25 @@ final class DeliveryAddressCest extends BaseCest
     private const OTHER_DELIVERY_ADDRESS_ID = 'test_delivery_address_2';
 
     /**
+     * @var array
+     */
+    private $mustFillFieldsDefault;
+
+    /**
      * @var string
      */
     private $deliveryAddressId = '';
 
+    public function _before(AcceptanceTester $I, Scenario $scenario): void
+    {
+        parent::_before($I, $scenario);
+
+        $this->mustFillFieldsDefault = $I->grabConfigValueFromDatabase('aMustFillFields', 1);
+    }
+
     public function _after(AcceptanceTester $I): void
     {
-        $default = 'a:14:{i:0;s:15:"oxuser__oxfname";i:1;s:15:"oxuser__oxlname";i:2;s:16:"oxuser__oxstreet";' .
-                   'i:3;s:18:"oxuser__oxstreetnr";i:4;s:13:"oxuser__oxzip";i:5;s:14:"oxuser__oxcity";' .
-                   'i:6;s:19:"oxuser__oxcountryid";i:7;s:18:"oxaddress__oxfname";i:8;s:18:"oxaddress__oxlname";' .
-                   'i:9;s:19:"oxaddress__oxstreet";i:10;s:21:"oxaddress__oxstreetnr";i:11;s:16:"oxaddress__oxzip";' .
-                   'i:12;s:17:"oxaddress__oxcity";i:13;s:22:"oxaddress__oxcountryid";}';
-        $I->updateConfigInDatabase('aMustFillFields', $default, 'arr');
+        $I->updateConfigInDatabase('aMustFillFields', $this->mustFillFieldsDefault['value'], 'arr');
     }
 
     public function testAddDeliveryAddressForNotLoggedInUser(AcceptanceTester $I): void
