@@ -175,6 +175,45 @@ final class BasketCest extends BaseCest
         $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
     }
 
+    public function testBasketCost(AcceptanceTester $I): void
+    {
+        $I->login(self::OTHER_USERNAME, self::OTHER_PASSWORD);
+
+        $I->sendGQLQuery(
+            'query{
+                basket(id: "' . self::PRIVATE_BASKET . '") {
+                    id
+                    cost {
+                        productNet {
+                            price
+                            vat
+                        }
+                        productGross {
+                            vats {
+                                vatRate
+                                vatPrice
+                            }
+                            sum
+                        }
+                        currency {
+                            name
+                            rate
+                        }
+                        discount
+                        voucher
+                        total
+                    }
+                }
+            }'
+        );
+
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+        $result = $I->grabJsonResponseAsArray();
+
+        $this->assertCost($I, $result['data']['basket']['cost']);
+    }
+
     protected function boolDataProvider(): array
     {
         return [
@@ -228,5 +267,33 @@ final class BasketCest extends BaseCest
         $I->seeResponseIsJson();
 
         return $I->grabJsonResponseAsArray();
+    }
+
+    private function assertCost(AcceptanceTester $I, array $costs): void
+    {
+        $expected = [
+            'productNet'   => [
+                'price' => 8.4,
+                'vat'   => 0,
+            ],
+            'productGross' => [
+                'vats' => [
+                    [
+                        'vatRate'  => 19,
+                        'vatPrice' => 1.6,
+                    ],
+                ],
+                'sum'  => 10,
+            ],
+            'currency'     => [
+                'name' => 'EUR',
+                'rate' => 1,
+            ],
+            'discount'     => 0,
+            'voucher'      => 0,
+            'total'        => 13.9,
+        ];
+
+        $I->assertSame($expected, $costs);
     }
 }

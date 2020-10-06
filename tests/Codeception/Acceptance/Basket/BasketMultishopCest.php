@@ -110,6 +110,73 @@ final class BasketMultishopCest extends MultishopBaseCest
         $I->seeResponseCodeIs(HttpCode::OK);
     }
 
+    public function testBasketCostFromDifferentShop(AcceptanceTester $I): void
+    {
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
+
+        $I->login(self::USERNAME, self::PASSWORD, 2);
+
+        $I->sendGQLQuery(
+            'query{
+                basket(id: "' . self::PUBLIC_BASKET . '") {
+                    id
+                    cost {
+                        productNet {
+                            price
+                            vat
+                        }
+                        productGross {
+                            vats {
+                                vatRate
+                                vatPrice
+                            }
+                            sum
+                        }
+                        currency {
+                            name
+                            rate
+                        }
+                        discount
+                        voucher
+                        total
+                    }
+                }
+            }',
+            null,
+            0,
+            2
+        );
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+        $result = $I->grabJsonResponseAsArray();
+
+        $I->assertEquals(
+            [
+                'productNet'   => [
+                    'price' => 8.4,
+                    'vat'   => 0,
+                ],
+                'productGross' => [
+                    'vats' => [
+                        [
+                            'vatRate'  => 19,
+                            'vatPrice' => 1.6,
+                        ],
+                    ],
+                    'sum'  => 10,
+                ],
+                'currency'     => [
+                    'name' => 'EUR',
+                    'rate' => 1,
+                ],
+                'discount'     => 0,
+                'voucher'      => 0,
+                'total'        => 10,
+            ],
+            $result['data']['basket']['cost']
+        );
+    }
+
     private function queryBasket(AcceptanceTester $I, string $id, int $shopId): array
     {
         $I->sendGQLQuery(
