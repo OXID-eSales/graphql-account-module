@@ -20,6 +20,8 @@ final class BasketVoucherTest extends TokenTestCase
 
     private const OTHER_PASSWORD = 'useruser';
 
+    private const PRIVATE_WISHLIST = '_test_wish_list_private';
+
     public function testGetBasketVouchers(): void
     {
         $this->prepareToken(self::OTHER_USERNAME, self::OTHER_PASSWORD);
@@ -86,5 +88,35 @@ final class BasketVoucherTest extends TokenTestCase
 
         $this->assertEquals($expectedVoucher1, $voucher1);
         $this->assertEquals($expectedVoucher2, $voucher2);
+    }
+
+    public function testGetBasketVouchersNoVouchers(): void
+    {
+        $this->prepareToken(self::OTHER_USERNAME, self::OTHER_PASSWORD);
+
+        $result = $this->query(
+            'query {
+                basket(id: "' . self::PRIVATE_WISHLIST . '") {
+                    vouchers {
+                        id
+                        reserved
+                        voucher
+                        discount
+                        series {
+                            id
+                            title
+                            description
+                            validFrom
+                            validTo
+                            discount
+                            discountType
+                        }
+                    }
+                }
+            }'
+        );
+
+        $this->assertResponseStatus(200, $result);
+        $this->assertEmpty($result['body']['data']['basket']['vouchers']);
     }
 }
