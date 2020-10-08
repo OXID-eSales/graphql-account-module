@@ -8,3 +8,5 @@ parameters:
         -
             message: '#Method OxidEsales\\GraphQL\\Account\\Basket\\Infrastructure\\BasketCost::getBasketCurrencyObject\(\) has no return typehint specified#'
             path: src/Basket/Infrastructure/BasketCost.php
+    excludes_analyse:
+        - src/Framework/ModuleSetup.php
