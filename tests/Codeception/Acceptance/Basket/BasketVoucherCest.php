@@ -7,11 +7,16 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\GraphQL\Account\Tests\Integration\Basket\Controller;
+namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Basket;
 
-use OxidEsales\GraphQL\Base\Tests\Integration\TokenTestCase;
+use Codeception\Util\HttpCode;
+use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\BaseCest;
+use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
-final class BasketVoucherTest extends TokenTestCase
+/**
+ * @group basket
+ */
+final class BasketVoucherCest extends BaseCest
 {
     // Private basket
     private const PRIVATE_BASKET = '_test_basket_private';
@@ -22,11 +27,11 @@ final class BasketVoucherTest extends TokenTestCase
 
     private const PRIVATE_WISHLIST = '_test_wish_list_private';
 
-    public function testGetBasketVouchers(): void
+    public function testGetBasketVouchers(AcceptanceTester $I): void
     {
-        $this->prepareToken(self::OTHER_USERNAME, self::OTHER_PASSWORD);
+        $I->login(self::OTHER_USERNAME, self::OTHER_PASSWORD);
 
-        $result = $this->query(
+        $I->sendGQLQuery(
             'query {
                 basket(id: "' . self::PRIVATE_BASKET . '") {
                     vouchers {
@@ -48,9 +53,11 @@ final class BasketVoucherTest extends TokenTestCase
             }'
         );
 
-        $this->assertResponseStatus(200, $result);
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+        $result = $I->grabJsonResponseAsArray();
 
-        [$voucher1, $voucher2] = $result['body']['data']['basket']['vouchers'];
+        [$voucher1, $voucher2] = $result['data']['basket']['vouchers'];
 
         $expectedSeries1 = [
             'id'           => 'serie2',
@@ -86,15 +93,15 @@ final class BasketVoucherTest extends TokenTestCase
             'series'   => $expectedSeries2,
         ];
 
-        $this->assertEquals($expectedVoucher1, $voucher1);
-        $this->assertEquals($expectedVoucher2, $voucher2);
+        $I->assertEquals($expectedVoucher1, $voucher1);
+        $I->assertEquals($expectedVoucher2, $voucher2);
     }
 
-    public function testGetBasketVouchersNoVouchers(): void
+    public function testGetBasketVouchersNoVouchers(AcceptanceTester $I): void
     {
-        $this->prepareToken(self::OTHER_USERNAME, self::OTHER_PASSWORD);
+        $I->login(self::OTHER_USERNAME, self::OTHER_PASSWORD);
 
-        $result = $this->query(
+        $I->sendGQLQuery(
             'query {
                 basket(id: "' . self::PRIVATE_WISHLIST . '") {
                     vouchers {
@@ -116,7 +123,10 @@ final class BasketVoucherTest extends TokenTestCase
             }'
         );
 
-        $this->assertResponseStatus(200, $result);
-        $this->assertEmpty($result['body']['data']['basket']['vouchers']);
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+        $result = $I->grabJsonResponseAsArray();
+
+        $I->assertEmpty($result['data']['basket']['vouchers']);
     }
 }
