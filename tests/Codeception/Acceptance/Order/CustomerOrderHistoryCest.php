@@ -43,13 +43,13 @@ final class CustomerOrderHistoryCest extends BaseCest
         parent::_before($I, $scenario);
 
         $this->originalParcel = EshopRegistry::getConfig()->getConfigParam('sParcelService');
-        $I->updateConfigInDatabase('sParcelService', self::PARCEL_SERVICE_LINK, 'string');
+        $I->updateConfigInDatabase('sParcelService', self::PARCEL_SERVICE_LINK, 'str');
         $I->login(self::USERNAME, self::PASSWORD);
     }
 
     public function _after(AcceptanceTester $I): void
     {
-        $I->updateConfigInDatabase('sParcelService', $this->originalParcelService, 'string');
+        $I->updateConfigInDatabase('sParcelService', $this->originalParcelService, 'str');
     }
 
     public function testCustomerOrderWithAllData(AcceptanceTester $I): void
