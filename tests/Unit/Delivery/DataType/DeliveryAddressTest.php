@@ -15,7 +15,7 @@ use PHPUnit\Framework\Constraint\IsType;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \OxidEsales\GraphQL\Account\Customer\DataType\DeliveryAddress
+ * @covers \OxidEsales\GraphQL\Account\Address\DataType\DeliveryAddress
  */
 final class DeliveryAddressTest extends TestCase
 {

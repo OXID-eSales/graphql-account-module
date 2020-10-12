@@ -34,3 +34,6 @@ modules:
                   Name: XDEBUG_SESSION
                   Value: PHPSTORM
                   HttpOnly: false
+    - \OxidEsales\GraphQL\Base\Tests\Codeception\Module\AcceptanceHelper:
+        depends:
+            - REST
