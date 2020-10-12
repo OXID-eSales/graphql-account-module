@@ -89,7 +89,7 @@ final class DeliveryAddress
      * @throws DeliveryAddressNotFound
      * @throws InvalidLogin
      */
-    private function getDeliveryAddress(string $id): DeliveryAddressDataType
+    public function getDeliveryAddress(string $id): DeliveryAddressDataType
     {
         /** Only logged in users can query delivery addresses */
         if (!$this->authenticationService->isLogged()) {
