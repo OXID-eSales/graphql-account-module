@@ -11,18 +11,27 @@ namespace OxidEsales\GraphQL\Account\Shared\Infrastructure;
 
 use OxidEsales\Eshop\Application\Model\User as EshopUserModel;
 use OxidEsales\Eshop\Application\Model\UserBasket as EshopUserBasketModel;
-use OxidEsales\Eshop\Application\Model\Voucher;
+use OxidEsales\GraphQL\Account\Basket\DataType\BasketVoucherFilterList;
+use OxidEsales\GraphQL\Account\Basket\Service\BasketVoucher as BasketVoucherService;
 use OxidEsales\GraphQL\Account\Shared\Shop\Basket as EshopBasketModel;
+use OxidEsales\GraphQL\Account\Voucher\DataType\Voucher;
+use OxidEsales\GraphQL\Base\DataType\IDFilter;
+use TheCodingMachine\GraphQLite\Types\ID;
 
 final class Basket
 {
     /** @var EshopBasketModel */
     private $basketModel;
 
+    /** @var BasketVoucherService */
+    private $basketVoucherService;
+
     public function __construct(
-        EshopBasketModel $basketModel
+        EshopBasketModel $basketModel,
+        BasketVoucherService $basketVoucherService
     ) {
-        $this->basketModel = $basketModel;
+        $this->basketModel          = $basketModel;
+        $this->basketVoucherService = $basketVoucherService;
     }
 
     public function getBasket(
@@ -39,8 +48,7 @@ final class Basket
         //Set user to basket otherwise delivery cost will not be calculated
         $this->basketModel->setUser($user);
 
-        //todo: set correct vouchers
-        $this->setVouchers();
+        $this->setVouchers($userBasket->getId());
 
         //todo: set correct payment
         $this->setPayment();
@@ -59,14 +67,21 @@ final class Basket
         $this->basketModel->setPayment('oxidinvoice');
     }
 
-    private function setVouchers(): void
+    private function setVouchers(string $basketId): void
     {
-        //todo: get voucher from user basket model
-        /** @var Voucher $voucher */
-        $voucher = oxNew(Voucher::class);
+        $vouchers = $this->basketVoucherService->basketVouchers(
+            new BasketVoucherFilterList(
+                new IDFilter(
+                    new ID(
+                        (string) $basketId
+                    )
+                )
+            )
+        );
 
-        if ($voucher->getId()) {
-            $this->basketModel->applyVoucher($voucher->getId());
+        /** @var Voucher $voucher */
+        foreach ($vouchers as $voucher) {
+            $this->basketModel->applyVoucher($voucher->getEshopModel()->getId());
         }
     }
 }
