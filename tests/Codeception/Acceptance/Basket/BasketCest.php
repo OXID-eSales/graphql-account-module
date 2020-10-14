@@ -177,11 +177,11 @@ final class BasketCest extends BaseCest
 
     public function testBasketCost(AcceptanceTester $I): void
     {
-        $I->login(self::OTHER_USERNAME, self::OTHER_PASSWORD);
+        $I->login(self::USERNAME, self::PASSWORD);
 
         $I->sendGQLQuery(
             'query{
-                basket(id: "' . self::PRIVATE_BASKET . '") {
+                basket(id: "' . self::PUBLIC_BASKET . '") {
                     id
                     cost {
                         productNet {
