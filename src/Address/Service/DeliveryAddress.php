@@ -14,6 +14,7 @@ use OxidEsales\GraphQL\Account\Address\DataType\DeliveryAddress as DeliveryAddre
 use OxidEsales\GraphQL\Account\Address\Exception\DeliveryAddressNotFound;
 use OxidEsales\GraphQL\Base\DataType\StringFilter;
 use OxidEsales\GraphQL\Base\Exception\InvalidLogin;
+use OxidEsales\GraphQL\Base\Exception\InvalidToken;
 use OxidEsales\GraphQL\Base\Exception\NotFound;
 use OxidEsales\GraphQL\Base\Service\Authentication;
 use OxidEsales\GraphQL\Base\Service\Authorization;
@@ -88,8 +89,9 @@ final class DeliveryAddress
     /**
      * @throws DeliveryAddressNotFound
      * @throws InvalidLogin
+     * @throws InvalidToken
      */
-    private function getDeliveryAddress(string $id): DeliveryAddressDataType
+    public function getDeliveryAddress(string $id): DeliveryAddressDataType
     {
         /** Only logged in users can query delivery addresses */
         if (!$this->authenticationService->isLogged()) {
