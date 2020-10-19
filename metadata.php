@@ -14,7 +14,7 @@ $sMetadataVersion = '2.0';
  * Module information
  */
 $aModule = [
-    'id'            => 'oe/graphql-account',
+    'id'            => 'oe_graphql_account',
     'title'         => [
         'de'        =>  'GraphQL Konto',
         'en'        =>  'GraphQL Account',
