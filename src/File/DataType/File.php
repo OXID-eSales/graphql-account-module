@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\File\DataType;
 
-use OxidEsales\EshopCommunity\Application\Model\File as FileModel;
+use OxidEsales\Eshop\Application\Model\File as FileModel;
 use OxidEsales\GraphQL\Catalogue\Shared\DataType\DataType;
 use TheCodingMachine\GraphQLite\Annotations\Field;
 use TheCodingMachine\GraphQLite\Annotations\Type;

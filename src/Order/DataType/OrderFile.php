@@ -10,9 +10,9 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Order\DataType;
 
 use DateTimeInterface;
+use OxidEsales\Eshop\Application\Model\OrderFile as OrderFileModel;
 use OxidEsales\Eshop\Core\Registry as EshopRegistry;
 use OxidEsales\Eshop\Core\SeoEncoder as EshopSeoEncoder;
-use OxidEsales\EshopCommunity\Application\Model\OrderFile as OrderFileModel;
 use OxidEsales\GraphQL\Base\DataType\DateTimeImmutableFactory;
 use OxidEsales\GraphQL\Catalogue\Shared\DataType\DataType;
 use TheCodingMachine\GraphQLite\Annotations\Field;

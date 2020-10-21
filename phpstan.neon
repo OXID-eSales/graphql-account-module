@@ -10,3 +10,5 @@ parameters:
             path: src/Basket/Infrastructure/BasketCost.php
     excludes_analyse:
         - src/Framework/ModuleSetup.php
+        - src/Shared/Infrastructure/Basket.php
+        - src/Shared/Shop/Basket.php

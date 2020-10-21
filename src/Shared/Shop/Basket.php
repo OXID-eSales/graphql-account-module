@@ -9,17 +9,17 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\Shared\Shop;
 
-use OxidEsales\Eshop\Application\Model\Basket as EshopBasketModel;
 use OxidEsales\Eshop\Application\Model\BasketItem;
+use OxidEsales\Eshop\Application\Model\UserBasketItem;
 use OxidEsales\Eshop\Application\Model\Voucher;
-use OxidEsales\EshopCommunity\Application\Model\UserBasketItem;
 
 /**
  * Basket model extended
  *
  * @mixin Basket
+ * @eshopExtension
  */
-final class Basket extends EshopBasketModel
+class Basket extends Basket_parent
 {
     /**
      * Add product to basket without doing any check.

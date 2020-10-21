@@ -9,11 +9,11 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\Shared\Infrastructure;
 
+use OxidEsales\Eshop\Application\Model\Basket as EshopBasketModel;
 use OxidEsales\Eshop\Application\Model\User as EshopUserModel;
 use OxidEsales\Eshop\Application\Model\UserBasket as EshopUserBasketModel;
 use OxidEsales\GraphQL\Account\Basket\DataType\BasketVoucherFilterList;
 use OxidEsales\GraphQL\Account\Basket\Service\BasketVoucher as BasketVoucherService;
-use OxidEsales\GraphQL\Account\Shared\Shop\Basket as EshopBasketModel;
 use OxidEsales\GraphQL\Account\Voucher\DataType\Voucher;
 use OxidEsales\GraphQL\Base\DataType\IDFilter;
 use TheCodingMachine\GraphQLite\Types\ID;
@@ -27,10 +27,9 @@ final class Basket
     private $basketVoucherService;
 
     public function __construct(
-        EshopBasketModel $basketModel,
         BasketVoucherService $basketVoucherService
     ) {
-        $this->basketModel          = $basketModel;
+        $this->basketModel          = oxNew(EshopBasketModel::class);
         $this->basketVoucherService = $basketVoucherService;
     }
 
