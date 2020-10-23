@@ -32,6 +32,8 @@ final class VoucherCest extends BaseCest
 
     private const SERIES_VOUCHER = 'mySeriesVoucher';
 
+    private const OTHER_SERIES_VOUCHER = 'seriesVoucher';
+
     private const WRONG_VOUCHER = 'non_existing_voucher';
 
     private const USED_VOUCHER = 'used_voucher';
@@ -65,7 +67,9 @@ final class VoucherCest extends BaseCest
     {
         $I->login(self::USERNAME, self::PASSWORD);
 
-        $I->sendGQLQuery($this->addVoucherMutation('non_existing', self::VOUCHER));
+        $basketId = 'non_existing';
+
+        $I->sendGQLQuery($this->addVoucherMutation($basketId, self::VOUCHER));
 
         $I->seeResponseCodeIs(HttpCode::NOT_FOUND);
 
@@ -73,7 +77,7 @@ final class VoucherCest extends BaseCest
         $result = $I->grabJsonResponseAsArray();
 
         $I->assertEquals(
-            'Basket was not found by id: non_existing',
+            sprintf('Basket was not found by id: %s', $basketId),
             $result['errors'][0]['message']
         );
     }
@@ -155,6 +159,41 @@ final class VoucherCest extends BaseCest
         $I->seeResponseCodeIs(HttpCode::OK);
     }
 
+    public function testNotAllowDifferentSeriesVoucher(AcceptanceTester $I): void
+    {
+        $this->prepareBasketAndVouchers($I);
+
+        $I->login(self::USERNAME, self::PASSWORD);
+
+        //Add voucher from first series
+        $I->sendGQLQuery($this->addVoucherMutation(self::BASKET_PUBLIC, self::SERIES_VOUCHER));
+
+        $I->seeResponseCodeIs(HttpCode::OK);
+
+        //Add voucher from second series
+        $I->sendGQLQuery($this->addVoucherMutation(self::BASKET_PUBLIC, self::OTHER_SERIES_VOUCHER));
+
+        $I->seeResponseCodeIs(HttpCode::NOT_FOUND);
+    }
+
+    public function testAllowDifferentSeriesVoucher(AcceptanceTester $I): void
+    {
+        $this->prepareBasketAndVouchers($I);
+        $this->prepareDifferentSeriesVouchers($I);
+
+        $I->login(self::USERNAME, self::PASSWORD);
+
+        //Add voucher from first series
+        $I->sendGQLQuery($this->addVoucherMutation(self::BASKET_PUBLIC, self::SERIES_VOUCHER));
+
+        $I->seeResponseCodeIs(HttpCode::OK);
+
+        //Add voucher from second series
+        $I->sendGQLQuery($this->addVoucherMutation(self::BASKET_PUBLIC, self::OTHER_SERIES_VOUCHER));
+
+        $I->seeResponseCodeIs(HttpCode::OK);
+    }
+
     public function testRemoveVoucherNotLoggedIn(AcceptanceTester $I): void
     {
         $I->sendGQLQuery($this->removeVoucherMutation(self::BASKET, self::VOUCHER));
@@ -197,6 +236,47 @@ final class VoucherCest extends BaseCest
         $I->seeResponseCodeIs(HttpCode::OK);
     }
 
+    public function testVoucherBasketDiscount(AcceptanceTester $I): void
+    {
+        $this->prepareVoucherForBasketDiscount($I);
+
+        $I->login(self::USERNAME, self::PASSWORD);
+
+        //Check basket discounts without applied voucher
+        $I->sendGQLQuery($this->basketQuery(self::BASKET_PUBLIC));
+
+        $I->seeResponseCodeIs(HttpCode::OK);
+
+        $I->seeResponseIsJson();
+        $result = $I->grabJsonResponseAsArray();
+
+        $I->assertSame($result['data']['basket'], [
+            'id'   => self::BASKET_PUBLIC,
+            'cost' => [
+                'discount' => 0,
+            ],
+        ]);
+
+        //Add voucher and check basket discount
+        $I->sendGQLQuery($this->addVoucherMutation(self::BASKET_PUBLIC, self::VOUCHER));
+
+        $I->seeResponseCodeIs(HttpCode::OK);
+
+        $I->sendGQLQuery($this->basketQuery(self::BASKET_PUBLIC));
+
+        $I->seeResponseCodeIs(HttpCode::OK);
+
+        $I->seeResponseIsJson();
+        $discountResult = $I->grabJsonResponseAsArray();
+
+        $I->assertSame($discountResult['data']['basket'], [
+            'id'   => self::BASKET_PUBLIC,
+            'cost' => [
+                'discount' => 5,
+            ],
+        ]);
+    }
+
     private function addVoucherMutation(string $basketId, string $voucher)
     {
         return 'mutation {
@@ -217,6 +297,18 @@ final class VoucherCest extends BaseCest
                     voucherId: "' . $voucherId . '"
                   ) {
                     id
+                  }
+                }';
+    }
+
+    private function basketQuery(string $basketId)
+    {
+        return 'query{
+                  basket(id: "' . $basketId . '") {
+                    id
+                    cost {
+                      discount
+                    }
                   }
                 }';
     }
@@ -251,6 +343,32 @@ final class VoucherCest extends BaseCest
             'OXALLOWSAMESERIES' => 1,
         ], [
             'OXID' => 'personal_series_voucher',
+        ]);
+    }
+
+    private function prepareDifferentSeriesVouchers(AcceptanceTester $I): void
+    {
+        $I->updateInDatabase('oxvoucherseries', [
+            'OXALLOWOTHERSERIES' => 1,
+        ], [
+            'OXID' => 'series_voucher',
+        ]);
+    }
+
+    private function prepareVoucherForBasketDiscount(AcceptanceTester $I): void
+    {
+        $I->updateInDatabase('oxvouchers', [
+            'OXRESERVED'     => 0,
+            'OEGQL_BASKETID' => '',
+        ], [
+            'OXID' => 'personal_series_voucher_1',
+        ]);
+
+        $I->updateInDatabase('oxvouchers', [
+            'OXRESERVED'     => 0,
+            'OEGQL_BASKETID' => '',
+        ], [
+            'OXID' => 'series_voucher_1',
         ]);
     }
 }

@@ -22,8 +22,6 @@ final class VoucherMultiShopCest extends MultishopBaseCest
 
     private const PASSWORD = 'useruser';
 
-
-
     private function addVoucherMutation(string $basketId, string $voucher)
     {
         return 'mutation {
