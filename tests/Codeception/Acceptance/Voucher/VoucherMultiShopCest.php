@@ -9,10 +9,14 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Voucher;
 
+use Codeception\Example;
+use Codeception\Scenario;
+use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\MultishopBaseCest;
+use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
 /**
- * @group voucher
+ * @group voucherAdd
  */
 final class VoucherMultiShopCest extends MultishopBaseCest
 {
@@ -22,6 +26,97 @@ final class VoucherMultiShopCest extends MultishopBaseCest
 
     private const PASSWORD = 'useruser';
 
+    private const SHOP1_BASKET = '_test_savedbasket_public';
+
+    private const SHOP2_BASKET = '_test_shop2_basket_public';
+
+    private const SHOP1_VOUCHER_NR = 'myVoucher';
+
+    private const SHOP2_VOUCHER_NR = 'shop2voucher';
+
+    private const SHOP2_VOUCHER_ID = 'shop_2_voucher_series';
+
+
+    /**
+     * @dataProvider dataProviderAddVoucherToBasketPerShop
+     */
+    public function testAddVoucherToBasketPerShop(AcceptanceTester $I, Example $data): void
+    {
+        $shopId    = $data['shopId'];
+        $basketId  = $data['basketId'];
+        $voucherNr = $data['voucherNr'];
+
+        $I->login(self::USERNAME, self::PASSWORD, $shopId);
+
+        $I->sendGQLQuery($this->addVoucherMutation($basketId, $voucherNr), null, 0, $shopId);
+
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+        $result = $I->grabJsonResponseAsArray();
+
+        $I->assertSame(
+            [
+                'id'    => $basketId,
+                'vouchers' => [
+                    [
+                        'number' => $voucherNr,
+                    ],
+                ],
+            ],
+            $result['data']['basketAddVoucher']
+        );
+    }
+
+    public function testAddVoucherFromShop1ToBasketFromShop2(AcceptanceTester $I): void
+    {
+        $this->prepareVoucherInBasket($I, '', 'personal_voucher_1');
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
+        $I->login(self::USERNAME, self::PASSWORD, 2);
+
+        $I->sendGQLQuery($this->addVoucherMutation(self::SHOP2_BASKET, self::SHOP1_VOUCHER_NR), null, 0, 2);
+
+        $I->seeResponseCodeIs(HttpCode::NOT_FOUND);
+        $I->seeResponseIsJson();
+        $result = $I->grabJsonResponseAsArray();
+
+        $I->assertEquals(
+            sprintf('Voucher by number: %s was not found or was not aplliable', self::SHOP1_VOUCHER_NR),
+            $result['errors'][0]['message']
+        );
+    }
+
+    public function testAddVoucherFromShop2ToBasketFromShop1(AcceptanceTester $I): void
+    {
+        $I->login(self::USERNAME, self::PASSWORD, 1);
+
+        $I->sendGQLQuery($this->addVoucherMutation(self::SHOP1_BASKET, self::SHOP2_VOUCHER_NR));
+
+        $I->seeResponseCodeIs(HttpCode::NOT_FOUND);
+        $I->seeResponseIsJson();
+        $result = $I->grabJsonResponseAsArray();
+
+        $I->assertEquals(
+            sprintf('Voucher by number: %s was not found or was not aplliable', self::SHOP2_VOUCHER_NR),
+            $result['errors'][0]['message']
+        );
+    }
+
+    protected function dataProviderAddVoucherToBasketPerShop()
+    {
+        return [
+            'shop_1' => [
+                'shopId'    => 1,
+                'basketId'  => self::SHOP1_BASKET,
+                'voucherNr' => self::SHOP1_VOUCHER_NR,
+            ],
+            'shop_2' => [
+                'shopId'    => 2,
+                'basketId'  => self::SHOP2_BASKET,
+                'voucherNr' => self::SHOP2_VOUCHER_NR,
+            ],
+        ];
+    }
+
     private function addVoucherMutation(string $basketId, string $voucher)
     {
         return 'mutation {
@@ -30,6 +125,9 @@ final class VoucherMultiShopCest extends MultishopBaseCest
                     voucher: "' . $voucher . '"
                   ) {
                     id
+                    vouchers {
+                      number
+                    }
                   }
                 }';
     }
@@ -44,5 +142,15 @@ final class VoucherMultiShopCest extends MultishopBaseCest
                     id
                   }
                 }';
+    }
+
+    private function prepareVoucherInBasket(AcceptanceTester $I, string $basketId, string $voucherId): void
+    {
+        $I->updateInDatabase('oxvouchers', [
+            'OXRESERVED'     => $basketId ? time() : 0,
+            'OEGQL_BASKETID' => $basketId,
+        ], [
+            'OXID' => $voucherId,
+        ]);
     }
 }
