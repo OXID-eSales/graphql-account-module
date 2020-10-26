@@ -347,7 +347,7 @@ final class VoucherCest extends BaseCest
                 }';
     }
 
-    private function prepareVoucherInBasket(AcceptanceTester $I)
+    private function prepareVoucherInBasket(AcceptanceTester $I): void
     {
         $this->prepareVoucher($I, '', 'personal_series_voucher_1');
         $this->prepareVoucher($I, '', 'personal_series_voucher_2');
