@@ -15,7 +15,7 @@ use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\MultishopBaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
 /**
- * @group vouchers
+ * @group voucher
  */
 final class VoucherMultiShopCest extends MultishopBaseCest
 {
@@ -99,16 +99,16 @@ final class VoucherMultiShopCest extends MultishopBaseCest
         );
     }
 
-//    public function testUnableToRemoveVoucherFromShop2InShop1(AcceptanceTester $I): void
-//    {
-//        $this->prepareVoucherInBasket($I, self::SHOP1_BASKET, self::SHOP2_VOUCHER_ID);
-//
-//        $I->login(self::USERNAME, self::PASSWORD, 1);
-//
-//        $I->sendGQLQuery($this->removeVoucherMutation(self::SHOP1_BASKET, self::SHOP2_VOUCHER_ID));
-//
-//        $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
-//    }
+    public function testUnableToRemoveVoucherFromShop2InShop1(AcceptanceTester $I): void
+    {
+        $this->prepareVoucherInBasket($I, self::SHOP1_BASKET, self::SHOP2_VOUCHER_ID);
+
+        $I->login(self::USERNAME, self::PASSWORD, 1);
+
+        $I->sendGQLQuery($this->removeVoucherMutation(self::SHOP1_BASKET, self::SHOP2_VOUCHER_ID));
+
+        $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
+    }
 
     public function testRemoveVoucherForSameShop(AcceptanceTester $I): void
     {

@@ -118,7 +118,7 @@ final class VoucherCest extends BaseCest
 
     public function testNotAllowToAddSecondVoucher(AcceptanceTester $I): void
     {
-        $this->prepareBasketAndVouchers($I);
+        $this->prepareVoucherInBasket($I);
 
         $I->login(self::USERNAME, self::PASSWORD);
 
@@ -143,8 +143,8 @@ final class VoucherCest extends BaseCest
 
     public function testAllowAddingMultipleVouchers(AcceptanceTester $I): void
     {
-        $this->prepareBasketAndVouchers($I);
-        $this->prepareSeriesVouchers($I);
+        $this->prepareVoucherInBasket($I);
+        $this->prepareSeriesVouchers($I, 'personal_series_voucher');
 
         $I->login(self::USERNAME, self::PASSWORD);
 
@@ -161,7 +161,7 @@ final class VoucherCest extends BaseCest
 
     public function testNotAllowDifferentSeriesVoucher(AcceptanceTester $I): void
     {
-        $this->prepareBasketAndVouchers($I);
+        $this->prepareVoucherInBasket($I);
 
         $I->login(self::USERNAME, self::PASSWORD);
 
@@ -178,8 +178,8 @@ final class VoucherCest extends BaseCest
 
     public function testAllowDifferentSeriesVoucher(AcceptanceTester $I): void
     {
-        $this->prepareBasketAndVouchers($I);
-        $this->prepareDifferentSeriesVouchers($I);
+        $this->prepareVoucherInBasket($I);
+        $this->prepareSeriesVouchers($I, 'series_voucher');
 
         $I->login(self::USERNAME, self::PASSWORD);
 
@@ -238,7 +238,8 @@ final class VoucherCest extends BaseCest
 
     public function testVoucherBasketDiscount(AcceptanceTester $I): void
     {
-        $this->prepareVoucherForBasketDiscount($I);
+        $this->prepareVoucher($I, '', 'personal_series_voucher_1');
+        $this->prepareVoucher($I, '', 'series_voucher_1');
 
         $I->login(self::USERNAME, self::PASSWORD);
 
@@ -255,6 +256,7 @@ final class VoucherCest extends BaseCest
             'cost' => [
                 'discount' => 0,
             ],
+            'vouchers' => [],
         ]);
 
         //Add voucher and check basket discount
@@ -274,7 +276,36 @@ final class VoucherCest extends BaseCest
             'cost' => [
                 'discount' => 5,
             ],
+            'vouchers' => [
+                [
+                    'id' => 'personal_voucher_1',
+                ],
+            ],
         ]);
+    }
+
+    public function testRemoveInvalidVoucherFromBasket(AcceptanceTester $I): void
+    {
+        $this->prepareVoucher($I, self::BASKET_PUBLIC, self::USED_VOUCHER);
+
+        $I->login(self::USERNAME, self::PASSWORD);
+
+        $I->sendGQLQuery($this->basketQuery(self::BASKET_PUBLIC));
+
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+
+        $result = $I->grabJsonResponseAsArray();
+        $I->assertSame(
+            [
+                'id'       => self::BASKET_PUBLIC,
+                'cost'     => [
+                    'discount' => 0,
+                ],
+                'vouchers' => [],
+            ],
+            $result['data']['basket']
+        );
     }
 
     private function addVoucherMutation(string $basketId, string $voucher)
@@ -309,66 +340,36 @@ final class VoucherCest extends BaseCest
                     cost {
                       discount
                     }
+                    vouchers {
+                        id
+                    }
                   }
                 }';
     }
 
-    private function prepareBasketAndVouchers(AcceptanceTester $I): void
+    private function prepareVoucherInBasket(AcceptanceTester $I)
     {
-        $I->updateInDatabase('oxvouchers', [
-            'OXRESERVED'     => 0,
-            'OEGQL_BASKETID' => '',
-        ], [
-            'OXID' => 'personal_series_voucher_1',
-        ]);
-
-        $I->updateInDatabase('oxvouchers', [
-            'OXRESERVED'     => 0,
-            'OEGQL_BASKETID' => '',
-        ], [
-            'OXID' => 'personal_series_voucher_1',
-        ]);
-
-        $I->updateInDatabase('oxvouchers', [
-            'OXRESERVED'     => 0,
-            'OEGQL_BASKETID' => '',
-        ], [
-            'OXID' => 'personal_series_voucher_2',
-        ]);
+        $this->prepareVoucher($I, '', 'personal_series_voucher_1');
+        $this->prepareVoucher($I, '', 'personal_series_voucher_2');
     }
 
-    private function prepareSeriesVouchers(AcceptanceTester $I): void
+    private function prepareSeriesVouchers(AcceptanceTester $I, string $voucherId): void
     {
         $I->updateInDatabase('oxvoucherseries', [
-            'OXALLOWSAMESERIES' => 1,
-        ], [
-            'OXID' => 'personal_series_voucher',
-        ]);
-    }
-
-    private function prepareDifferentSeriesVouchers(AcceptanceTester $I): void
-    {
-        $I->updateInDatabase('oxvoucherseries', [
+            'OXALLOWSAMESERIES'  => 1,
             'OXALLOWOTHERSERIES' => 1,
         ], [
-            'OXID' => 'series_voucher',
+            'OXID' => $voucherId,
         ]);
     }
 
-    private function prepareVoucherForBasketDiscount(AcceptanceTester $I): void
+    private function prepareVoucher(AcceptanceTester $I, string $basketId, string $voucherId): void
     {
         $I->updateInDatabase('oxvouchers', [
-            'OXRESERVED'     => 0,
-            'OEGQL_BASKETID' => '',
+            'OXRESERVED'     => $basketId ? time() : 0,
+            'OEGQL_BASKETID' => $basketId,
         ], [
-            'OXID' => 'personal_series_voucher_1',
-        ]);
-
-        $I->updateInDatabase('oxvouchers', [
-            'OXRESERVED'     => 0,
-            'OEGQL_BASKETID' => '',
-        ], [
-            'OXID' => 'series_voucher_1',
+            'OXID' => $voucherId,
         ]);
     }
 }
