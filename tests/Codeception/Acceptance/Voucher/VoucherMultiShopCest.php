@@ -10,19 +10,16 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\Voucher;
 
 use Codeception\Example;
-use Codeception\Scenario;
 use Codeception\Util\HttpCode;
 use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\MultishopBaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
 /**
- * @group voucherAdd
+ * @group vouchers
  */
 final class VoucherMultiShopCest extends MultishopBaseCest
 {
     private const USERNAME = 'user@oxid-esales.com';
-
-    private const OTHER_USERNAME = 'otheruser@oxid-esales.com';
 
     private const PASSWORD = 'useruser';
 
@@ -32,10 +29,11 @@ final class VoucherMultiShopCest extends MultishopBaseCest
 
     private const SHOP1_VOUCHER_NR = 'myVoucher';
 
+    private const SHOP1_VOUCHER_ID = 'personal_voucher_1';
+
     private const SHOP2_VOUCHER_NR = 'shop2voucher';
 
     private const SHOP2_VOUCHER_ID = 'shop_2_voucher_series';
-
 
     /**
      * @dataProvider dataProviderAddVoucherToBasketPerShop
@@ -56,7 +54,7 @@ final class VoucherMultiShopCest extends MultishopBaseCest
 
         $I->assertSame(
             [
-                'id'    => $basketId,
+                'id'       => $basketId,
                 'vouchers' => [
                     [
                         'number' => $voucherNr,
@@ -101,6 +99,62 @@ final class VoucherMultiShopCest extends MultishopBaseCest
         );
     }
 
+//    public function testUnableToRemoveVoucherFromShop2InShop1(AcceptanceTester $I): void
+//    {
+//        $this->prepareVoucherInBasket($I, self::SHOP1_BASKET, self::SHOP2_VOUCHER_ID);
+//
+//        $I->login(self::USERNAME, self::PASSWORD, 1);
+//
+//        $I->sendGQLQuery($this->removeVoucherMutation(self::SHOP1_BASKET, self::SHOP2_VOUCHER_ID));
+//
+//        $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
+//    }
+
+    public function testRemoveVoucherForSameShop(AcceptanceTester $I): void
+    {
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
+        $this->prepareVoucherInBasket($I, self::SHOP1_BASKET, self::SHOP2_VOUCHER_ID);
+
+        $I->login(self::USERNAME, self::PASSWORD, 2);
+
+        $I->sendGQLQuery(
+            $this->removeVoucherMutation(self::SHOP1_BASKET, self::SHOP2_VOUCHER_ID),
+            null,
+            0,
+            2
+        );
+
+        $I->seeResponseCodeIs(HttpCode::OK);
+    }
+
+    /**
+     * @dataProvider dataProviderRemoveVoucherToBasketPerShop
+     */
+    public function testRemoveVoucherFromBasketPerShop(AcceptanceTester $I, Example $data): void
+    {
+        $shopId    = $data['shopId'];
+        $basketId  = $data['basketId'];
+        $voucherId = $data['voucherId'];
+
+        $this->prepareVoucherInBasket($I, $basketId, $voucherId);
+
+        $I->login(self::USERNAME, self::PASSWORD, $shopId);
+
+        $I->sendGQLQuery($this->removeVoucherMutation($basketId, $voucherId), null, 0, $shopId);
+
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+        $result = $I->grabJsonResponseAsArray();
+
+        $I->assertSame(
+            [
+                'id'       => $basketId,
+                'vouchers' => [],
+            ],
+            $result['data']['basketRemoveVoucher']
+        );
+    }
+
     protected function dataProviderAddVoucherToBasketPerShop()
     {
         return [
@@ -113,6 +167,22 @@ final class VoucherMultiShopCest extends MultishopBaseCest
                 'shopId'    => 2,
                 'basketId'  => self::SHOP2_BASKET,
                 'voucherNr' => self::SHOP2_VOUCHER_NR,
+            ],
+        ];
+    }
+
+    protected function dataProviderRemoveVoucherToBasketPerShop()
+    {
+        return [
+            'shop_1' => [
+                'shopId'    => 1,
+                'basketId'  => self::SHOP1_BASKET,
+                'voucherId' => self::SHOP1_VOUCHER_ID,
+            ],
+            'shop_2' => [
+                'shopId'    => 2,
+                'basketId'  => self::SHOP2_BASKET,
+                'voucherId' => self::SHOP2_VOUCHER_ID,
             ],
         ];
     }
@@ -140,6 +210,9 @@ final class VoucherMultiShopCest extends MultishopBaseCest
                     voucherId: "' . $voucherId . '"
                   ) {
                     id
+                    vouchers {
+                        number
+                    }
                   }
                 }';
     }
