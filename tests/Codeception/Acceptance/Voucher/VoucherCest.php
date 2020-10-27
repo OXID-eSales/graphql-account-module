@@ -286,11 +286,11 @@ final class VoucherCest extends BaseCest
 
     public function testRemoveInvalidVoucherFromBasket(AcceptanceTester $I): void
     {
-        $this->prepareVoucher($I, self::BASKET_PUBLIC, self::USED_VOUCHER);
+        $this->prepareVoucher($I, self::BASKET, self::USED_VOUCHER);
 
         $I->login(self::USERNAME, self::PASSWORD);
 
-        $I->sendGQLQuery($this->basketQuery(self::BASKET_PUBLIC));
+        $I->sendGQLQuery($this->basketQuery(self::BASKET));
 
         $I->seeResponseCodeIs(HttpCode::OK);
         $I->seeResponseIsJson();
@@ -298,7 +298,7 @@ final class VoucherCest extends BaseCest
         $result = $I->grabJsonResponseAsArray();
         $I->assertSame(
             [
-                'id'       => self::BASKET_PUBLIC,
+                'id'       => self::BASKET,
                 'cost'     => [
                     'discount' => 0,
                 ],
