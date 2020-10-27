@@ -38,6 +38,13 @@ final class VoucherCest extends BaseCest
 
     private const USED_VOUCHER = 'used_voucher';
 
+    public function _after(AcceptanceTester $I): void
+    {
+        //Reset voucher usage
+        $this->prepareVoucher($I, '', 'personal_voucher_1');
+        $this->prepareVoucher($I, '', self::USED_VOUCHER);
+    }
+
     public function testAddVoucherNotLoggedIn(AcceptanceTester $I): void
     {
         $I->sendGQLQuery($this->addVoucherMutation(self::BASKET, self::VOUCHER));
@@ -229,6 +236,8 @@ final class VoucherCest extends BaseCest
 
     public function testRemoveVoucher(AcceptanceTester $I): void
     {
+        $this->prepareVoucher($I, self::BASKET, 'personal_voucher_1');
+
         $I->login(self::USERNAME, self::PASSWORD);
 
         $I->sendGQLQuery($this->removeVoucherMutation(self::BASKET, 'personal_voucher_1'));

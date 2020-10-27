@@ -110,7 +110,7 @@ final class VoucherMultiShopCest extends MultishopBaseCest
         $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
     }
 
-    public function testRemoveVoucherForSameShop(AcceptanceTester $I): void
+    public function testRemoveVoucherWithMallUser(AcceptanceTester $I): void
     {
         $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
         $this->prepareVoucherInBasket($I, self::SHOP1_BASKET, self::SHOP2_VOUCHER_ID);
