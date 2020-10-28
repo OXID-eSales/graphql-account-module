@@ -10,8 +10,10 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Shared\Infrastructure;
 
 use OxidEsales\Eshop\Application\Model\Basket as EshopBasketModel;
+use OxidEsales\Eshop\Application\Model\DeliveryList;
 use OxidEsales\Eshop\Application\Model\User as EshopUserModel;
 use OxidEsales\Eshop\Application\Model\UserBasket as EshopUserBasketModel;
+use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\GraphQL\Account\Basket\DataType\BasketVoucherFilterList;
 use OxidEsales\GraphQL\Account\Basket\Service\BasketVoucher as BasketVoucherService;
 use OxidEsales\GraphQL\Account\Voucher\DataType\Voucher;
@@ -37,6 +39,9 @@ final class Basket
         EshopUserBasketModel $userBasket,
         EshopUserModel $user
     ): EshopBasketModel {
+        // We fix the prefilling from previous delivery method calculations by cleaning the DeliveryList registry object
+        Registry::set(DeliveryList::class, null);
+
         //Populate basket with products
         $savedItems = $userBasket->getItems();
 
@@ -51,10 +56,13 @@ final class Basket
 
         $this->basketModel->setPayment($userBasket->getFieldData('oegql_paymentid'));
 
-        //todo: implement shipping and other discounts
+        // Need to set delivery country as a global parameter so it will be caught in delivery method calculations
+        // $myConfig->setGlobalParameter('delcountryid', ....)
 
-        $this->basketModel->onUpdate();
-        $this->basketModel->calculateBasket();
+        //todo: implement shipping and other discounts
+        $this->basketModel->setShipping($userBasket->getFieldData('OEGQL_DELIVERYMETHODID'));
+
+        $this->basketModel->calculateBasket(true);
 
         return $this->basketModel;
     }

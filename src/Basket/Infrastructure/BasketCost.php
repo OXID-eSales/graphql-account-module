@@ -12,6 +12,7 @@ namespace OxidEsales\GraphQL\Account\Basket\Infrastructure;
 use OxidEsales\Eshop\Core\Price as EshopPriceModel;
 use OxidEsales\GraphQL\Account\Basket\DataType\BasketCost as BasketCostDataType;
 use OxidEsales\GraphQL\Account\Basket\DataType\BasketProductBruttoSum;
+use OxidEsales\GraphQL\Catalogue\Shared\DataType\Price;
 
 final class BasketCost
 {
@@ -35,5 +36,16 @@ final class BasketCost
     public function getProductGross(BasketCostDataType $basketCost): BasketProductBruttoSum
     {
         return new BasketProductBruttoSum($basketCost->getEshopModel());
+    }
+
+    public function getDeliveryPrice(BasketCostDataType $basketCost): Price
+    {
+        /** @phpstan-ignore-next-line */
+        $deliveryPrice = $basketCost->getEshopModel()->getBasketDeliveryCost();
+
+        return new Price(
+            $deliveryPrice,
+            $this->getBasketCurrencyObject($basketCost)
+        );
     }
 }

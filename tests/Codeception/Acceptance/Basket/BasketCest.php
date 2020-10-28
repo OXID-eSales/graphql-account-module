@@ -205,6 +205,9 @@ final class BasketCest extends BaseCest
                         discount
                         voucher
                         total
+                        delivery{
+                            price
+                        }
                     }
                 }
             }'
@@ -298,6 +301,9 @@ final class BasketCest extends BaseCest
             'discount'     => 0,
             'voucher'      => 0,
             'total'        => 21.4,
+            'delivery'     => [
+                'price' => 3.9,
+            ],
         ];
 
         $I->assertSame($expected, $costs);

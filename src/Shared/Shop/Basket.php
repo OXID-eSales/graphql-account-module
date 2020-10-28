@@ -41,6 +41,11 @@ class Basket extends Basket_parent
         $this->_aVouchers[$voucher->getId()] = $voucher->getSimpleVoucher();
     }
 
+    public function getBasketDeliveryCost()
+    {
+        return $this->_calcDeliveryCost();
+    }
+
     /**
      * Convert user basket item to basket item.
      */

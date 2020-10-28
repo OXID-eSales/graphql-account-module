@@ -67,4 +67,12 @@ final class BasketCostRelations
     {
         return new Currency($this->basketCostInfrastructure->getBasketCurrencyObject($basketCost));
     }
+
+    /**
+     * @Field()
+     */
+    public function getDelivery(BasketCost $basketCost): Price
+    {
+        return $this->basketCostInfrastructure->getDeliveryPrice($basketCost);
+    }
 }
