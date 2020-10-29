@@ -175,9 +175,6 @@ final class BasketCest extends BaseCest
         $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
     }
 
-    /**
-     * @group testy
-     */
     public function testBasketCost(AcceptanceTester $I): void
     {
         $I->login(self::USERNAME, self::PASSWORD);

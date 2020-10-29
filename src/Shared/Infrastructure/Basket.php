@@ -49,11 +49,7 @@ final class Basket
 
         $this->setVouchers($userBasket->getId());
 
-        $paymentId = (string) $userBasket->getFieldData('oegql_paymentid');
-
-        if (!empty($paymentId)) {
-            $this->setPayment($paymentId);
-        }
+        $this->basketModel->setPayment($userBasket->getFieldData('oegql_paymentid'));
 
         //todo: implement shipping and other discounts
 
@@ -61,11 +57,6 @@ final class Basket
         $this->basketModel->calculateBasket();
 
         return $this->basketModel;
-    }
-
-    public function setPayment(string $paymentId): void
-    {
-        $this->basketModel->setPayment($paymentId);
     }
 
     private function setVouchers(string $basketId): void
