@@ -11,7 +11,6 @@ namespace OxidEsales\GraphQL\Account\Basket\Controller;
 
 use OxidEsales\GraphQL\Account\Basket\DataType\Basket as BasketDataType;
 use OxidEsales\GraphQL\Account\Basket\Service\Basket as BasketService;
-use OxidEsales\GraphQL\Account\Voucher\Service\Voucher as VoucherService;
 use TheCodingMachine\GraphQLite\Annotations\Logged;
 use TheCodingMachine\GraphQLite\Annotations\Mutation;
 use TheCodingMachine\GraphQLite\Annotations\Query;
@@ -21,15 +20,10 @@ final class Basket
     /** @var BasketService */
     private $basketService;
 
-    /** @var VoucherService */
-    private $voucherService;
-
     public function __construct(
-        BasketService $basketService,
-        VoucherService $voucherService
+        BasketService $basketService
     ) {
-        $this->basketService  = $basketService;
-        $this->voucherService = $voucherService;
+        $this->basketService = $basketService;
     }
 
     /**
@@ -114,11 +108,9 @@ final class Basket
      * @Mutation()
      * @Logged()
      */
-    public function basketAddVoucher(string $basketId, string $voucher): BasketDataType
+    public function basketAddVoucher(string $basketId, string $voucherNumber): BasketDataType
     {
-        $this->voucherService->addVoucher($voucher, $basketId);
-
-        return $this->basketService->basket($basketId);
+        return $this->basketService->addVoucher($basketId, $voucherNumber);
     }
 
     /**
@@ -127,8 +119,6 @@ final class Basket
      */
     public function basketRemoveVoucher(string $basketId, string $voucherId): BasketDataType
     {
-        $this->voucherService->removeVoucher($voucherId, $basketId);
-
-        return $this->basketService->basket($basketId);
+        return $this->basketService->removeVoucher($basketId, $voucherId);
     }
 }

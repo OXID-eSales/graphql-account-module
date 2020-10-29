@@ -9,9 +9,10 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\Shared\Infrastructure;
 
+use Exception;
 use OxidEsales\Eshop\Application\Model\Basket as EshopBasketModel;
 use OxidEsales\Eshop\Application\Model\User as EshopUserModel;
-use OxidEsales\Eshop\Application\Model\UserBasket as EshopUserBasketModel;
+use OxidEsales\GraphQL\Account\Basket\DataType\Basket as BasketDataType;
 use OxidEsales\GraphQL\Account\Basket\DataType\BasketVoucherFilterList;
 use OxidEsales\GraphQL\Account\Basket\Service\BasketVoucher as BasketVoucherService;
 use OxidEsales\GraphQL\Account\Voucher\DataType\Voucher;
@@ -34,9 +35,10 @@ final class Basket
     }
 
     public function getBasket(
-        EshopUserBasketModel $userBasket,
+        BasketDataType $basket,
         EshopUserModel $user
     ): EshopBasketModel {
+        $userBasket = $basket->getEshopModel();
         //Populate basket with products
         $savedItems = $userBasket->getItems();
 
@@ -47,7 +49,7 @@ final class Basket
         //Set user to basket otherwise delivery cost will not be calculated
         $this->basketModel->setUser($user);
 
-        $this->setVouchers($userBasket->getId());
+        $this->setVouchers();
 
         //todo: set correct payment
         $this->setPayment();
@@ -66,13 +68,14 @@ final class Basket
         $this->basketModel->setPayment('oxidinvoice');
     }
 
-    private function setVouchers(string $basketId): void
+    private function setVouchers(): void
     {
         $vouchers = $this->basketVoucherService->basketVouchers(
             new BasketVoucherFilterList(
                 new IDFilter(
                     new ID(
-                        (string) $basketId
+                        /** @phpstan-ignore-next-line */
+                        (string) $this->basketModel->getId()
                     )
                 )
             )
@@ -80,7 +83,17 @@ final class Basket
 
         /** @var Voucher $voucher */
         foreach ($vouchers as $voucher) {
-            $this->basketModel->applyVoucher($voucher->getEshopModel()->getId());
+            try {
+                $this->basketVoucherService->addVoucherToBasket(
+                    $voucher->id(),
+                    $this->basketModel
+                );
+            } catch (Exception $exception) {
+                $this->basketVoucherService->removeVoucherFromBasket(
+                    $voucher->id(),
+                    $this->basketModel
+                );
+            }
         }
     }
 }
