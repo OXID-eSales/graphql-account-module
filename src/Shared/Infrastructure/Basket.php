@@ -49,8 +49,11 @@ final class Basket
 
         $this->setVouchers($userBasket->getId());
 
-        //todo: set correct payment
-        $this->setPayment();
+        $paymentId = (string) $userBasket->getFieldData('oegql_paymentid');
+
+        if (!empty($paymentId)) {
+            $this->setPayment($paymentId);
+        }
 
         //todo: implement shipping and other discounts
 
@@ -60,10 +63,9 @@ final class Basket
         return $this->basketModel;
     }
 
-    private function setPayment(): void
+    public function setPayment(string $paymentId): void
     {
-        //todo: get payment from user basket model and set it to basket
-        $this->basketModel->setPayment('oxidinvoice');
+        $this->basketModel->setPayment($paymentId);
     }
 
     private function setVouchers(string $basketId): void

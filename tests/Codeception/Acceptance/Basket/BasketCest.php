@@ -175,6 +175,9 @@ final class BasketCest extends BaseCest
         $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
     }
 
+    /**
+     * @group testy
+     */
     public function testBasketCost(AcceptanceTester $I): void
     {
         $I->login(self::USERNAME, self::PASSWORD);
@@ -198,6 +201,9 @@ final class BasketCest extends BaseCest
                         currency {
                             name
                             rate
+                        }
+                        payment {
+                            price
                         }
                         discount
                         voucher
@@ -289,9 +295,12 @@ final class BasketCest extends BaseCest
                 'name' => 'EUR',
                 'rate' => 1,
             ],
+            'payment'      => [
+                'price' => 7.5,
+            ],
             'discount'     => 0,
             'voucher'      => 0,
-            'total'        => 13.9,
+            'total'        => 21.4,
         ];
 
         $I->assertSame($expected, $costs);
