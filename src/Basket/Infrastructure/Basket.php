@@ -9,10 +9,15 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\Basket\Infrastructure;
 
+use Exception;
+use OxidEsales\Eshop\Application\Model\BasketReservation as EshopBasketReservationModel;
 use OxidEsales\Eshop\Application\Model\UserBasket as BasketModel;
 use OxidEsales\Eshop\Application\Model\UserBasketItem as BasketItemModel;
+use OxidEsales\Eshop\Core\Registry as EshopRegistry;
+use OxidEsales\EshopCommunity\Internal\Framework\Database\TransactionService as EshopDatabaseTransactionService;
 use OxidEsales\GraphQL\Account\Basket\DataType\Basket as BasketDataType;
 use OxidEsales\GraphQL\Account\Basket\Exception\BasketItemNotFound;
+use OxidEsales\GraphQL\Account\Shared\Infrastructure\Basket as SharedBasketInfrastructure;
 use OxidEsales\GraphQL\Catalogue\Shared\Infrastructure\Repository;
 
 final class Basket
@@ -20,16 +25,42 @@ final class Basket
     /** @var Repository */
     private $repository;
 
+    /** @var EshopDatabaseTransactionService */
+    private $transactionService;
+
+    /** @var SharedBasketInfrastructure */
+    private $sharedBasketInfrastructure;
+
     public function __construct(
-        Repository $repository
+        Repository $repository,
+        EshopDatabaseTransactionService $transactionService,
+        SharedBasketInfrastructure $sharedBasketInfrastructure
     ) {
-        $this->repository = $repository;
+        $this->repository                 = $repository;
+        $this->transactionService         = $transactionService;
+        $this->sharedBasketInfrastructure = $sharedBasketInfrastructure;
     }
 
     public function addProduct(BasketDataType $basket, string $productId, float $amount): bool
     {
-        $model = $basket->getEshopModel();
-        $model->addItemToBasket($productId, $amount);
+        EshopRegistry::getSession()->setVariable('basketReservationToken', (string) $basket->getUserId()->val());
+
+        $this->transactionService->begin();
+        try {
+            $model = $basket->getEshopModel();
+            $model->addItemToBasket($productId, $amount);
+
+            //reserve active basket
+            $shopBasket = $this->sharedBasketInfrastructure->getBasket($model, $model->getUser());
+            if (EshopRegistry::getConfig()->getConfigParam('blPsBasketReservationEnabled')) {
+                $reservations = oxNew(EshopBasketReservationModel::class);
+                $reservations->reserveBasket($shopBasket);
+            }
+        } catch (Exception $exception) {
+            $this->transactionService->rollback();
+            throw $exception;
+        }
+        $this->transactionService->commit();
 
         return true;
     }
