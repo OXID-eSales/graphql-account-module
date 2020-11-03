@@ -253,10 +253,9 @@ final class Basket
             throw BasketAccessForbidden::byAuthenticatedUser();
         }
 
-        $customer    = $this->customerService->customer($this->authenticationService->getUserId());
-        $basketModel = $this->sharedInfrastructure->getBasket($basket, $customer->getEshopModel());
+        $customer = $this->customerService->customer($this->authenticationService->getUserId());
 
-        $this->basketVoucherService->addVoucherToBasket($voucherNumber, $basketModel);
+        $this->basketVoucherService->addVoucherToBasket($voucherNumber, $basket, $customer);
 
         return $basket;
     }
@@ -269,10 +268,9 @@ final class Basket
             throw BasketAccessForbidden::byAuthenticatedUser();
         }
 
-        $customer    = $this->customerService->customer($this->authenticationService->getUserId());
-        $basketModel = $this->sharedInfrastructure->getBasket($basket, $customer->getEshopModel());
+        $customer = $this->customerService->customer($this->authenticationService->getUserId());
 
-        $this->basketVoucherService->removeVoucherFromBasket($voucherId, $basketModel);
+        $this->basketVoucherService->removeVoucherFromBasket($voucherId, $basket, $customer);
 
         return $basket;
     }

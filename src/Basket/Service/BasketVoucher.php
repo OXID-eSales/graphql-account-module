@@ -9,9 +9,11 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\Basket\Service;
 
-use OxidEsales\Eshop\Application\Model\Basket as EshopBasketModel;
+use OxidEsales\GraphQL\Account\Basket\DataType\Basket as UserBasketDataType;
 use OxidEsales\GraphQL\Account\Basket\DataType\BasketVoucherFilterList;
+use OxidEsales\GraphQL\Account\Customer\DataType\Customer as CustomerDataType;
 use OxidEsales\GraphQL\Account\Customer\Service\Customer as CustomerService;
+use OxidEsales\GraphQL\Account\Shared\Infrastructure\Basket as SharedInfrastructure;
 use OxidEsales\GraphQL\Account\Voucher\DataType\Sorting;
 use OxidEsales\GraphQL\Account\Voucher\DataType\Voucher as VoucherDataType;
 use OxidEsales\GraphQL\Account\Voucher\Infrastructure\Repository as VoucherRepository;
@@ -39,18 +41,23 @@ final class BasketVoucher
     /** @var Authentication */
     private $authentication;
 
+    /** @var SharedInfrastructure */
+    private $sharedInfrastructure;
+
     public function __construct(
         Repository $repository,
         VoucherRepository $voucherRepository,
         VoucherInfrastructure $voucherInfrastructure,
         CustomerService $customerService,
-        Authentication $authentication
+        Authentication $authentication,
+        SharedInfrastructure $sharedInfrastructure
     ) {
         $this->repository            = $repository;
         $this->voucherRepository     = $voucherRepository;
         $this->voucherInfrastructure = $voucherInfrastructure;
         $this->customerService       = $customerService;
         $this->authentication        = $authentication;
+        $this->sharedInfrastructure  = $sharedInfrastructure;
     }
 
     /**
@@ -66,46 +73,52 @@ final class BasketVoucher
         );
     }
 
-    public function addVoucherToBasket(string $voucherNumber, EshopBasketModel $basketModel): void
-    {
+    public function addVoucherToBasket(
+        string $voucherNumber,
+        UserBasketDataType $basket,
+        CustomerDataType $customer
+    ): void {
         /** @var VoucherDataType $voucher */
         $voucher = $this->voucherRepository->getVoucherByNumber($voucherNumber);
 
-        $customer = $this->customerService->customer($this->authentication->getUserId());
+        /** @var VoucherDataType[] $vouchers */
+        $vouchers = $this->getVouchers($basket->id());
 
         $this->voucherInfrastructure->addVoucher(
             $voucher,
-            $basketModel,
+            $this->sharedInfrastructure->getBasket($basket, $customer->getEshopModel(), $vouchers),
             $customer,
-            $this->basketVouchers(
-                new BasketVoucherFilterList(
-                    new IDFilter(
-                        new ID(
-                            /** @phpstan-ignore-next-line */
-                            (string) $basketModel->getId()
-                        )
-                    )
-                )
-            )
+            $vouchers
         );
     }
 
-    public function removeVoucherFromBasket(string $voucherId, EshopBasketModel $basketModel): void
-    {
+    public function removeVoucherFromBasket(
+        string $voucherId,
+        UserBasketDataType $basket,
+        CustomerDataType $customer
+    ): void {
         /** @var VoucherDataType $voucher */
         $voucher = $this->voucherRepository->getVoucherById($voucherId);
 
+        /** @var VoucherDataType[] $vouchers */
+        $vouchers = $this->getVouchers($basket->id());
+
         $this->voucherInfrastructure->removeVoucher(
             $voucher,
-            $basketModel,
-            $this->basketVouchers(
-                new BasketVoucherFilterList(
-                    new IDFilter(
-                        new ID(
-                            /** @phpstan-ignore-next-line */
-                            (string) $basketModel->getId()
-                        )
-                    )
+            $this->sharedInfrastructure->getBasket($basket, $customer->getEshopModel(), $vouchers),
+            $vouchers
+        );
+    }
+
+    /**
+     * @return VoucherDataType[]
+     */
+    private function getVouchers(ID $userBasketId): array
+    {
+        return $this->basketVouchers(
+            new BasketVoucherFilterList(
+                new IDFilter(
+                    $userBasketId
                 )
             )
         );
