@@ -64,7 +64,7 @@ REPLACE INTO `oxuserbaskets` (`OXID`, `OXUSERID`, `OXTITLE`, `OXPUBLIC`) VALUES
 ('_test_basket_private_ex', '309db395b6c85c3881fcb9b437a73dd6', 'buy_these_later', false),
 ('_test_noticelist_public', '_678d3b5380202966df6ff128e9eecaq', 'noticelist', true),
 ('_test_savedbasket_public', 'e7af1c3b786fd02906ccd75698f4e6b9', 'savedbasket', true),
-('_test_savedbasket_private', 'e7af1c3b786fd02906ccd75698f4e6b9', 'savedbasket', false);
+('_test_savedbasket_private', 'e7af1c3b786fd02906ccd75698f4e6b9', 'savedbasket_private', false);
 
 REPLACE INTO `oxuserbasketitems` (`OXID`, `OXBASKETID`, `OXARTID`, `OXAMOUNT`, `OXSELLIST`, `OXPERSPARAM`) VALUES
 ('_test_wish_list_item_1', '_test_wish_list_public', '_test_product_for_wish_list', 1, 'N;', ''),
@@ -138,3 +138,5 @@ REPLACE INTO `oxuserpayments` (`OXID`, `OXUSERID`, `OXPAYMENTSID`, `OXVALUE`, `O
 REPLACE INTO `oxorderfiles` (`OXID`, `OXORDERID`, `OXFILENAME`, `OXFILEID`, `OXSHOPID`, `OXORDERARTICLEID`, `OXFIRSTDOWNLOAD`, `OXLASTDOWNLOAD`, `OXDOWNLOADCOUNT`, `OXMAXDOWNLOADCOUNT`, `OXDOWNLOADEXPIRATIONTIME`, `OXLINKEXPIRATIONTIME`, `OXRESETCOUNT`, `OXVALIDUNTIL`, `OXTIMESTAMP`) VALUES
 ('729aafa296783575ddfd8e9527355b3b',	'8c726d3f42ff1a6ea2828d5f309de881',	'ch03.pdf',	'oiaad7812ae7127283b8fd6d309ea5d5',	1,	'c5b7fd8dff99f066c168cd720212075a',	'2020-09-10 09:14:15',	'2020-09-10 09:14:15',	1,	0,	24,	168,	0,	'2020-09-11 09:14:15',	'2020-09-10 09:14:15'),
 ('886deb7e49bb2e51b4fb939f6ed7655c',	'7f0b6ef39c4e76c04a0f75232489bb65',	'ch03.pdf',	'non_existing_file',	1,	'c5b7fd8dff99f066c168cd720212075a',	'2020-09-10 09:14:15',	'2020-09-10 09:14:15',	1,	0,	24,	168,	0,	'2020-09-11 09:14:15',	'2020-09-10 09:14:15');
+
+UPDATE `oxuserbaskets` SET `OEGQL_PAYMENTID` = 'oxidcashondel' WHERE `OXID` = '_test_basket_public';

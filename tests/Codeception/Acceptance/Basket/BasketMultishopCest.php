@@ -132,6 +132,10 @@ final class BasketMultishopCest extends MultishopBaseCest
                             }
                             sum
                         }
+                        payment {
+                            price
+                            vat
+                        }
                         currency {
                             name
                             rate
@@ -165,13 +169,17 @@ final class BasketMultishopCest extends MultishopBaseCest
                     ],
                     'sum'  => 10,
                 ],
+                'payment' => [
+                    'price' => 7.5,
+                    'vat'   => 19,
+                ],
                 'currency'     => [
                     'name' => 'EUR',
                     'rate' => 1,
                 ],
                 'discount'     => 0,
                 'voucher'      => 0,
-                'total'        => 10,
+                'total'        => 17.5,
             ],
             $result['data']['basket']['cost']
         );

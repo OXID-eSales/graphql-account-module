@@ -90,6 +90,73 @@ final class BasketsCest extends BaseCest
         $I->assertSame(5, count($baskets));
     }
 
+    public function testBasketsCosts(AcceptanceTester $I): void
+    {
+        $I->login(self::USERNAME, self::PASSWORD);
+
+        $I->sendGQLQuery(
+            'query {
+                baskets(owner: "' . self::USERNAME . '") {
+                    id
+                    cost {
+                        productNet {
+                            price
+                        }
+                        payment {
+                            price
+                        }
+                        discount
+                        total
+                    }
+                }
+            }'
+        );
+
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+        $result = $I->grabJsonResponseAsArray();
+
+        $I->assertSame([
+            [
+                'id'   => self::BASKET_ID,
+                'cost' => [
+                    'productNet' => [
+                        'price' => 0,
+                    ],
+                    'payment'    => [
+                        'price' => 0,
+                    ],
+                    'discount'   => 0,
+                    'total'      => 0,
+                ],
+            ], [
+                'id'   => '_test_basket_public',
+                'cost' => [
+                    'productNet' => [
+                        'price' => 8.4,
+                    ],
+                    'payment'    => [
+                        'price' => 7.5,
+                    ],
+                    'discount'   => 0,
+                    'total'      => 21.4,
+                ],
+            ], [
+                'id'   => '_test_wish_list_public',
+                'cost' => [
+                    'productNet' => [
+                        'price' => 16.81,
+                    ],
+                    'payment'    => [
+                        'price' => 0,
+                    ],
+                    'discount'   => 0,
+                    'total'      => 23.9,
+                ],
+            ],
+        ], $result['data']['baskets']);
+    }
+
     private function basketsQuery(AcceptanceTester $I, string $owner): array
     {
         $I->sendGQLQuery('query {
