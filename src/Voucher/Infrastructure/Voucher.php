@@ -11,31 +11,42 @@ namespace OxidEsales\GraphQL\Account\Voucher\Infrastructure;
 
 use Exception;
 use OxidEsales\Eshop\Application\Model\Basket as EshopBasketModel;
+use OxidEsales\EshopCommunity\Internal\Framework\Database\TransactionService as EshopDatabaseTransactionService;
+use OxidEsales\GraphQL\Account\Basket\DataType\Basket as UserBasketDataType;
 use OxidEsales\GraphQL\Account\Customer\DataType\Customer as CustomerDataType;
+use OxidEsales\GraphQL\Account\Shared\Infrastructure\Basket as SharedBasketInfrastructure;
 use OxidEsales\GraphQL\Account\Voucher\DataType\Voucher as VoucherDataType;
 use OxidEsales\GraphQL\Account\Voucher\Exception\VoucherNotApplied;
 use OxidEsales\GraphQL\Account\Voucher\Exception\VoucherNotFound;
-use TheCodingMachine\GraphQLite\Types\ID;
 
 final class Voucher
 {
     /** @var Repository */
     private $repository;
 
+    /** @var SharedBasketInfrastructure */
+    private $sharedBasketInfrastructure;
+
+    /** @var EshopDatabaseTransactionService */
+    private $transactionService;
+
     public function __construct(
-        Repository $repository
+        Repository $repository,
+        SharedBasketInfrastructure $sharedBasketInfrastructure,
+        EshopDatabaseTransactionService $transactionService
     ) {
-        $this->repository = $repository;
+        $this->repository                 = $repository;
+        $this->sharedBasketInfrastructure = $sharedBasketInfrastructure;
+        $this->transactionService         = $transactionService;
     }
 
     public function addVoucher(
         VoucherDataType $voucherDataType,
-        EshopBasketModel $basketModel,
+        UserBasketDataType $userBasket,
         CustomerDataType $customer,
         array $activeVouchers
     ): void {
-        $databseProvider = \OxidEsales\Eshop\Core\DatabaseProvider::getMaster();
-        $databseProvider->startTransaction();
+        $this->transactionService->begin();
 
         try {
             $voucherModel  = $voucherDataType->getEshopModel();
@@ -45,6 +56,8 @@ final class Voucher
                 true
             );
 
+            $basketModel = $this->sharedBasketInfrastructure->getBasket($userBasket, $customer->getEshopModel(), $activeVouchers);
+
             $voucherModel->checkVoucherAvailability(
                 $this->getActiveVouchersNumbers($activeVouchers),
                 $this->getProductsPrice($basketModel)
@@ -52,18 +65,18 @@ final class Voucher
             $voucherModel->checkUserAvailability($customer->getEshopModel());
             $voucherModel->markAsReserved();
             /** @phpstan-ignore-next-line */
-            $this->repository->addBasketIdToVoucher(new ID((string) $basketModel->getId()), $voucherModel->getId());
+            $this->repository->addBasketIdToVoucher($userBasket->id(), $voucherModel->getId());
         } catch (Exception $exception) {
-            $databseProvider->rollbackTransaction();
+            $this->transactionService->rollback();
 
             throw VoucherNotFound::byVoucher($voucherDataType->voucher());
         }
-        $databseProvider->commitTransaction();
+        $this->transactionService->commit();
     }
 
     public function removeVoucher(
         VoucherDataType $voucherDataType,
-        EshopBasketModel $basketModel,
+        UserBasketDataType $userBasket,
         array $activeVouchers
     ): void {
         $voucherId     = (string) $voucherDataType->id();
@@ -75,7 +88,7 @@ final class Voucher
             $this->repository->removeBasketIdFromVoucher($voucherId);
         } else {
             /** @phpstan-ignore-next-line */
-            throw VoucherNotApplied::byId($voucherId, (string) $basketModel->getId());
+            throw VoucherNotApplied::byId($voucherId, (string) $userBasket->id()->val());
         }
     }
 

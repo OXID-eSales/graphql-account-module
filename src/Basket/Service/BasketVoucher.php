@@ -86,7 +86,7 @@ final class BasketVoucher
 
         $this->voucherInfrastructure->addVoucher(
             $voucher,
-            $this->sharedInfrastructure->getBasket($basket, $customer->getEshopModel(), $vouchers),
+            $basket,
             $customer,
             $vouchers
         );
@@ -105,7 +105,7 @@ final class BasketVoucher
 
         $this->voucherInfrastructure->removeVoucher(
             $voucher,
-            $this->sharedInfrastructure->getBasket($basket, $customer->getEshopModel(), $vouchers),
+            $basket,
             $vouchers
         );
     }
