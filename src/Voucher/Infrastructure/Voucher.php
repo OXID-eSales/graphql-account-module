@@ -88,7 +88,7 @@ final class Voucher
             $this->repository->removeBasketIdFromVoucher($voucherId);
         } else {
             /** @phpstan-ignore-next-line */
-            throw VoucherNotApplied::byId($voucherId, (string) $userBasket->id()->val());
+            throw VoucherNotApplied::byId($voucherId, (string) $userBasket->id());
         }
     }
 

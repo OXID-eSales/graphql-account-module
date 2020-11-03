@@ -27,9 +27,9 @@ final class Basket
         array $vouchers = []
     ): EshopBasketModel {
         /** @var EshopUserBasketModel $userBasketModel */
-        $userBasket = $basket->getEshopModel();
+        $userBasketModel = $basket->getEshopModel();
         //Populate basket with products
-        $savedItems = $userBasket->getItems();
+        $savedItems = $userBasketModel->getItems();
 
         /** @var EshopBasketModel $basketModel */
         $basketModel = oxNew(EshopBasketModel::class);
@@ -59,7 +59,7 @@ final class Basket
     {
         /** @var Voucher $voucher */
         foreach ($vouchers as $voucher) {
-            $basketModel->addVoucher((string) $voucher->id()->val());
+            $basketModel->addVoucher((string) $voucher->id());
         }
     }
 }
