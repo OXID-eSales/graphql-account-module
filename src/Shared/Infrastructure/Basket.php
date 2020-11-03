@@ -49,7 +49,7 @@ final class Basket
         //Set user to basket otherwise delivery cost will not be calculated
         $this->basketModel->setUser($user);
 
-        $this->setVouchers();
+        $this->setVouchers($basket->id());
 
         //todo: set correct payment
         $this->setPayment();
@@ -68,15 +68,12 @@ final class Basket
         $this->basketModel->setPayment('oxidinvoice');
     }
 
-    private function setVouchers(): void
+    private function setVouchers(ID $basketId): void
     {
         $vouchers = $this->basketVoucherService->basketVouchers(
             new BasketVoucherFilterList(
                 new IDFilter(
-                    new ID(
-                        /** @phpstan-ignore-next-line */
-                        (string) $this->basketModel->getId()
-                    )
+                    $basketId
                 )
             )
         );
