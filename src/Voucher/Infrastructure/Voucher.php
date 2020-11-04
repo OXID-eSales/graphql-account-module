@@ -11,6 +11,7 @@ namespace OxidEsales\GraphQL\Account\Voucher\Infrastructure;
 
 use Exception;
 use OxidEsales\Eshop\Application\Model\Basket as EshopBasketModel;
+use OxidEsales\Eshop\Core\Exception\ObjectException as EshopObjectException;
 use OxidEsales\GraphQL\Account\Basket\DataType\Basket as BasketDataType;
 use OxidEsales\GraphQL\Account\Customer\DataType\Customer as CustomerDataType;
 use OxidEsales\GraphQL\Account\Shared\Infrastructure\Basket as BasketModel;
@@ -87,6 +88,19 @@ final class Voucher
         } else {
             throw VoucherNotApplied::byId($voucherId, (string) $basketDataType->id());
         }
+    }
+
+    public function isVoucherSerieUsableInCurrentShop(VoucherDataType $voucherDataType): bool
+    {
+        $result = true;
+
+        try {
+            $voucherDataType->getEshopModel()->getSerie();
+        } catch (EshopObjectException $exception) {
+            $result = false;
+        }
+
+        return $result;
     }
 
     private function getActiveVouchersIds(array $activeVouchers): array

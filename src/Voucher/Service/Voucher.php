@@ -15,6 +15,7 @@ use OxidEsales\GraphQL\Account\Basket\Service\Basket as BasketService;
 use OxidEsales\GraphQL\Account\Basket\Service\BasketVoucher;
 use OxidEsales\GraphQL\Account\Customer\Service\Customer as CustomerService;
 use OxidEsales\GraphQL\Account\Voucher\DataType\Voucher as VoucherDataType;
+use OxidEsales\GraphQL\Account\Voucher\Exception\VoucherNotFound;
 use OxidEsales\GraphQL\Account\Voucher\Infrastructure\Repository;
 use OxidEsales\GraphQL\Account\Voucher\Infrastructure\Voucher as VoucherInfrastructure;
 use OxidEsales\GraphQL\Base\DataType\IDFilter;
@@ -96,6 +97,10 @@ final class Voucher
             throw new InvalidLogin('Unauthorized');
         }
 
+        if (!$this->voucherInfrastructure->isVoucherSerieUsableInCurrentShop($voucher)) {
+            throw VoucherNotFound::byVoucher($voucherNr);
+        }
+
         $customer = $this->customerService->customer($this->authentication->getUserId());
         $this->voucherInfrastructure->addVoucher(
             $voucher,
@@ -115,6 +120,10 @@ final class Voucher
 
         if (!$basket->belongsToUser($this->authentication->getUserId())) {
             throw new InvalidLogin('Unauthorized');
+        }
+
+        if (!$this->voucherInfrastructure->isVoucherSerieUsableInCurrentShop($voucher)) {
+            throw VoucherNotFound::byId((string) $voucher->id());
         }
 
         $this->voucherInfrastructure->removeVoucher(
