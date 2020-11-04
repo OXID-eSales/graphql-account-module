@@ -24,7 +24,7 @@ final class VoucherCest extends BaseCest
 
     private const PASSWORD = 'useruser';
 
-    private const BASKET = '_test_savedbasket_public';
+    private const BASKET = '_test_voucher_public';
 
     private const BASKET_PUBLIC = '_test_basket_public';
 
@@ -101,7 +101,7 @@ final class VoucherCest extends BaseCest
         $result = $I->grabJsonResponseAsArray();
 
         $I->assertEquals(
-            sprintf('Voucher by number: %s was not found or was not aplliable', self::WRONG_VOUCHER),
+            sprintf('Voucher by number: %s was not found or was not applicable', self::WRONG_VOUCHER),
             $result['errors'][0]['message']
         );
     }
@@ -118,7 +118,7 @@ final class VoucherCest extends BaseCest
         $result = $I->grabJsonResponseAsArray();
 
         $I->assertEquals(
-            sprintf('Voucher by number: %s was not found or was not aplliable', self::USED_VOUCHER),
+            sprintf('Voucher by number: %s was not found or was not applicable', self::USED_VOUCHER),
             $result['errors'][0]['message']
         );
     }
@@ -143,7 +143,7 @@ final class VoucherCest extends BaseCest
         $result = $I->grabJsonResponseAsArray();
 
         $I->assertEquals(
-            sprintf('Voucher by number: %s was not found or was not aplliable', self::SERIES_VOUCHER),
+            sprintf('Voucher by number: %s was not found or was not applicable', self::SERIES_VOUCHER),
             $result['errors'][0]['message']
         );
     }

@@ -23,7 +23,7 @@ final class VoucherMultiShopCest extends MultishopBaseCest
 
     private const PASSWORD = 'useruser';
 
-    private const SHOP1_BASKET = '_test_savedbasket_public';
+    private const SHOP1_BASKET = '_test_voucher_public';
 
     private const SHOP2_BASKET = '_test_shop2_basket_public';
 
@@ -78,7 +78,7 @@ final class VoucherMultiShopCest extends MultishopBaseCest
         $result = $I->grabJsonResponseAsArray();
 
         $I->assertEquals(
-            sprintf('Voucher by number: %s was not found or was not aplliable', self::SHOP1_VOUCHER_NR),
+            sprintf('Voucher by number: %s was not found or was not applicable', self::SHOP1_VOUCHER_NR),
             $result['errors'][0]['message']
         );
     }
@@ -94,7 +94,7 @@ final class VoucherMultiShopCest extends MultishopBaseCest
         $result = $I->grabJsonResponseAsArray();
 
         $I->assertEquals(
-            sprintf('Voucher by number: %s was not found or was not aplliable', self::SHOP2_VOUCHER_NR),
+            sprintf('Voucher by number: %s was not found or was not applicable', self::SHOP2_VOUCHER_NR),
             $result['errors'][0]['message']
         );
     }

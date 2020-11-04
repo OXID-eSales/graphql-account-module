@@ -22,6 +22,6 @@ final class VoucherNotFound extends NotFound
 
     public static function byVoucher(string $id): self
     {
-        return new self(sprintf('Voucher by number: %s was not found or was not aplliable', $id));
+        return new self(sprintf('Voucher by number: %s was not found or was not applicable', $id));
     }
 }
