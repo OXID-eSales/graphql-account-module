@@ -14,23 +14,25 @@ use OxidEsales\Eshop\Application\Model\DeliveryList as EshopDeliveryListModel;
 use OxidEsales\Eshop\Application\Model\DeliverySetList as EshopDeliverySetListModel;
 use OxidEsales\Eshop\Application\Model\User as EshopUserModel;
 use OxidEsales\Eshop\Application\Model\UserBasket as EshopUserBasketModel;
-use OxidEsales\GraphQL\Account\Basket\DataType\Basket as BasketDataType;
 use OxidEsales\Eshop\Core\Registry as EshopRegistry;
+use OxidEsales\GraphQL\Account\Basket\DataType\Basket as BasketDataType;
 use OxidEsales\GraphQL\Account\Basket\DataType\BasketVoucherFilterList;
-use OxidEsales\GraphQL\Account\Basket\Service\BasketVoucher as BasketVoucherService;
+use OxidEsales\GraphQL\Account\Voucher\DataType\Sorting;
 use OxidEsales\GraphQL\Account\Voucher\DataType\Voucher as VoucherDataType;
 use OxidEsales\GraphQL\Base\DataType\IDFilter;
+use OxidEsales\GraphQL\Base\DataType\PaginationFilter;
+use OxidEsales\GraphQL\Catalogue\Shared\Infrastructure\Repository;
 use TheCodingMachine\GraphQLite\Types\ID;
 
 final class Basket
 {
-    /** @var BasketVoucherService */
-    private $basketVoucherService;
+    /** @var Repository */
+    private $repository;
 
     public function __construct(
-        BasketVoucherService $basketVoucherService
+        Repository $repository
     ) {
-        $this->basketVoucherService = $basketVoucherService;
+        $this->repository = $repository;
     }
 
     public function getBasket(
@@ -52,7 +54,9 @@ final class Basket
         //Set user to basket otherwise delivery cost will not be calculated
         $basketModel->setUser($user);
 
-        /** @var Voucher $voucher */
+        /** @var VoucherDataType[] $vouchers */
+        $vouchers = $this->getVouchers($basket->id());
+
         foreach ($vouchers as $voucher) {
             $basketModel->applyVoucher($voucher->getEshopModel()->getId());
         }
@@ -73,16 +77,17 @@ final class Basket
     /**
      * @return VoucherDataType[]
      */
-    private function getVouchers(string $basketId): array
+    private function getVouchers(ID $basketId): array
     {
-         return $this->basketVoucherService->basketVouchers(
+        return $this->repository->getList(
+            VoucherDataType::class,
             new BasketVoucherFilterList(
                 new IDFilter(
-                    new ID(
-                        (string) $basketId
-                    )
+                    $basketId
                 )
-            )
+            ),
+            new PaginationFilter(),
+            new Sorting()
         );
     }
 }

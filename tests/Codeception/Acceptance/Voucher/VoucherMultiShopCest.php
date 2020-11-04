@@ -192,7 +192,7 @@ final class VoucherMultiShopCest extends MultishopBaseCest
         return 'mutation {
                   basketAddVoucher(
                     basketId: "' . $basketId . '",
-                    voucher: "' . $voucher . '"
+                    voucherNumber: "' . $voucher . '"
                   ) {
                     id
                     vouchers {

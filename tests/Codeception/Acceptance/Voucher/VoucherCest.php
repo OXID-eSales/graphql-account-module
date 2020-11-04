@@ -322,7 +322,7 @@ final class VoucherCest extends BaseCest
         return 'mutation {
                   basketAddVoucher(
                     basketId: "' . $basketId . '",
-                    voucher: "' . $voucher . '"
+                    voucherNumber: "' . $voucher . '"
                   ) {
                     id
                   }

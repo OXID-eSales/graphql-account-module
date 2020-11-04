@@ -57,7 +57,7 @@ final class Voucher
                 true
             );
 
-            $basketModel = $this->sharedBasketInfrastructure->getBasket($userBasket, $customer->getEshopModel(), $activeVouchers);
+            $basketModel = $this->sharedBasketInfrastructure->getBasket($userBasket, $customer->getEshopModel());
 
             $voucherModel->checkVoucherAvailability(
                 $this->getActiveVouchersNumbers($activeVouchers),
