@@ -17,6 +17,6 @@ final class VoucherNotApplied extends NotFound
 {
     public static function byId(string $voucherId, string $basketId): self
     {
-        return new self(sprintf('Voucher with id: %s was not apllied to basket with id: %s', $voucherId, $basketId));
+        return new self(sprintf('Voucher with id: %s was not applied to basket with id: %s', $voucherId, $basketId));
     }
 }
