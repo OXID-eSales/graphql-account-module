@@ -58,6 +58,9 @@ final class Basket
     /** @var CustomerService */
     private $customerService;
 
+    /** @var BasketVoucher */
+    private $basketVoucherService;
+
     public function __construct(
         Repository $repository,
         BasketRepository $basketRepository,
@@ -67,7 +70,8 @@ final class Basket
         BasketInfraService $basketInfraService,
         ProductService $productService,
         SharedInfrastructure $sharedInfrastructure,
-        CustomerService $customerService
+        CustomerService $customerService,
+        BasketVoucher $basketVoucherService
     ) {
         $this->repository            = $repository;
         $this->basketRepository      = $basketRepository;
@@ -78,6 +82,7 @@ final class Basket
         $this->productService        = $productService;
         $this->sharedInfrastructure  = $sharedInfrastructure;
         $this->customerService       = $customerService;
+        $this->basketVoucherService  = $basketVoucherService;
     }
 
     /**
@@ -235,8 +240,38 @@ final class Basket
 
         /** @var CustomerDataType $customer */
         $customer    = $this->customerService->customer($userId);
-        $basketModel = $this->sharedInfrastructure->getBasket($basket->getEshopModel(), $customer->getEshopModel());
+        $basketModel = $this->sharedInfrastructure->getBasket($basket, $customer->getEshopModel());
 
         return new BasketCost($basketModel);
+    }
+
+    public function addVoucher(string $basketId, string $voucherNumber): BasketDataType
+    {
+        $basket = $this->basketRepository->getBasketById($basketId);
+
+        if (!$basket->belongsToUser($this->authenticationService->getUserId())) {
+            throw BasketAccessForbidden::byAuthenticatedUser();
+        }
+
+        $customer = $this->customerService->customer($this->authenticationService->getUserId());
+
+        $this->basketVoucherService->addVoucherToBasket($voucherNumber, $basket, $customer);
+
+        return $basket;
+    }
+
+    public function removeVoucher(string $basketId, string $voucherId): BasketDataType
+    {
+        $basket = $this->basketRepository->getBasketById($basketId);
+
+        if (!$basket->belongsToUser($this->authenticationService->getUserId())) {
+            throw BasketAccessForbidden::byAuthenticatedUser();
+        }
+
+        $customer = $this->customerService->customer($this->authenticationService->getUserId());
+
+        $this->basketVoucherService->removeVoucherFromBasket($voucherId, $basket, $customer);
+
+        return $basket;
     }
 }
