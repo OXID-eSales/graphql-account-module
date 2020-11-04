@@ -10,8 +10,11 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Shared\Infrastructure;
 
 use OxidEsales\Eshop\Application\Model\Basket as EshopBasketModel;
+use OxidEsales\Eshop\Application\Model\DeliveryList as EshopDeliveryListModel;
+use OxidEsales\Eshop\Application\Model\DeliverySetList as EshopDeliverySetListModel;
 use OxidEsales\Eshop\Application\Model\User as EshopUserModel;
 use OxidEsales\Eshop\Application\Model\UserBasket as EshopUserBasketModel;
+use OxidEsales\Eshop\Core\Registry as EshopRegistry;
 use OxidEsales\GraphQL\Account\Basket\DataType\BasketVoucherFilterList;
 use OxidEsales\GraphQL\Account\Basket\Service\BasketVoucher as BasketVoucherService;
 use OxidEsales\GraphQL\Account\Voucher\DataType\Voucher;
@@ -52,6 +55,10 @@ final class Basket
         $this->basketModel->setPayment($userBasket->getFieldData('oegql_paymentid'));
 
         //todo: implement shipping and other discounts
+
+        //reset in case we hit Basket::calculateBasket() more than once
+        EshopRegistry::set(EshopDeliverySetListModel::class, null);
+        EshopRegistry::set(EshopDeliveryListModel::class, null);
 
         $this->basketModel->onUpdate();
         $this->basketModel->calculateBasket();

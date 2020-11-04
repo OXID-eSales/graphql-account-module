@@ -30,6 +30,7 @@ $aModule = [
     'email'       => 'info@oxid-esales.com',
     'extend'      => [
         \OxidEsales\Eshop\Application\Model\Basket::class => \OxidEsales\GraphQL\Account\Shared\Shop\Basket::class,
+        \OxidEsales\Eshop\Application\Model\Voucher::class => \OxidEsales\GraphQL\Account\Shared\Shop\Voucher::class,
     ],
     'controllers' => [
     ],
