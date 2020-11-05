@@ -28,7 +28,7 @@
         "phpstan/phpstan": "^0.12.26",
         "oxid-esales/oxideshop-ce": "6.5",
         "oxid-esales/oxideshop-unified-namespace-generator": "^2.0",
-        "sensiolabs-de/deptrac-shim": "^0.6.0|^0.8.2",
+        "sensiolabs-de/deptrac-shim": "^0.6.0|^0.9.0",
         "codeception/module-asserts": "*"
     },
     "prefer-stable": false,
@@ -48,7 +48,7 @@
         "test:syntax": "parallel-lint src/ tests/ metadata.php",
         "test:static": "phpstan --memory-limit=-1 analyse src/",
         "test:unit": "phpunit -c tests/phpunit.xml tests/Unit/",
-        "test:deptrac": "vendor/bin/deptrac",
+        "test:deptrac": "vendor/bin/deptrac analyze depfile.yml",
         "test": [
             "@test:syntax",
             "@test:lint",
