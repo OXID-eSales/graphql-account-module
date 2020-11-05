@@ -16,6 +16,7 @@ use OxidEsales\GraphQL\Account\Customer\Service\Customer as CustomerService;
 use OxidEsales\GraphQL\Account\Shared\Infrastructure\Basket as SharedInfrastructure;
 use OxidEsales\GraphQL\Account\Voucher\DataType\Sorting;
 use OxidEsales\GraphQL\Account\Voucher\DataType\Voucher as VoucherDataType;
+use OxidEsales\GraphQL\Account\Voucher\Exception\VoucherNotFound;
 use OxidEsales\GraphQL\Account\Voucher\Infrastructure\Repository as VoucherRepository;
 use OxidEsales\GraphQL\Account\Voucher\Infrastructure\Voucher as VoucherInfrastructure;
 use OxidEsales\GraphQL\Base\DataType\IDFilter;
@@ -81,6 +82,10 @@ final class BasketVoucher
         /** @var VoucherDataType $voucher */
         $voucher = $this->voucherRepository->getVoucherByNumber($voucherNumber);
 
+        if (!$this->voucherInfrastructure->isVoucherSerieUsableInCurrentShop($voucher)) {
+            throw VoucherNotFound::byVoucher($voucherNumber);
+        }
+
         /** @var VoucherDataType[] $vouchers */
         $vouchers = $this->getVouchers($basket->id());
 
@@ -99,6 +104,10 @@ final class BasketVoucher
     ): void {
         /** @var VoucherDataType $voucher */
         $voucher = $this->voucherRepository->getVoucherById($voucherId);
+
+        if (!$this->voucherInfrastructure->isVoucherSerieUsableInCurrentShop($voucher)) {
+            throw VoucherNotFound::byId($voucherId);
+        }
 
         /** @var VoucherDataType[] $vouchers */
         $vouchers = $this->getVouchers($basket->id());
