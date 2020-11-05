@@ -68,7 +68,6 @@ final class VoucherMultiShopCest extends MultishopBaseCest
     public function testAddVoucherFromShop1ToBasketFromShop2(AcceptanceTester $I): void
     {
         $this->prepareVoucherInBasket($I, '', 'personal_voucher_1');
-        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
         $I->login(self::USERNAME, self::PASSWORD, 2);
 
         $I->sendGQLQuery($this->addVoucherMutation(self::SHOP2_BASKET, self::SHOP1_VOUCHER_NR), null, 0, 2);

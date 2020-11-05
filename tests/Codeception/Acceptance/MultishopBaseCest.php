@@ -33,6 +33,8 @@ abstract class MultishopBaseCest extends BaseCest
             return;
         }
 
+        parent::_before($I, $scenario);
+
         $this->ensureSubshop();
     }
 

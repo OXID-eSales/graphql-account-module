@@ -65,7 +65,7 @@ final class Voucher
             );
             $voucherModel->checkUserAvailability($customer->getEshopModel());
             $voucherModel->markAsReserved();
-            /** @phpstan-ignore-next-line */
+
             $this->repository->addBasketIdToVoucher($userBasket->id(), $voucherModel->getId());
         } catch (Exception $exception) {
             $this->transactionService->rollback();
@@ -88,7 +88,6 @@ final class Voucher
             $voucherModel->unMarkAsReserved();
             $this->repository->removeBasketIdFromVoucher($voucherId);
         } else {
-            /** @phpstan-ignore-next-line */
             throw VoucherNotApplied::byId($voucherId, (string) $userBasket->id());
         }
     }
