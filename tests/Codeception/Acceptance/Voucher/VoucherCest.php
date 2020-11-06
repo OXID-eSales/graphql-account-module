@@ -317,43 +317,94 @@ final class VoucherCest extends BaseCest
         );
     }
 
-    private function addVoucherMutation(string $basketId, string $voucher)
+    public function testVoucherVisibilityWithSavedBasketAndGraphqlBasket(AcceptanceTester $I): void
+    {
+        $I->login(self::OTHER_USERNAME, self::PASSWORD);
+
+        // Create basket with voucher using graphql which is different than 'savedbasket'
+        $graphqlBasketId = $this->basketCreateMutation($I, 'basket_with_vouchers');
+        $I->sendGQLQuery($this->addVoucherMutation($graphqlBasketId, self::VOUCHER));
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->sendGQLQuery($this->basketQuery($graphqlBasketId));
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $vouchers = $I->grabJsonResponseAsArray()['data']['basket']['vouchers'];
+
+        $I->assertCount(1, $vouchers);
+
+        // Check 'savedbasket' owned by the same user, the vouchers should be 0
+        $savedBasketId = $this->basketCreateMutation($I, 'savedbasket');
+        $I->sendGQLQuery($this->basketQuery($savedBasketId));
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $vouchers = $I->grabJsonResponseAsArray()['data']['basket']['vouchers'];
+
+        $I->assertCount(0, $vouchers);
+
+        $this->basketRemoveMutation($I, $graphqlBasketId);
+    }
+
+    private function addVoucherMutation(string $basketId, string $voucherNumber)
     {
         return 'mutation {
-                  basketAddVoucher(
-                    basketId: "' . $basketId . '",
-                    voucherNumber: "' . $voucher . '"
-                  ) {
-                    id
-                  }
-                }';
+            basketAddVoucher (
+                basketId: "' . $basketId . '",
+                voucherNumber: "' . $voucherNumber . '"
+            ) {
+                id
+            }
+        }';
     }
 
     private function removeVoucherMutation(string $basketId, string $voucherId)
     {
         return 'mutation {
-                  basketRemoveVoucher(
-                    basketId: "' . $basketId . '",
-                    voucherId: "' . $voucherId . '"
-                  ) {
-                    id
-                  }
-                }';
+            basketRemoveVoucher (
+                basketId: "' . $basketId . '",
+                voucherId: "' . $voucherId . '"
+            ) {
+                id
+            }
+        }';
     }
 
     private function basketQuery(string $basketId)
     {
-        return 'query{
-                  basket(id: "' . $basketId . '") {
+        return 'query {
+            basket(id: "' . $basketId . '") {
+                id
+                cost {
+                    discount
+                }
+                vouchers {
                     id
-                    cost {
-                      discount
-                    }
-                    vouchers {
-                        id
-                    }
-                  }
-                }';
+                }
+            }
+        }';
+    }
+
+    private function basketCreateMutation(AcceptanceTester $I, string $title): string
+    {
+        $I->sendGQLQuery('mutation {
+            basketCreate(basket: {title: "' . $title . '", public: false}) {
+                id
+            }
+        }');
+
+        $I->seeResponseIsJson();
+        $I->seeResponseCodeIs(HttpCode::OK);
+
+        $result = $I->grabJsonResponseAsArray();
+
+        return $result['data']['basketCreate']['id'];
+    }
+
+    private function basketRemoveMutation(AcceptanceTester $I, string $basketId): void
+    {
+        $I->sendGQLQuery('mutation {
+            basketRemove(id: "' . $basketId . '")
+        }');
+
+        $I->seeResponseIsJson();
+        $I->seeResponseCodeIs(HttpCode::OK);
     }
 
     private function prepareVoucherInBasket(AcceptanceTester $I): void
