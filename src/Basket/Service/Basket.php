@@ -20,6 +20,8 @@ use OxidEsales\GraphQL\Account\Customer\DataType\Customer as CustomerDataType;
 use OxidEsales\GraphQL\Account\Customer\Exception\CustomerNotFound;
 use OxidEsales\GraphQL\Account\Customer\Service\Customer as CustomerService;
 use OxidEsales\GraphQL\Account\Shared\Infrastructure\Basket as SharedInfrastructure;
+use OxidEsales\GraphQL\Account\Voucher\DataType\Voucher as VoucherDataType;
+use OxidEsales\GraphQL\Account\Voucher\Infrastructure\Voucher as VoucherInfrastructure;
 use OxidEsales\GraphQL\Base\Exception\InvalidLogin;
 use OxidEsales\GraphQL\Base\Exception\InvalidToken;
 use OxidEsales\GraphQL\Base\Exception\NotFound;
@@ -61,6 +63,9 @@ final class Basket
     /** @var BasketVoucher */
     private $basketVoucherService;
 
+    /** @var VoucherInfrastructure */
+    private $voucherInfrastructure;
+
     public function __construct(
         Repository $repository,
         BasketRepository $basketRepository,
@@ -71,7 +76,8 @@ final class Basket
         ProductService $productService,
         SharedInfrastructure $sharedInfrastructure,
         CustomerService $customerService,
-        BasketVoucher $basketVoucherService
+        BasketVoucher $basketVoucherService,
+        VoucherInfrastructure $voucherInfrastructure
     ) {
         $this->repository            = $repository;
         $this->basketRepository      = $basketRepository;
@@ -83,6 +89,7 @@ final class Basket
         $this->sharedInfrastructure  = $sharedInfrastructure;
         $this->customerService       = $customerService;
         $this->basketVoucherService  = $basketVoucherService;
+        $this->voucherInfrastructure = $voucherInfrastructure;
     }
 
     /**
@@ -128,6 +135,13 @@ final class Basket
             $this->authorizationService->isAllowed('DELETE_BASKET')
             || $basket->belongsToUser($this->authenticationService->getUserId())
         ) {
+            $vouchers = $this->basketVoucherService->getBasketVouchers($id);
+
+            /** @var VoucherDataType $voucher */
+            foreach ($vouchers as $voucher) {
+                $this->voucherInfrastructure->removeVoucher($voucher, $basket, $vouchers);
+            }
+
             return $this->repository->delete($basket->getEshopModel());
         }
 
@@ -268,9 +282,7 @@ final class Basket
             throw BasketAccessForbidden::byAuthenticatedUser();
         }
 
-        $customer = $this->customerService->customer($this->authenticationService->getUserId());
-
-        $this->basketVoucherService->removeVoucherFromBasket($voucherId, $basket, $customer);
+        $this->basketVoucherService->removeVoucherFromBasket($voucherId, $basket);
 
         return $basket;
     }

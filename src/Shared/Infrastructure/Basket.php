@@ -62,7 +62,7 @@ final class Basket
         }
 
         $basketModel->setPayment($userBasketModel->getFieldData('oegql_paymentid'));
-        $basketModel->setShipping($userBasketModel->getFieldData('oegql_shippingid'));
+        $basketModel->setShipping($userBasketModel->getFieldData('oegql_deliverymethodid'));
 
         //reset in case we hit Basket::calculateBasket() more than once
         EshopRegistry::set(EshopDeliverySetListModel::class, null);

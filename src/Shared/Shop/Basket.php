@@ -12,6 +12,7 @@ namespace OxidEsales\GraphQL\Account\Shared\Shop;
 use OxidEsales\Eshop\Application\Model\BasketItem;
 use OxidEsales\Eshop\Application\Model\UserBasketItem;
 use OxidEsales\Eshop\Application\Model\Voucher;
+use OxidEsales\Eshop\Core\Exception\ObjectException as EshopObjectException;
 
 /**
  * Basket model extended
@@ -36,9 +37,15 @@ class Basket extends Basket_parent
     {
         /** @var Voucher $voucher */
         $voucher = oxNew(Voucher::class);
+
         $voucher->load($voucherId);
 
-        $this->_aVouchers[$voucher->getId()] = $voucher->getSimpleVoucher();
+        try {
+            $voucher->getSerie();
+            $this->_aVouchers[$voucher->getId()] = $voucher->getSimpleVoucher();
+        } catch (EshopObjectException $exception) {
+            $voucher->unMarkAsReserved();
+        }
     }
 
     /**

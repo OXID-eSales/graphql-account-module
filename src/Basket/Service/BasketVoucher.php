@@ -61,19 +61,6 @@ final class BasketVoucher
         $this->sharedInfrastructure  = $sharedInfrastructure;
     }
 
-    /**
-     * @return VoucherDataType[]
-     */
-    public function basketVouchers(BasketVoucherFilterList $filter): array
-    {
-        return $this->repository->getList(
-            VoucherDataType::class,
-            $filter,
-            new PaginationFilter(),
-            new Sorting()
-        );
-    }
-
     public function addVoucherToBasket(
         string $voucherNumber,
         UserBasketDataType $basket,
@@ -87,7 +74,7 @@ final class BasketVoucher
         }
 
         /** @var VoucherDataType[] $vouchers */
-        $vouchers = $this->getVouchers($basket->id());
+        $vouchers = $this->getBasketVouchers((string) $basket->id());
 
         $this->voucherInfrastructure->addVoucher(
             $voucher,
@@ -99,8 +86,7 @@ final class BasketVoucher
 
     public function removeVoucherFromBasket(
         string $voucherId,
-        UserBasketDataType $basket,
-        CustomerDataType $customer
+        UserBasketDataType $basket
     ): void {
         /** @var VoucherDataType $voucher */
         $voucher = $this->voucherRepository->getVoucherById($voucherId);
@@ -110,7 +96,7 @@ final class BasketVoucher
         }
 
         /** @var VoucherDataType[] $vouchers */
-        $vouchers = $this->getVouchers($basket->id());
+        $vouchers = $this->getBasketVouchers((string) $basket->id());
 
         $this->voucherInfrastructure->removeVoucher(
             $voucher,
@@ -122,14 +108,19 @@ final class BasketVoucher
     /**
      * @return VoucherDataType[]
      */
-    private function getVouchers(ID $userBasketId): array
+    public function getBasketVouchers(string $basketId): array
     {
-        return $this->basketVouchers(
+        return $this->repository->getList(
+            VoucherDataType::class,
             new BasketVoucherFilterList(
                 new IDFilter(
-                    $userBasketId
+                    new ID(
+                        $basketId
+                    )
                 )
-            )
+            ),
+            new PaginationFilter(),
+            new Sorting()
         );
     }
 }

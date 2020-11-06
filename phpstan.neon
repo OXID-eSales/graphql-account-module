@@ -12,3 +12,4 @@ parameters:
         - src/Framework/ModuleSetup.php
         - src/Shared/Infrastructure/Basket.php
         - src/Shared/Shop/Basket.php
+        - src/Shared/Shop/Voucher.php

@@ -25,6 +25,7 @@ class Voucher extends Voucher_parent
         parent::unMarkAsReserved();
 
         if ($this->getId()) {
+            $this->load($this->getId());
             $this->assign(
                 [
                     'oegql_basketid' => '',
