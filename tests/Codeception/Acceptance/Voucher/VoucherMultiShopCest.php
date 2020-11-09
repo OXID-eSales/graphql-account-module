@@ -177,6 +177,17 @@ final class VoucherMultiShopCest extends MultishopBaseCest
         );
     }
 
+    public function testApplyVouchersFromDifferentShopsOnSameBasket(AcceptanceTester $I)
+    {
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
+        $this->prepareVoucherInBasket($I, self::SHOP1_BASKET, self::SHOP2_VOUCHER_ID);
+
+        $I->login(self::USERNAME, self::PASSWORD, 1);
+
+        $I->sendGQLQuery($this->addVoucherMutation(self::SHOP1_BASKET, self::SHOP1_VOUCHER_NR));
+        $I->seeResponseCodeIs(HttpCode::OK);
+    }
+
     protected function dataProviderAddVoucherToBasketPerShop()
     {
         return [
