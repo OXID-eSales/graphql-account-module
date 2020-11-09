@@ -15,7 +15,7 @@ use OxidEsales\GraphQL\Account\Tests\Codeception\Acceptance\MultishopBaseCest;
 use OxidEsales\GraphQL\Account\Tests\Codeception\AcceptanceTester;
 
 /**
- * @group voucher
+ * @group voucherrr
  */
 final class VoucherMultiShopCest extends MultishopBaseCest
 {
@@ -154,6 +154,29 @@ final class VoucherMultiShopCest extends MultishopBaseCest
         );
     }
 
+    public function testSeeAppliedVoucherFromShop2InShop1WithMallUser(AcceptanceTester $I)
+    {
+        $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
+
+        // apply voucher on basket in shop2
+        $this->prepareVoucherInBasket($I, self::SHOP1_BASKET, self::SHOP2_VOUCHER_ID);
+
+        $I->login(self::USERNAME, self::PASSWORD, 1);
+
+        //query the basket in shop1
+        $this->getBasket($I, self::SHOP1_BASKET);
+
+        //the voucher from shop2 should now be marked as not reserved
+        $I->canSeeInDatabase(
+            'oxvouchers',
+            [
+                'oxid'           => self::SHOP2_VOUCHER_ID,
+                'oxreserved'     => 0,
+                'oegql_basketid' => '',
+            ]
+        );
+    }
+
     protected function dataProviderAddVoucherToBasketPerShop()
     {
         return [
@@ -224,5 +247,26 @@ final class VoucherMultiShopCest extends MultishopBaseCest
         ], [
             'OXID' => $voucherId,
         ]);
+    }
+
+    private function getBasket(AcceptanceTester $I, string $basketId): void
+    {
+        $I->sendGQLQuery(
+            'query{
+                basket(id: "' . $basketId . '") {
+                    cost{
+                        voucher
+                    }
+                    vouchers{
+                        voucher
+                        id
+                        discount
+                        reserved
+                    }
+                }
+            }'
+        );
+
+        $I->seeResponseCodeIs(HttpCode::OK);
     }
 }

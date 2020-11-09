@@ -31,7 +31,7 @@ class Basket extends Basket_parent
     }
 
     /**
-     * Do no checks, just apply the voucher by given ID.
+     * check and apply or mark as not reserved the voucher by given ID.
      */
     public function applyVoucher(string $voucherId): void
     {
