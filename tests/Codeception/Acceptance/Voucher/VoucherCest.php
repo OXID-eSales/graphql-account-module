@@ -559,6 +559,46 @@ final class VoucherCest extends BaseCest
         );
     }
 
+    public function testVoucherAssignedToUserGroup(AcceptanceTester $I): void
+    {
+        // Assign group to the voucher
+        $I->haveInDatabase(
+            'oxobject2group',
+            [
+                'OXID'       => 'voucher_assigned_to_user_group',
+                'OXSHOPID'   => 1,
+                'OXOBJECTID' => 'personal_voucher',
+                'OXGROUPSID' => 'oxidcustomer',
+            ]
+        );
+
+        // Add voucher with user which is not into the group
+        $I->login(self::OTHER_USERNAME, self::PASSWORD);
+
+        $basketId = $this->basketCreateMutation($I, 'voucher_assigned_to_user_group');
+        $this->basketAddProductMutation($I, $basketId, self::PRODUCT_ID);
+        $I->sendGQLQuery($this->addVoucherMutation($basketId, self::VOUCHER));
+        $I->seeResponseCodeIs(HttpCode::NOT_FOUND);
+
+        // Reset DB
+        $this->basketRemoveProductMutation($I, $basketId, self::PRODUCT_ID);
+        $this->basketRemoveMutation($I, $basketId);
+        $I->seeResponseCodeIs(HttpCode::OK);
+
+        // Add voucher with user which is into the group
+        $I->login(self::USERNAME, self::PASSWORD);
+
+        $basketId = $this->basketCreateMutation($I, 'voucher_assigned_to_user_group');
+        $this->basketAddProductMutation($I, $basketId, self::PRODUCT_ID);
+        $I->sendGQLQuery($this->addVoucherMutation($basketId, self::VOUCHER));
+        $I->seeResponseCodeIs(HttpCode::OK);
+
+        // Reset DB
+        $this->basketRemoveProductMutation($I, $basketId, self::PRODUCT_ID);
+        $this->basketRemoveMutation($I, $basketId);
+        $I->seeResponseCodeIs(HttpCode::OK);
+    }
+
     private function basketRemoveProductMutation(AcceptanceTester $I, string $basketId, string $productId, int $amount = 1): void
     {
         $I->sendGQLQuery('mutation {
