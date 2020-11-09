@@ -73,4 +73,13 @@ final class Customer
 
         return $result;
     }
+
+    public function getUserActiveCountryId(string $userId): string
+    {
+        /** @var EshopUserModel $userModel */
+        $userModel = oxNew(EshopUserModel::class);
+        $userModel->load($userId);
+
+        return (string) $userModel->getActiveCountry();
+    }
 }
