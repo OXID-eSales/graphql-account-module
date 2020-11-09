@@ -13,7 +13,7 @@ use OxidEsales\Eshop\Core\Email as EshopEmail;
 use OxidEsales\EshopCommunity\Internal\Domain\Contact\Form\ContactFormBridgeInterface;
 use OxidEsales\GraphQL\Account\Contact\DataType\ContactRequest;
 use OxidEsales\GraphQL\Account\Contact\Exception\ContactRequestFieldsValidationError;
-use OxidEsales\GraphQL\Base\Service\Legacy;
+use OxidEsales\GraphQL\Base\Infrastructure\Legacy;
 
 final class Contact
 {

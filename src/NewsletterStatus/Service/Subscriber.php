@@ -12,7 +12,7 @@ namespace OxidEsales\GraphQL\Account\NewsletterStatus\Service;
 use OxidEsales\GraphQL\Account\NewsletterStatus\DataType\Subscriber as SubscriberDataType;
 use OxidEsales\GraphQL\Account\NewsletterStatus\Exception\SubscriberNotFound;
 use OxidEsales\GraphQL\Base\Exception\NotFound;
-use OxidEsales\GraphQL\Base\Service\Legacy;
+use OxidEsales\GraphQL\Base\Infrastructure\Legacy;
 use OxidEsales\GraphQL\Catalogue\Shared\Infrastructure\Repository;
 
 final class Subscriber

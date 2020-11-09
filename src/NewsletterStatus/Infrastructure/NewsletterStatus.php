@@ -18,7 +18,7 @@ use OxidEsales\GraphQL\Account\NewsletterStatus\DataType\NewsletterStatus as New
 use OxidEsales\GraphQL\Account\NewsletterStatus\DataType\NewsletterStatusSubscribe as NewsletterStatusSubscribeType;
 use OxidEsales\GraphQL\Account\NewsletterStatus\DataType\Subscriber as SubscriberDataType;
 use OxidEsales\GraphQL\Account\NewsletterStatus\Infrastructure\Repository as NewsletterStatusRepository;
-use OxidEsales\GraphQL\Base\Service\Legacy as LegacyService;
+use OxidEsales\GraphQL\Base\Infrastructure\Legacy as LegacyService;
 
 final class NewsletterStatus
 {

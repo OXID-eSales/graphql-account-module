@@ -18,8 +18,8 @@ use OxidEsales\GraphQL\Account\Customer\Exception\InvalidEmail;
 use OxidEsales\GraphQL\Account\Customer\Infrastructure\Repository as CustomerRepository;
 use OxidEsales\GraphQL\Base\Exception\InvalidLogin;
 use OxidEsales\GraphQL\Base\Exception\NotFound;
+use OxidEsales\GraphQL\Base\Infrastructure\Legacy;
 use OxidEsales\GraphQL\Base\Service\Authentication;
-use OxidEsales\GraphQL\Base\Service\Legacy;
 use OxidEsales\GraphQL\Catalogue\Shared\Infrastructure\Repository;
 
 final class Customer

@@ -16,7 +16,7 @@ use OxidEsales\GraphQL\Account\Customer\Exception\InvalidEmail;
 use OxidEsales\GraphQL\Account\Customer\Exception\PasswordMismatch;
 use OxidEsales\GraphQL\Account\Customer\Infrastructure\CustomerRegisterFactory;
 use OxidEsales\GraphQL\Account\Customer\Infrastructure\Repository;
-use OxidEsales\GraphQL\Base\Service\Legacy;
+use OxidEsales\GraphQL\Base\Infrastructure\Legacy;
 use TheCodingMachine\GraphQLite\Annotations\Factory;
 
 final class CustomerRegisterInput

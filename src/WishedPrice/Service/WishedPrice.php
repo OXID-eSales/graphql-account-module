@@ -12,6 +12,7 @@ namespace OxidEsales\GraphQL\Account\WishedPrice\Service;
 use OxidEsales\GraphQL\Account\WishedPrice\DataType\WishedPrice as WishedPriceDataType;
 use OxidEsales\GraphQL\Account\WishedPrice\DataType\WishedPriceFilterList;
 use OxidEsales\GraphQL\Account\WishedPrice\Exception\WishedPriceNotFound;
+use OxidEsales\GraphQL\Account\WishedPrice\Infrastructure\WishedPriceNotification as WishedPriceNotificationInfrastructure;
 use OxidEsales\GraphQL\Base\DataType\StringFilter;
 use OxidEsales\GraphQL\Base\Exception\InvalidLogin;
 use OxidEsales\GraphQL\Base\Exception\InvalidToken;
@@ -34,16 +35,21 @@ final class WishedPrice
     /** @var RelationService */
     private $wishedPriceRelationService;
 
+    /** @var WishedPriceNotificationInfrastructure */
+    private $wishedPriceNotificationInfrastructure;
+
     public function __construct(
         Repository $repository,
         Authentication $authenticationService,
         Authorization $authorizationService,
-        RelationService $wishedPriceRelationService
+        RelationService $wishedPriceRelationService,
+        WishedPriceNotificationInfrastructure $wishedPriceNotificationInfrastructure
     ) {
-        $this->repository                 = $repository;
-        $this->authenticationService      = $authenticationService;
-        $this->authorizationService       = $authorizationService;
-        $this->wishedPriceRelationService = $wishedPriceRelationService;
+        $this->repository                            = $repository;
+        $this->authenticationService                 = $authenticationService;
+        $this->authorizationService                  = $authorizationService;
+        $this->wishedPriceRelationService            = $wishedPriceRelationService;
+        $this->wishedPriceNotificationInfrastructure = $wishedPriceNotificationInfrastructure;
     }
 
     /**
@@ -105,6 +111,7 @@ final class WishedPrice
     public function save(WishedPriceDataType $wishedPrice): bool
     {
         $modelItem = $wishedPrice->getEshopModel();
+        $this->wishedPriceNotificationInfrastructure->sendNotification($wishedPrice);
 
         return $this->repository->saveModel($modelItem);
     }
