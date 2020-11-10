@@ -13,6 +13,7 @@ use OxidEsales\Eshop\Application\Model\UserBasket as BasketModel;
 use OxidEsales\Eshop\Application\Model\UserBasketItem as BasketItemModel;
 use OxidEsales\GraphQL\Account\Basket\DataType\Basket as BasketDataType;
 use OxidEsales\GraphQL\Account\Basket\Exception\BasketItemNotFound;
+use \OxidEsales\GraphQL\Account\Shared\Infrastructure\Basket as SharedBasketInfrastructure;
 use OxidEsales\GraphQL\Catalogue\Shared\Infrastructure\Repository;
 
 final class Basket
@@ -20,10 +21,15 @@ final class Basket
     /** @var Repository */
     private $repository;
 
+    /** @var SharedBasketInfrastructure */
+    private $sharedBasketInfrastructure;
+
     public function __construct(
-        Repository $repository
+        Repository $repository,
+        SharedBasketInfrastructure $sharedBasketInfrastructure
     ) {
         $this->repository = $repository;
+        $this->sharedBasketInfrastructure = $sharedBasketInfrastructure;
     }
 
     public function addProduct(BasketDataType $basket, string $productId, float $amount): bool
@@ -51,6 +57,8 @@ final class Basket
         }
 
         $model->addItemToBasket($productId, $amountRemaining, null, true);
+
+        $this->sharedBasketInfrastructure->getBasket($basket, $model->getUser());
 
         return true;
     }
