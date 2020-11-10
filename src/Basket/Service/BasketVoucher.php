@@ -62,7 +62,7 @@ final class BasketVoucher
         $voucher = $this->voucherRepository->getVoucherByNumber($voucherNumber);
 
         if (!$this->voucherInfrastructure->isVoucherSerieUsableInCurrentShop($voucher)) {
-            throw VoucherNotFound::byVoucher($voucherNumber);
+            throw VoucherNotFound::byNumber($voucherNumber);
         }
 
         /** @var VoucherDataType[] $vouchers */

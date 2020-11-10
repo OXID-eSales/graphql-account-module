@@ -61,7 +61,7 @@ final class Repository
         try {
             $voucherModel->getVoucherByNr($voucher, [], true);
         } catch (Exception $exception) {
-            throw VoucherNotFound::byVoucher($voucher);
+            throw VoucherNotFound::byNumber($voucher);
         }
 
         return $this->getVoucherById($voucherModel->getId());

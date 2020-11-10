@@ -68,7 +68,7 @@ final class Voucher
         } catch (Exception $exception) {
             $this->transactionService->rollback();
 
-            throw VoucherNotFound::byVoucher($voucher->voucher());
+            throw VoucherNotFound::byNumber($voucher->voucher());
         }
         $this->transactionService->commit();
     }
