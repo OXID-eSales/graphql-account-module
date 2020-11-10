@@ -9,10 +9,8 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Account\Basket\Service;
 
-use OxidEsales\GraphQL\Account\Basket\DataType\Basket as UserBasketDataType;
+use OxidEsales\GraphQL\Account\Basket\DataType\Basket as BasketDataType;
 use OxidEsales\GraphQL\Account\Basket\DataType\BasketVoucherFilterList;
-use OxidEsales\GraphQL\Account\Customer\DataType\Customer as CustomerDataType;
-use OxidEsales\GraphQL\Account\Customer\Service\Customer as CustomerService;
 use OxidEsales\GraphQL\Account\Shared\Infrastructure\Basket as SharedInfrastructure;
 use OxidEsales\GraphQL\Account\Voucher\DataType\Sorting;
 use OxidEsales\GraphQL\Account\Voucher\DataType\Voucher as VoucherDataType;
@@ -36,9 +34,6 @@ final class BasketVoucher
     /** @var VoucherInfrastructure */
     private $voucherInfrastructure;
 
-    /** @var CustomerService */
-    private $customerService;
-
     /** @var Authentication */
     private $authentication;
 
@@ -49,22 +44,19 @@ final class BasketVoucher
         Repository $repository,
         VoucherRepository $voucherRepository,
         VoucherInfrastructure $voucherInfrastructure,
-        CustomerService $customerService,
         Authentication $authentication,
         SharedInfrastructure $sharedInfrastructure
     ) {
         $this->repository            = $repository;
         $this->voucherRepository     = $voucherRepository;
         $this->voucherInfrastructure = $voucherInfrastructure;
-        $this->customerService       = $customerService;
         $this->authentication        = $authentication;
         $this->sharedInfrastructure  = $sharedInfrastructure;
     }
 
     public function addVoucherToBasket(
         string $voucherNumber,
-        UserBasketDataType $basket,
-        CustomerDataType $customer
+        BasketDataType $basket
     ): void {
         /** @var VoucherDataType $voucher */
         $voucher = $this->voucherRepository->getVoucherByNumber($voucherNumber);
@@ -79,14 +71,13 @@ final class BasketVoucher
         $this->voucherInfrastructure->addVoucher(
             $voucher,
             $basket,
-            $customer,
             $vouchers
         );
     }
 
     public function removeVoucherFromBasket(
         string $voucherId,
-        UserBasketDataType $basket
+        BasketDataType $basket
     ): void {
         /** @var VoucherDataType $voucher */
         $voucher = $this->voucherRepository->getVoucherById($voucherId);

@@ -12,7 +12,6 @@ namespace OxidEsales\GraphQL\Account\Shared\Infrastructure;
 use OxidEsales\Eshop\Application\Model\Basket as EshopBasketModel;
 use OxidEsales\Eshop\Application\Model\DeliveryList as EshopDeliveryListModel;
 use OxidEsales\Eshop\Application\Model\DeliverySetList as EshopDeliverySetListModel;
-use OxidEsales\Eshop\Application\Model\User as EshopUserModel;
 use OxidEsales\Eshop\Application\Model\UserBasket as EshopUserBasketModel;
 use OxidEsales\Eshop\Core\Registry as EshopRegistry;
 use OxidEsales\GraphQL\Account\Basket\DataType\Basket as BasketDataType;
@@ -35,10 +34,8 @@ final class Basket
         $this->repository = $repository;
     }
 
-    public function getBasket(
-        BasketDataType $basket,
-        EshopUserModel $user
-    ): EshopBasketModel {
+    public function getBasket(BasketDataType $basket): EshopBasketModel
+    {
         /** @var EshopUserBasketModel $userBasketModel */
         $userBasketModel = $basket->getEshopModel();
         //Populate basket with products
@@ -52,7 +49,7 @@ final class Basket
         }
 
         //Set user to basket otherwise delivery cost will not be calculated
-        $basketModel->setUser($user);
+        $basketModel->setUser($userBasketModel->getUser());
 
         /** @var VoucherDataType[] $vouchers */
         $vouchers = $this->getVouchers($basket->id());

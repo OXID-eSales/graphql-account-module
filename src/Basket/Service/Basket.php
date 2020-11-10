@@ -18,7 +18,6 @@ use OxidEsales\GraphQL\Account\Basket\Infrastructure\Basket as BasketInfraServic
 use OxidEsales\GraphQL\Account\Basket\Infrastructure\Repository as BasketRepository;
 use OxidEsales\GraphQL\Account\Customer\DataType\Customer as CustomerDataType;
 use OxidEsales\GraphQL\Account\Customer\Exception\CustomerNotFound;
-use OxidEsales\GraphQL\Account\Customer\Service\Customer as CustomerService;
 use OxidEsales\GraphQL\Account\Shared\Infrastructure\Basket as SharedInfrastructure;
 use OxidEsales\GraphQL\Account\Voucher\DataType\Voucher as VoucherDataType;
 use OxidEsales\GraphQL\Account\Voucher\Infrastructure\Voucher as VoucherInfrastructure;
@@ -57,9 +56,6 @@ final class Basket
     /** @var SharedInfrastructure */
     private $sharedInfrastructure;
 
-    /** @var CustomerService */
-    private $customerService;
-
     /** @var BasketVoucher */
     private $basketVoucherService;
 
@@ -75,7 +71,6 @@ final class Basket
         BasketInfraService $basketInfraService,
         ProductService $productService,
         SharedInfrastructure $sharedInfrastructure,
-        CustomerService $customerService,
         BasketVoucher $basketVoucherService,
         VoucherInfrastructure $voucherInfrastructure
     ) {
@@ -87,7 +82,6 @@ final class Basket
         $this->basketInfraService    = $basketInfraService;
         $this->productService        = $productService;
         $this->sharedInfrastructure  = $sharedInfrastructure;
-        $this->customerService       = $customerService;
         $this->basketVoucherService  = $basketVoucherService;
         $this->voucherInfrastructure = $voucherInfrastructure;
     }
@@ -252,9 +246,7 @@ final class Basket
             throw new InvalidLogin('Unauthorized');
         }
 
-        /** @var CustomerDataType $customer */
-        $customer    = $this->customerService->customer($userId);
-        $basketModel = $this->sharedInfrastructure->getBasket($basket, $customer->getEshopModel());
+        $basketModel = $this->sharedInfrastructure->getBasket($basket);
 
         return new BasketCost($basketModel);
     }
@@ -267,9 +259,7 @@ final class Basket
             throw BasketAccessForbidden::byAuthenticatedUser();
         }
 
-        $customer = $this->customerService->customer($this->authenticationService->getUserId());
-
-        $this->basketVoucherService->addVoucherToBasket($voucherNumber, $basket, $customer);
+        $this->basketVoucherService->addVoucherToBasket($voucherNumber, $basket);
 
         return $basket;
     }
