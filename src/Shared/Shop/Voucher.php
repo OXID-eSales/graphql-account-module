@@ -42,6 +42,7 @@ class Voucher extends Voucher_parent
     protected function _getBasketItems($oDiscount = null): array
     {
         $items = parent::_getBasketItems($oDiscount);
+
         if (empty($items)) {
             $items = $this->getGraphQLBasketItems($oDiscount);
         }
@@ -51,13 +52,13 @@ class Voucher extends Voucher_parent
 
     protected function getGraphQLBasketItems($oDiscount = null): array
     {
-        if (is_null($oDiscount)) {
+        if (null === $oDiscount) {
             $oDiscount = $this->_getSerieDiscount();
         }
 
         $oBasket = $this->getGraphQLBasket();
-        $aItems = [];
-        $iCount = 0;
+        $aItems  = [];
+        $iCount  = 0;
 
         foreach ($oBasket->getContents() as $oBasketItem) {
             if (!$oBasketItem->isDiscountArticle() && ($oArticle = $oBasketItem->getArticle()) && !$oArticle->skipDiscounts() && $oDiscount->isForBasketItem($oArticle)) {
@@ -83,11 +84,11 @@ class Voucher extends Voucher_parent
         if ($basketId) {
             /** @var BasketService $basketService */
             $basketService = $this->getContainer()->get(BasketService::class);
-            $basket = $basketService->basket($basketId);
+            $basket        = $basketService->basket($basketId);
 
             /** @var SharedBasketInfrastructure $sharedBasketInfrastructure */
             $sharedBasketInfrastructure = $this->getContainer()->get(SharedBasketInfrastructure::class);
-            $basketModel = $sharedBasketInfrastructure->getBasket($basket);
+            $basketModel                = $sharedBasketInfrastructure->getBasket($basket);
         }
 
         return $basketModel;

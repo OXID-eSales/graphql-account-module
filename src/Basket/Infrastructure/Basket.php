@@ -28,7 +28,7 @@ final class Basket
         Repository $repository,
         SharedBasketInfrastructure $sharedBasketInfrastructure
     ) {
-        $this->repository = $repository;
+        $this->repository                 = $repository;
         $this->sharedBasketInfrastructure = $sharedBasketInfrastructure;
     }
 

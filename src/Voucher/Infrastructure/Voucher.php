@@ -42,20 +42,20 @@ final class Voucher
 
     public function addVoucher(
         VoucherDataType $voucher,
-        BasketDataType $basket,
-        array $activeVouchers
+        BasketDataType $basket
     ): void {
         $this->transactionService->begin();
 
         try {
-            $voucherModel  = $voucher->getEshopModel();
+            $basketModel = $this->sharedBasketInfrastructure->getBasket($basket);
+
+            $activeVouchers = $this->repository->getBasketVouchers((string) $basket->id());
+            $voucherModel   = $voucher->getEshopModel();
             $voucherModel->getVoucherByNr(
                 $voucher->voucher(),
                 $this->getActiveVouchersIds(($activeVouchers)),
                 true
             );
-
-            $basketModel = $this->sharedBasketInfrastructure->getBasket($basket);
 
             $voucherModel->checkVoucherAvailability(
                 $this->getActiveVouchersNumbers($activeVouchers),
@@ -75,10 +75,10 @@ final class Voucher
 
     public function removeVoucher(
         VoucherDataType $voucherDataType,
-        BasketDataType $userBasket,
-        array $activeVouchers
+        BasketDataType $userBasket
     ): void {
-        $voucherId     = (string) $voucherDataType->id();
+        $voucherId      = (string) $voucherDataType->id();
+        $activeVouchers = $this->repository->getBasketVouchers((string) $userBasket->id());
 
         if (in_array($voucherId, $this->getActiveVouchersIds($activeVouchers))) {
             $voucherModel = $voucherDataType->getEshopModel();

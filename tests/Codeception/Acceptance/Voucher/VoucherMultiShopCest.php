@@ -154,7 +154,7 @@ final class VoucherMultiShopCest extends MultishopBaseCest
         );
     }
 
-    public function testSeeAppliedVoucherFromShop2InShop1WithMallUser(AcceptanceTester $I)
+    public function testSeeAppliedVoucherFromShop2InShop1WithMallUser(AcceptanceTester $I): void
     {
         $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
 
@@ -177,10 +177,11 @@ final class VoucherMultiShopCest extends MultishopBaseCest
         );
     }
 
-    public function testApplyVouchersFromDifferentShopsOnSameBasket(AcceptanceTester $I)
+    public function testApplyVouchersFromDifferentShopsOnSameBasket(AcceptanceTester $I): void
     {
         $I->updateConfigInDatabaseForShops('blMallUsers', true, 'bool', [1, 2]);
         $this->prepareVoucherInBasket($I, self::SHOP1_BASKET, self::SHOP2_VOUCHER_ID);
+        $this->prepareVoucherInBasket($I, '', self::SHOP1_VOUCHER_ID);
 
         $I->login(self::USERNAME, self::PASSWORD, 1);
 
@@ -265,9 +266,6 @@ final class VoucherMultiShopCest extends MultishopBaseCest
         $I->sendGQLQuery(
             'query{
                 basket(id: "' . $basketId . '") {
-                    cost{
-                        voucher
-                    }
                     vouchers{
                         voucher
                         id
