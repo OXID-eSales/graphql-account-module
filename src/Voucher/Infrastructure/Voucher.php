@@ -103,15 +103,36 @@ final class Voucher
         return $result;
     }
 
+    /**
+     * @throws VoucherNotFound
+     */
     public function checkProductAvailability(BasketDataType $basket, VoucherDataType $voucher): void
     {
-        $voucherModel = $voucher->getEshopModel();
-
-        if (!$voucherModel->isProductVoucher()) {
+        if (!$voucher->getEshopModel()->isProductVoucher()) {
             return;
         }
 
-        $discountModel = $voucherModel->getSerieDiscount();
+        $this->checkForVoucherRelatedProducts($basket, $voucher);
+    }
+
+    /**
+     * @throws VoucherNotFound
+     */
+    public function checkCategoryAvailability(BasketDataType $basket, VoucherDataType $voucher): void
+    {
+        if (!$voucher->getEshopModel()->isCategoryVoucher()) {
+            return;
+        }
+
+        $this->checkForVoucherRelatedProducts($basket, $voucher);
+    }
+
+    /**
+     * @throws VoucherNotFound
+     */
+    private function checkForVoucherRelatedProducts(BasketDataType $basket, VoucherDataType $voucher): void
+    {
+        $discountModel = $voucher->getEshopModel()->getSerieDiscount();
         $basketModel   = $this->sharedBasketInfrastructure->getBasket($basket);
         $items         = $basketModel->getContents();
 
@@ -120,7 +141,11 @@ final class Voucher
         foreach ($items as $item) {
             $product = $item->getArticle();
 
-            if (!$item->isDiscountArticle() && $product && !$product->skipDiscounts() && $discountModel->isForBasketItem($product)) {
+            if (!$item->isDiscountArticle() &&
+                $product &&
+                !$product->skipDiscounts() &&
+                $discountModel->isForBasketItem($product)
+            ) {
                 $productIsInBasket = true;
 
                 break;

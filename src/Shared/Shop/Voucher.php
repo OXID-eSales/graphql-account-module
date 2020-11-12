@@ -42,6 +42,11 @@ class Voucher extends Voucher_parent
         return $this->_isProductVoucher();
     }
 
+    public function isCategoryVoucher(): bool
+    {
+        return $this->_isCategoryVoucher();
+    }
+
     public function getSerieDiscount(): EshopDiscountModel
     {
         return $this->_getSerieDiscount();

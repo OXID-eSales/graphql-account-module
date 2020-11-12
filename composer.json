@@ -17,7 +17,7 @@
     },
     "require": {
         "php": "^7.1",
-        "oxid-esales/graphql-base": "^5",
+        "oxid-esales/graphql-base": "dev-master",
         "oxid-esales/graphql-catalogue": "dev-master"
     },
     "require-dev": {

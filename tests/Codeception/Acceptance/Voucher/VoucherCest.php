@@ -439,6 +439,68 @@ final class VoucherCest extends BaseCest
         $I->seeResponseCodeIs(HttpCode::OK);
     }
 
+    public function testVoucherAssignedToSpecificCategory(AcceptanceTester $I): void
+    {
+        $categoryId = '0f4fb00809cec9aa0910aa9c8fe36751'; // Kites
+        $productId  = 'b56369b1fc9d7b97f9c5fc343b349ece'; // Product from Kites category
+        $I->haveInDatabase(
+            'oxobject2discount',
+            [
+                'OXID'         => 'voucher_assigned_to_category',
+                'OXDISCOUNTID' => 'personal_voucher',
+                'OXOBJECTID'   => $categoryId,
+                'OXTYPE'       => 'oxcategories',
+            ]
+        );
+
+        $I->login(self::USERNAME, self::PASSWORD);
+
+        $basketId = $this->basketCreateMutation($I, 'basket_voucher_category');
+        $this->basketAddProductMutation($I, $basketId, self::PRODUCT_ID);
+        $I->sendGQLQuery($this->addVoucherMutation($basketId, self::VOUCHER));
+        $I->seeResponseCodeIs(HttpCode::NOT_FOUND);
+
+        $this->basketAddProductMutation($I, $basketId, $productId);
+        $I->sendGQLQuery($this->addVoucherMutation($basketId, self::VOUCHER));
+        $I->seeResponseCodeIs(HttpCode::OK);
+
+        $I->seeInDatabase('oxvouchers', [
+            'oxid'           => 'personal_voucher_1',
+            'oxreserved >'   => 0,
+            'oegql_basketid' => $basketId,
+        ]);
+
+        $I->sendGQLQuery($this->basketQuery($basketId));
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $result = $I->grabJsonResponseAsArray();
+        $I->assertSame(
+            [
+                'id'       => $basketId,
+                'cost'     => [
+                    'voucher'  => 5,
+                    'discount' => 5,
+                ],
+                'vouchers' => [
+                    ['id' => 'personal_voucher_1'],
+                ],
+            ],
+            $result['data']['basket']
+        );
+
+        $this->basketRemoveProductMutation($I, $basketId, $productId);
+
+        $I->seeInDatabase('oxvouchers', [
+            'oxid'           => 'personal_voucher_1',
+            'oxreserved'     => 0,
+            'oegql_basketid' => '',
+        ]);
+
+        // Reset DB
+        $this->basketRemoveProductMutation($I, $basketId, self::PRODUCT_ID);
+        $this->basketRemoveMutation($I, $basketId);
+        $I->seeResponseCodeIs(HttpCode::OK);
+    }
+
     public function testAddVoucherWhichIsOutdated(AcceptanceTester $I): void
     {
         $I->updateInDatabase(

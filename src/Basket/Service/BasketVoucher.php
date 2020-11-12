@@ -62,6 +62,8 @@ final class BasketVoucher
 
         $this->voucherInfrastructure->checkProductAvailability($basket, $voucher);
 
+        $this->voucherInfrastructure->checkCategoryAvailability($basket, $voucher);
+
         $this->voucherInfrastructure->addVoucher(
             $voucher,
             $basket
