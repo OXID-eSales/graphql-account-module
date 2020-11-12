@@ -47,7 +47,7 @@ final class Voucher
         $this->transactionService->begin();
 
         try {
-            $basketModel = $this->sharedBasketInfrastructure->getBasket($basket);
+            $basketModel = $this->sharedBasketInfrastructure->getCalculatedBasket($basket);
 
             $activeVouchers = $this->repository->getBasketVouchers((string) $basket->id());
             $voucherModel   = $voucher->getEshopModel();
@@ -101,6 +101,35 @@ final class Voucher
         }
 
         return $result;
+    }
+
+    public function checkProductAvailability(BasketDataType $basket, VoucherDataType $voucher): void
+    {
+        $voucherModel = $voucher->getEshopModel();
+
+        if (!$voucherModel->isProductVoucher()) {
+            return;
+        }
+
+        $discountModel = $voucherModel->getSerieDiscount();
+        $basketModel   = $this->sharedBasketInfrastructure->getBasket($basket);
+        $items         = $basketModel->getContents();
+
+        $productIsInBasket = false;
+
+        foreach ($items as $item) {
+            $product = $item->getArticle();
+
+            if (!$item->isDiscountArticle() && $product && !$product->skipDiscounts() && $discountModel->isForBasketItem($product)) {
+                $productIsInBasket = true;
+
+                break;
+            }
+        }
+
+        if (!$productIsInBasket) {
+            throw VoucherNotFound::byNumber($voucher->number());
+        }
     }
 
     private function getActiveVouchersIds(array $activeVouchers): array

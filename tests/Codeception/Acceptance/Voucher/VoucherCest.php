@@ -408,6 +408,23 @@ final class VoucherCest extends BaseCest
             'oegql_basketid' => $basketId,
         ]);
 
+        $I->sendGQLQuery($this->basketQuery($basketId));
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $result = $I->grabJsonResponseAsArray();
+        $I->assertSame(
+            [
+                'id'       => $basketId,
+                'cost'     => [
+                    'voucher'  => 5,
+                    'discount' => 5,
+                ],
+                'vouchers' => [
+                    ['id' => 'personal_voucher_1'],
+                ],
+            ],
+            $result['data']['basket']
+        );
+
         $this->basketRemoveProductMutation($I, $basketId, self::PRODUCT_ID);
 
         $I->seeInDatabase('oxvouchers', [

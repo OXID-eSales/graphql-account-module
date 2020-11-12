@@ -254,7 +254,7 @@ final class Basket
             throw new InvalidLogin('Unauthorized');
         }
 
-        $basketModel = $this->sharedInfrastructure->getBasket($basket);
+        $basketModel = $this->sharedInfrastructure->getCalculatedBasket($basket);
 
         return new BasketCost($basketModel);
     }

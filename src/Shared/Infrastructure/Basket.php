@@ -66,6 +66,13 @@ final class Basket
         EshopRegistry::set(EshopDeliveryListModel::class, null);
 
         $basketModel->onUpdate();
+
+        return $basketModel;
+    }
+
+    public function getCalculatedBasket(BasketDataType $basket): EshopBasketModel
+    {
+        $basketModel = $this->getBasket($basket);
         $basketModel->calculateBasket();
 
         return $basketModel;

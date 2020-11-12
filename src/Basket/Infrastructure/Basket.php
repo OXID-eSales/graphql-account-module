@@ -58,7 +58,7 @@ final class Basket
 
         $model->addItemToBasket($productId, $amountRemaining, null, true);
 
-        $this->sharedBasketInfrastructure->getBasket($basket);
+        $this->sharedBasketInfrastructure->getCalculatedBasket($basket);
 
         return true;
     }

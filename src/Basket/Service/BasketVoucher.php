@@ -60,6 +60,8 @@ final class BasketVoucher
             throw VoucherNotFound::byNumber($voucherNumber);
         }
 
+        $this->voucherInfrastructure->checkProductAvailability($basket, $voucher);
+
         $this->voucherInfrastructure->addVoucher(
             $voucher,
             $basket

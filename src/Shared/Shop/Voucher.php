@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OxidEsales\GraphQL\Account\Shared\Shop;
 
 use OxidEsales\Eshop\Application\Model\Basket as EshopBasketModel;
+use OxidEsales\Eshop\Application\Model\Discount as EshopDiscountModel;
 use OxidEsales\GraphQL\Account\Basket\Service\Basket as BasketService;
 use OxidEsales\GraphQL\Account\Shared\Infrastructure\Basket as SharedBasketInfrastructure;
 
@@ -21,9 +22,6 @@ use OxidEsales\GraphQL\Account\Shared\Infrastructure\Basket as SharedBasketInfra
  */
 class Voucher extends Voucher_parent
 {
-    /**
-     * un mark as reserved
-     */
     public function unMarkAsReserved(): void
     {
         parent::unMarkAsReserved();
@@ -39,6 +37,16 @@ class Voucher extends Voucher_parent
         }
     }
 
+    public function isProductVoucher(): bool
+    {
+        return $this->_isProductVoucher();
+    }
+
+    public function getSerieDiscount(): EshopDiscountModel
+    {
+        return $this->_getSerieDiscount();
+    }
+
     protected function _getBasketItems($oDiscount = null): array
     {
         $items = parent::_getBasketItems($oDiscount);
@@ -50,12 +58,19 @@ class Voucher extends Voucher_parent
         return $items;
     }
 
+    /**
+     * This method is the same as _getSessionBasketItems, the difference is in the $oBasket.
+     * In GraphQL module we don't have session, that's why we need to get GraphQL basket.
+     *
+     * @param null|mixed $oDiscount
+     */
     protected function getGraphQLBasketItems($oDiscount = null): array
     {
         if (null === $oDiscount) {
             $oDiscount = $this->_getSerieDiscount();
         }
 
+        /** Here is the difference with _getSessionBasketItems method */
         $oBasket = $this->getGraphQLBasket();
         $aItems  = [];
         $iCount  = 0;
@@ -76,9 +91,9 @@ class Voucher extends Voucher_parent
         return $aItems;
     }
 
-    protected function getGraphQLBasket(): ?EshopBasketModel
+    protected function getGraphQLBasket(): EshopBasketModel
     {
-        $basketModel = null;
+        $basketModel = oxNew(EshopBasketModel::class);
         $basketId    = $this->getFieldData('oegql_basketid');
 
         if ($basketId) {
