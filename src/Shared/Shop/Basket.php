@@ -13,6 +13,7 @@ use OxidEsales\Eshop\Application\Model\BasketItem;
 use OxidEsales\Eshop\Application\Model\UserBasketItem;
 use OxidEsales\Eshop\Application\Model\Voucher;
 use OxidEsales\Eshop\Core\Exception\ObjectException as EshopObjectException;
+use OxidEsales\Eshop\Core\Price as EshopPrice;
 
 /**
  * Basket model extended
@@ -46,6 +47,11 @@ class Basket extends Basket_parent
         } catch (EshopObjectException $exception) {
             $voucher->unMarkAsReserved();
         }
+    }
+
+    public function getBasketDeliveryCost(): EshopPrice
+    {
+        return $this->_calcDeliveryCost();
     }
 
     /**

@@ -288,3 +288,15 @@ REPLACE INTO `oxvoucherseries2shop` (`OXSHOPID`, `OXMAPOBJECTID`) VALUES
 ('2', '8');
 
 UPDATE `oxuserbaskets` SET `OEGQL_PAYMENTID` = 'oxidcashondel' WHERE `OXID` = '_test_basket_public';
+
+REPLACE INTO  `oxdelivery2shop` ( `OXSHOPID`,  `OXMAPOBJECTID`) VALUES
+(2, 901),
+(2, 902),
+(2, 903),
+(2, 904),
+(2, 905);
+
+REPLACE INTO  `oxdeliveryset2shop` ( `OXSHOPID`,  `OXMAPOBJECTID`) VALUES
+(2, 901),
+(2, 902),
+(2, 903);

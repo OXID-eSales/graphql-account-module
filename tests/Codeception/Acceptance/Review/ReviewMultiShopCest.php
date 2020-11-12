@@ -130,7 +130,7 @@ final class ReviewMultiShopCest extends MultishopBaseCest
         $I->seeResponseCodeIs(HttpCode::OK);
 
         $reviews = $this->restructureResult($allReviews['data']['customer']['reviews']);
-        $I->assertNull($reviews[$reviewIdWithShop1Product]['product']);
+        $I->assertNull($reviews[$reviewIdWithShop1Product]);
     }
 
     protected function dataProviderReviewPerShop(): array
