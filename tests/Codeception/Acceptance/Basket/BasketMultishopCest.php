@@ -182,7 +182,7 @@ final class BasketMultishopCest extends MultishopBaseCest
                 ],
                 'discount'     => 0,
                 'voucher'      => 0,
-                'total'        => 17.5,
+                'total'        => 21.4,
                 'delivery'     => [
                     'price' => 3.9,
                 ],
