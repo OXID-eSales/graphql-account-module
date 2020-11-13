@@ -118,7 +118,7 @@ final class Basket
     {
         $this->voucherService->addVoucher($voucher, $basketId);
 
-        return $this->basketService->basket($basketId);
+        return $this->basketService->getAuthenticatedCustomerBasket($basketId);
     }
 
     /**
@@ -129,6 +129,6 @@ final class Basket
     {
         $this->voucherService->removeVoucher($voucherId, $basketId);
 
-        return $this->basketService->basket($basketId);
+        return $this->basketService->getAuthenticatedCustomerBasket($basketId);
     }
 }

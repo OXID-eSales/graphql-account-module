@@ -18,7 +18,6 @@ use OxidEsales\GraphQL\Account\Voucher\DataType\Voucher as VoucherDataType;
 use OxidEsales\GraphQL\Account\Voucher\Infrastructure\Repository;
 use OxidEsales\GraphQL\Account\Voucher\Infrastructure\Voucher as VoucherInfrastructure;
 use OxidEsales\GraphQL\Base\DataType\IDFilter;
-use OxidEsales\GraphQL\Base\Exception\InvalidLogin;
 use OxidEsales\GraphQL\Base\Service\Authentication;
 use TheCodingMachine\GraphQLite\Types\ID;
 
@@ -90,11 +89,7 @@ final class Voucher
         $voucher = $this->getVoucherByNumber($voucherNr);
 
         /** @var BasketDataType $basket */
-        $basket = $this->basketService->basket($basketId);
-
-        if (!$basket->belongsToUser($this->authentication->getUserId())) {
-            throw new InvalidLogin('Unauthorized');
-        }
+        $basket = $this->basketService->getAuthenticatedCustomerBasket($basketId);
 
         $customer = $this->customerService->customer($this->authentication->getUserId());
         $this->voucherInfrastructure->addVoucher(
@@ -111,11 +106,7 @@ final class Voucher
         $voucher = $this->getVoucherById($voucherId);
 
         /** @var BasketDataType $basket */
-        $basket = $this->basketService->basket($basketId);
-
-        if (!$basket->belongsToUser($this->authentication->getUserId())) {
-            throw new InvalidLogin('Unauthorized');
-        }
+        $basket = $this->basketService->getAuthenticatedCustomerBasket($basketId);
 
         $this->voucherInfrastructure->removeVoucher(
             $voucher,

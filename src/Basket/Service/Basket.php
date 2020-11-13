@@ -97,6 +97,23 @@ final class Basket
         return $basket;
     }
 
+    /**
+     * @throws BasketAccessForbidden
+     * @throws BasketNotFound
+     * @throws InvalidToken
+     */
+    public function getAuthenticatedCustomerBasket(string $id): BasketDataType
+    {
+        $basket = $this->basketRepository->getBasketById($id);
+        $userId = $this->authenticationService->getUserId();
+
+        if (!$basket->belongsToUser($userId)) {
+            throw BasketAccessForbidden::byAuthenticatedUser();
+        }
+
+        return $basket;
+    }
+
     public function basketByOwnerAndTitle(CustomerDataType $customer, string $title): BasketDataType
     {
         return $this->basketRepository->customerBasketByTitle($customer, $title);
@@ -152,11 +169,7 @@ final class Basket
 
     public function addProduct(string $basketId, string $productId, float $amount): BasketDataType
     {
-        $basket = $this->basketRepository->getBasketById($basketId);
-
-        if (!$basket->belongsToUser($this->authenticationService->getUserId())) {
-            throw new InvalidLogin('Unauthorized');
-        }
+        $basket = $this->getAuthenticatedCustomerBasket($basketId);
 
         $this->productService->product($productId);
 
@@ -167,11 +180,7 @@ final class Basket
 
     public function removeProduct(string $basketId, string $productId, float $amount): BasketDataType
     {
-        $basket = $this->basketRepository->getBasketById($basketId);
-
-        if (!$basket->belongsToUser($this->authenticationService->getUserId())) {
-            throw new InvalidLogin('Unauthorized');
-        }
+        $basket = $this->getAuthenticatedCustomerBasket($basketId);
 
         $this->basketInfraService->removeProduct($basket, $productId, $amount);
 
@@ -200,11 +209,8 @@ final class Basket
      */
     public function makePublic(string $basketId): BasketDataType
     {
-        $basket = $this->basketRepository->getBasketById($basketId);
+        $basket = $this->getAuthenticatedCustomerBasket($basketId);
 
-        if (!$basket->belongsToUser($this->authenticationService->getUserId())) {
-            throw BasketAccessForbidden::byAuthenticatedUser();
-        }
         $this->basketInfraService->makePublic($basket);
 
         return $basket;
@@ -215,11 +221,8 @@ final class Basket
      */
     public function makePrivate(string $basketId): BasketDataType
     {
-        $basket = $this->basketRepository->getBasketById($basketId);
+        $basket = $this->getAuthenticatedCustomerBasket($basketId);
 
-        if (!$basket->belongsToUser($this->authenticationService->getUserId())) {
-            throw BasketAccessForbidden::byAuthenticatedUser();
-        }
         $this->basketInfraService->makePrivate($basket);
 
         return $basket;
@@ -228,10 +231,6 @@ final class Basket
     public function basketCost(BasketDataType $basket): BasketCost
     {
         $userId = $this->authenticationService->getUserId();
-
-        if (!$basket->belongsToUser($userId)) {
-            throw new InvalidLogin('Unauthorized');
-        }
 
         /** @var CustomerDataType $customer */
         $customer    = $this->customerService->customer($userId);
