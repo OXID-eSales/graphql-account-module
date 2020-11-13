@@ -48,13 +48,13 @@ final class BasketsMultishopCest extends MultishopBaseCest
         $I->seeResponseCodeIs(HttpCode::OK);
 
         $baskets = $response['data']['baskets'];
-        $I->assertEquals(4, count($baskets));
+        $I->assertEquals(5, count($baskets));
     }
 
     protected function shopDataProvider(): array
     {
         return [
-            [1, 3],
+            [1, 4],
             [2, 1],
         ];
     }

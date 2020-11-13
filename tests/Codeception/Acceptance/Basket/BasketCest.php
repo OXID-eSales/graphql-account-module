@@ -205,7 +205,7 @@ final class BasketCest extends BaseCest
                         discount
                         voucher
                         total
-                        delivery{
+                        delivery {
                             price
                         }
                     }

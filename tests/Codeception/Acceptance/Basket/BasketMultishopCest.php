@@ -143,7 +143,7 @@ final class BasketMultishopCest extends MultishopBaseCest
                         discount
                         voucher
                         total
-                        delivery{
+                        delivery {
                             price
                         }
                     }

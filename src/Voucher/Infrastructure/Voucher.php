@@ -11,73 +11,74 @@ namespace OxidEsales\GraphQL\Account\Voucher\Infrastructure;
 
 use Exception;
 use OxidEsales\Eshop\Application\Model\Basket as EshopBasketModel;
+use OxidEsales\Eshop\Core\Exception\ObjectException as EshopObjectException;
+use OxidEsales\EshopCommunity\Internal\Framework\Database\TransactionService as EshopDatabaseTransactionService;
 use OxidEsales\GraphQL\Account\Basket\DataType\Basket as BasketDataType;
-use OxidEsales\GraphQL\Account\Customer\DataType\Customer as CustomerDataType;
-use OxidEsales\GraphQL\Account\Shared\Infrastructure\Basket as BasketModel;
+use OxidEsales\GraphQL\Account\Shared\Infrastructure\Basket as SharedBasketInfrastructure;
 use OxidEsales\GraphQL\Account\Voucher\DataType\Voucher as VoucherDataType;
 use OxidEsales\GraphQL\Account\Voucher\Exception\VoucherNotApplied;
 use OxidEsales\GraphQL\Account\Voucher\Exception\VoucherNotFound;
 
 final class Voucher
 {
-    /** @var BasketModel */
-    private $basketModel;
-
     /** @var Repository */
     private $repository;
 
+    /** @var SharedBasketInfrastructure */
+    private $sharedBasketInfrastructure;
+
+    /** @var EshopDatabaseTransactionService */
+    private $transactionService;
+
     public function __construct(
-        BasketModel $basketModel,
-        Repository $repository
+        Repository $repository,
+        SharedBasketInfrastructure $sharedBasketInfrastructure,
+        EshopDatabaseTransactionService $transactionService
     ) {
-        $this->basketModel = $basketModel;
-        $this->repository  = $repository;
+        $this->repository                 = $repository;
+        $this->sharedBasketInfrastructure = $sharedBasketInfrastructure;
+        $this->transactionService         = $transactionService;
     }
 
     public function addVoucher(
-        VoucherDataType $voucherDataType,
-        BasketDataType $basketDataType,
-        CustomerDataType $customer,
-        array $activeVouchers
+        VoucherDataType $voucher,
+        BasketDataType $basket
     ): void {
-        $databseProvider = \OxidEsales\Eshop\Core\DatabaseProvider::getMaster();
-        $databseProvider->startTransaction();
+        $this->transactionService->begin();
 
         try {
-            $voucherModel  = $voucherDataType->getEshopModel();
+            $basketModel = $this->sharedBasketInfrastructure->getCalculatedBasket($basket);
+
+            $activeVouchers = $this->repository->getBasketVouchers((string) $basket->id());
+            $voucherModel   = $voucher->getEshopModel();
             $voucherModel->getVoucherByNr(
-                $voucherDataType->voucher(),
+                $voucher->voucher(),
                 $this->getActiveVouchersIds(($activeVouchers)),
                 true
             );
 
-            /** @var EshopBasketModel $eshopBasketModel */
-            $eshopBasketModel = $this->basketModel->getBasket(
-                $basketDataType->getEshopModel(),
-                $customer->getEshopModel()
-            );
-
             $voucherModel->checkVoucherAvailability(
                 $this->getActiveVouchersNumbers($activeVouchers),
-                $this->getProductsPrice($eshopBasketModel)
+                $this->getProductsPrice($basketModel)
             );
-            $voucherModel->checkUserAvailability($customer->getEshopModel());
+            $voucherModel->checkUserAvailability($basket->getEshopModel()->getUser());
             $voucherModel->markAsReserved();
-            $this->repository->addBasketIdToVoucher($basketDataType->id(), $voucherModel->getId());
-        } catch (Exception $exception) {
-            $databseProvider->rollbackTransaction();
 
-            throw VoucherNotFound::byVoucher($voucherDataType->voucher());
+            $this->repository->addBasketIdToVoucher($basket->id(), $voucherModel->getId());
+        } catch (Exception $exception) {
+            $this->transactionService->rollback();
+
+            throw VoucherNotFound::byNumber($voucher->voucher());
         }
-        $databseProvider->commitTransaction();
+        $this->transactionService->commit();
     }
 
     public function removeVoucher(
         VoucherDataType $voucherDataType,
-        BasketDataType $basketDataType,
-        array $activeVouchers
+        BasketDataType $userBasket
     ): void {
-        $voucherId     = (string) $voucherDataType->id();
+        $voucherId      = (string) $voucherDataType->id();
+        $activeVouchers = $this->repository->getBasketVouchers((string) $userBasket->id());
 
         if (in_array($voucherId, $this->getActiveVouchersIds($activeVouchers))) {
             $voucherModel = $voucherDataType->getEshopModel();
@@ -85,7 +86,74 @@ final class Voucher
             $voucherModel->unMarkAsReserved();
             $this->repository->removeBasketIdFromVoucher($voucherId);
         } else {
-            throw VoucherNotApplied::byId($voucherId, (string) $basketDataType->id());
+            throw VoucherNotApplied::byId($voucherId, (string) $userBasket->id());
+        }
+    }
+
+    public function isVoucherSerieUsableInCurrentShop(VoucherDataType $voucherDataType): bool
+    {
+        $result = true;
+
+        try {
+            $voucherDataType->getEshopModel()->getSerie();
+        } catch (EshopObjectException $exception) {
+            $result = false;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @throws VoucherNotFound
+     */
+    public function checkProductAvailability(BasketDataType $basket, VoucherDataType $voucher): void
+    {
+        if (!$voucher->getEshopModel()->isProductVoucher()) {
+            return;
+        }
+
+        $this->checkForVoucherRelatedProducts($basket, $voucher);
+    }
+
+    /**
+     * @throws VoucherNotFound
+     */
+    public function checkCategoryAvailability(BasketDataType $basket, VoucherDataType $voucher): void
+    {
+        if (!$voucher->getEshopModel()->isCategoryVoucher()) {
+            return;
+        }
+
+        $this->checkForVoucherRelatedProducts($basket, $voucher);
+    }
+
+    /**
+     * @throws VoucherNotFound
+     */
+    private function checkForVoucherRelatedProducts(BasketDataType $basket, VoucherDataType $voucher): void
+    {
+        $discountModel = $voucher->getEshopModel()->getSerieDiscount();
+        $basketModel   = $this->sharedBasketInfrastructure->getBasket($basket);
+        $items         = $basketModel->getContents();
+
+        $productIsInBasket = false;
+
+        foreach ($items as $item) {
+            $product = $item->getArticle();
+
+            if (!$item->isDiscountArticle() &&
+                $product &&
+                !$product->skipDiscounts() &&
+                $discountModel->isForBasketItem($product)
+            ) {
+                $productIsInBasket = true;
+
+                break;
+            }
+        }
+
+        if (!$productIsInBasket) {
+            throw VoucherNotFound::byNumber($voucher->number());
         }
     }
 

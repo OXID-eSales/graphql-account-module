@@ -39,7 +39,7 @@ final class BasketsCest extends BaseCest
 
         $baskets = $response['data']['baskets'];
 
-        $I->assertSame(3, count($baskets));
+        $I->assertSame(4, count($baskets));
     }
 
     public function testGetOnlyPublicBaskets(AcceptanceTester $I): void
@@ -52,7 +52,7 @@ final class BasketsCest extends BaseCest
         $I->seeResponseCodeIs(HttpCode::OK);
 
         $baskets = $response['data']['baskets'];
-        $I->assertSame(2, count($baskets));
+        $I->assertSame(3, count($baskets));
 
         // restore database
         $I->login(self::USERNAME, self::PASSWORD);
@@ -87,7 +87,7 @@ final class BasketsCest extends BaseCest
         $I->seeResponseCodeIs(HttpCode::OK);
 
         $baskets = $response['data']['baskets'];
-        $I->assertSame(5, count($baskets));
+        $I->assertSame(6, count($baskets));
     }
 
     public function testBasketsCosts(AcceptanceTester $I): void
@@ -142,16 +142,28 @@ final class BasketsCest extends BaseCest
                     'total'      => 21.4,
                 ],
             ], [
-                'id'   => '_test_wish_list_public',
+                'id'   => '_test_voucher_public',
                 'cost' => [
                     'productNet' => [
-                        'price' => 16.81,
+                        'price' => 8.4,
                     ],
                     'payment'    => [
                         'price' => 0,
                     ],
                     'discount'   => 0,
-                    'total'      => 23.9,
+                    'total'      => 13.9,
+                ],
+            ], [
+                'id'   => '_test_wish_list_public',
+                'cost' => [
+                    'productNet' => [
+                        'price' => 8.4,
+                    ],
+                    'payment'    => [
+                        'price' => 0,
+                    ],
+                    'discount'   => 0,
+                    'total'      => 13.9,
                 ],
             ],
         ], $result['data']['baskets']);

@@ -18,8 +18,10 @@ use OxidEsales\GraphQL\Account\Basket\Infrastructure\Basket as BasketInfraServic
 use OxidEsales\GraphQL\Account\Basket\Infrastructure\Repository as BasketRepository;
 use OxidEsales\GraphQL\Account\Customer\DataType\Customer as CustomerDataType;
 use OxidEsales\GraphQL\Account\Customer\Exception\CustomerNotFound;
-use OxidEsales\GraphQL\Account\Customer\Service\Customer as CustomerService;
 use OxidEsales\GraphQL\Account\Shared\Infrastructure\Basket as SharedInfrastructure;
+use OxidEsales\GraphQL\Account\Voucher\DataType\Voucher as VoucherDataType;
+use OxidEsales\GraphQL\Account\Voucher\Infrastructure\Repository as VoucherRepository;
+use OxidEsales\GraphQL\Account\Voucher\Infrastructure\Voucher as VoucherInfrastructure;
 use OxidEsales\GraphQL\Base\Exception\InvalidLogin;
 use OxidEsales\GraphQL\Base\Exception\InvalidToken;
 use OxidEsales\GraphQL\Base\Exception\NotFound;
@@ -55,8 +57,14 @@ final class Basket
     /** @var SharedInfrastructure */
     private $sharedInfrastructure;
 
-    /** @var CustomerService */
-    private $customerService;
+    /** @var BasketVoucher */
+    private $basketVoucherService;
+
+    /** @var VoucherInfrastructure */
+    private $voucherInfrastructure;
+
+    /** @var VoucherRepository */
+    private $voucherRepository;
 
     public function __construct(
         Repository $repository,
@@ -67,7 +75,9 @@ final class Basket
         BasketInfraService $basketInfraService,
         ProductService $productService,
         SharedInfrastructure $sharedInfrastructure,
-        CustomerService $customerService
+        BasketVoucher $basketVoucherService,
+        VoucherInfrastructure $voucherInfrastructure,
+        VoucherRepository $voucherRepository
     ) {
         $this->repository            = $repository;
         $this->basketRepository      = $basketRepository;
@@ -77,7 +87,9 @@ final class Basket
         $this->basketInfraService    = $basketInfraService;
         $this->productService        = $productService;
         $this->sharedInfrastructure  = $sharedInfrastructure;
-        $this->customerService       = $customerService;
+        $this->basketVoucherService  = $basketVoucherService;
+        $this->voucherInfrastructure = $voucherInfrastructure;
+        $this->voucherRepository     = $voucherRepository;
     }
 
     /**
@@ -93,6 +105,8 @@ final class Basket
         ) {
             throw new InvalidToken('Basket is private.');
         }
+
+        $this->sharedInfrastructure->getBasket($basket);
 
         return $basket;
     }
@@ -140,6 +154,13 @@ final class Basket
             $this->authorizationService->isAllowed('DELETE_BASKET')
             || $basket->belongsToUser($this->authenticationService->getUserId())
         ) {
+            $vouchers = $this->voucherRepository->getBasketVouchers($id);
+
+            /** @var VoucherDataType $voucher */
+            foreach ($vouchers as $voucher) {
+                $this->voucherInfrastructure->removeVoucher($voucher, $basket);
+            }
+
             return $this->repository->delete($basket->getEshopModel());
         }
 
@@ -230,12 +251,36 @@ final class Basket
 
     public function basketCost(BasketDataType $basket): BasketCost
     {
-        $userId = $this->authenticationService->getUserId();
+        $basket = $this->getAuthenticatedCustomerBasket($basketId);
 
-        /** @var CustomerDataType $customer */
-        $customer    = $this->customerService->customer($userId);
-        $basketModel = $this->sharedInfrastructure->getBasket($basket->getEshopModel(), $customer->getEshopModel());
+        $basketModel = $this->sharedInfrastructure->getCalculatedBasket($basket);
 
         return new BasketCost($basketModel);
+    }
+
+    public function addVoucher(string $basketId, string $voucherNumber): BasketDataType
+    {
+        $basket = $this->basketRepository->getBasketById($basketId);
+
+        if (!$basket->belongsToUser($this->authenticationService->getUserId())) {
+            throw BasketAccessForbidden::byAuthenticatedUser();
+        }
+
+        $this->basketVoucherService->addVoucherToBasket($voucherNumber, $basket);
+
+        return $basket;
+    }
+
+    public function removeVoucher(string $basketId, string $voucherId): BasketDataType
+    {
+        $basket = $this->basketRepository->getBasketById($basketId);
+
+        if (!$basket->belongsToUser($this->authenticationService->getUserId())) {
+            throw BasketAccessForbidden::byAuthenticatedUser();
+        }
+
+        $this->basketVoucherService->removeVoucherFromBasket($voucherId, $basket);
+
+        return $basket;
     }
 }

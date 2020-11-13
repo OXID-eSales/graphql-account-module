@@ -64,13 +64,16 @@ REPLACE INTO `oxuserbaskets` (`OXID`, `OXUSERID`, `OXTITLE`, `OXPUBLIC`) VALUES
 ('_test_basket_private_ex', '309db395b6c85c3881fcb9b437a73dd6', 'buy_these_later', false),
 ('_test_noticelist_public', '_678d3b5380202966df6ff128e9eecaq', 'noticelist', true),
 ('_test_savedbasket_public', 'e7af1c3b786fd02906ccd75698f4e6b9', 'savedbasket', true),
-('_test_savedbasket_private', 'e7af1c3b786fd02906ccd75698f4e6b9', 'savedbasket_private', false);
+('_test_savedbasket_private', 'e7af1c3b786fd02906ccd75698f4e6b9', 'savedbasket_private', false),
+('_test_voucher_public', 'e7af1c3b786fd02906ccd75698f4e6b9', 'test_voucher', true);
+
 
 REPLACE INTO `oxuserbasketitems` (`OXID`, `OXBASKETID`, `OXARTID`, `OXAMOUNT`, `OXSELLIST`, `OXPERSPARAM`) VALUES
 ('_test_wish_list_item_1', '_test_wish_list_public', '_test_product_for_wish_list', 1, 'N;', ''),
 ('_test_wish_list_item_2', '_test_wish_list_private', '_test_product_for_wish_list', 1, 'N;', ''),
 ('_test_basket_item_1', '_test_basket_public', '_test_product_for_basket', 1, 'N;', ''),
-('_test_basket_item_2', '_test_basket_private', '_test_product_for_basket', 1, 'N;', '');
+('_test_basket_item_2', '_test_basket_private', '_test_product_for_basket', 1, 'N;', ''),
+('_test_voucherbasket_item_1', '_test_voucher_public', '_test_product_for_basket', 1, 'N;', '');
 
 UPDATE `oxcountry` SET `oxorder` = 1 where `OXID` = 'a7c40f631fc920687.20179984';
 UPDATE `oxcountry` SET `oxorder` = 2 where `OXID` = '8f241f11096877ac0.98748826';
@@ -124,13 +127,23 @@ REPLACE INTO `oxorderarticles` (`OXID`, `OXORDERID`, `OXAMOUNT`, `OXARTID`, `OXA
 REPLACE INTO `oxvoucherseries` (`OXID`, `OXSERIENR`, `OXDISCOUNT`, `OXDISCOUNTTYPE`, `OXBEGINDATE`, `OXENDDATE`, `OXSERIEDESCRIPTION`, `OXALLOWOTHERSERIES`) VALUES
 ('voucherserie1', 'voucherserie1', 21.6, 'absolute', '2000-01-01', '2050-12-31', '', 1),
 ('serie2', 'serie2', 2.0, 'absolute', '2000-01-01', '2050-12-31', 'serie2 description', 1),
-('serie3', 'serie3', 3.0, 'absolute', '2000-01-01', '2050-12-31', 'serie3 description', 1);
+('serie3', 'serie3', 3.0, 'absolute', '2000-01-01', '2050-12-31', 'serie3 description', 1),
+('personal_voucher', 'myVoucher', 5.0, 'absolute', '2000-01-01', '2050-12-31', 'personal voucher', 0),
+('personal_series_voucher', 'mySeriesVoucher', 6.0, 'absolute', '2000-01-01', '2050-12-31', 'personal voucher', 1),
+('series_voucher', 'seriesVoucher', 8.0, 'absolute', '2000-01-01', '2050-12-31', 'series voucher', 0),
+('used_voucher', 'used_voucher', 3.0, 'absolute', '2000-01-01', '2050-12-31', 'used voucher', 0);
 
 REPLACE INTO `oxvouchers` (`OXDATEUSED`, `OXORDERID`, `OXUSERID`, `OXRESERVED`, `OXVOUCHERNR`, `OXVOUCHERSERIEID`, `OXDISCOUNT`, `OXID`, `OXTIMESTAMP`, `OEGQL_BASKETID`) VALUES
 ('2020-08-28', '_149bc776dd339a83d863c4f64693bb6', '_45ad3b5380202966df6ff128e9eecaq', 1, 'voucher1', 'voucherserie1', 21.6, 'usedvoucherid', now(), null),
 (null, null, null, 0, 'voucher2', 'voucherserie1', 0, 'notusedvoucherid', now(), null),
 (null, null, null, 1601551714, 'serie2voucher', 'serie2', 0, 'serie2voucher', now(), '_test_basket_private'),
-(null, null, null, 1601551714, 'serie3voucher', 'serie3', 0, 'serie3voucher', now(), '_test_basket_private');
+(null, null, null, 1601551714, 'serie3voucher', 'serie3', 0, 'serie3voucher', now(), '_test_basket_private'),
+(null, null, null, 0, 'myVoucher', 'personal_voucher', 0, 'personal_voucher_1', now(), null),
+(null, null, null, 0, 'myVoucher', 'personal_voucher', 0, 'personal_voucher_2', now(), null),
+(null, null, null, 0, 'mySeriesVoucher', 'personal_series_voucher', 0, 'personal_series_voucher_1', now(), null),
+(null, null, null, 0, 'mySeriesVoucher', 'personal_series_voucher', 0, 'personal_series_voucher_2', now(), null),
+(null, null, null, 0, 'seriesVoucher', 'series_voucher', 0, 'series_voucher_1', now(), null),
+('2020-10-10', '_test_order', 'e7af1c3b786fd02906ccd75698f4e6b9', 0, 'used_voucher', 'used_voucher', 0, 'used_voucher', now(), '');
 
 REPLACE INTO `oxuserpayments` (`OXID`, `OXUSERID`, `OXPAYMENTSID`, `OXVALUE`, `OXTIMESTAMP`) VALUES
 ('direct_debit_order_payment',  'e7af1c3b786fd02906ccd75698f4e6b9', 'oxiddebitnote', ENCODE('lsbankname__Pro Credit Bank@@lsblz__PRCBBGSF456@@lsktonr__DE89 3704 0044 0532 0130 00@@lsktoinhaber__Marc Muster@@', 'sd45DF09_sdlk09239DD'), '2020-09-10 08:15:00');

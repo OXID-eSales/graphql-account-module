@@ -64,13 +64,16 @@ REPLACE INTO `oxuserbaskets` (`OXID`, `OXUSERID`, `OXTITLE`, `OXPUBLIC`) VALUES
 ('_test_basket_private_ex', '309db395b6c85c3881fcb9b437a73dd6', 'buy_these_later', false),
 ('_test_noticelist_public', '_678d3b5380202966df6ff128e9eecaq', 'noticelist', true),
 ('_test_savedbasket_public', 'e7af1c3b786fd02906ccd75698f4e6b9', 'savedbasket', true),
-('_test_savedbasket_private', 'e7af1c3b786fd02906ccd75698f4e6b9', 'savedbasket_private', false);
+('_test_savedbasket_private', 'e7af1c3b786fd02906ccd75698f4e6b9', 'savedbasket_private', false),
+('_test_voucher_public', 'e7af1c3b786fd02906ccd75698f4e6b9', 'test_voucher', true);
+
 
 REPLACE INTO `oxuserbasketitems` (`OXID`, `OXBASKETID`, `OXARTID`, `OXAMOUNT`, `OXSELLIST`, `OXPERSPARAM`) VALUES
 ('_test_wish_list_item_1', '_test_wish_list_public', '_test_product_for_wish_list', 1, 'N;', ''),
 ('_test_wish_list_item_2', '_test_wish_list_private', '_test_product_for_wish_list', 1, 'N;', ''),
 ('_test_basket_item_1', '_test_basket_public', '_test_product_for_basket', 1, 'N;', ''),
-('_test_basket_item_2', '_test_basket_private', '_test_product_for_basket', 1, 'N;', '');
+('_test_basket_item_2', '_test_basket_private', '_test_product_for_basket', 1, 'N;', ''),
+('_test_voucherbasket_item_1', '_test_voucher_public', '_test_product_for_basket', 1, 'N;', '');
 
 UPDATE `oxcountry` SET `oxorder` = 1 where `OXID` = 'a7c40f631fc920687.20179984';
 UPDATE `oxcountry` SET `oxorder` = 2 where `OXID` = '8f241f11096877ac0.98748826';
@@ -121,16 +124,28 @@ REPLACE INTO `oxorderarticles` (`OXID`, `OXORDERID`, `OXAMOUNT`, `OXARTID`, `OXA
 ('c5b7fd8dff99f066c168cd720212075a','8c726d3f42ff1a6ea2828d5f309de881',1,'oiaa81b5e002fc2f73b9398c361c0b97','10101','Online shops with OXID eShop','','',0,0,0,10,'',0,0,0,'','','','','','oxid_book_cover_1.jpg','','','','',0,600,'0000-00-00','2012-04-25','2020-09-10 09:13:36',0,0,0,'','','','',1,'','',0,1,0),
 ('4ad5c368c9c7715ac800adb27e079ebe','7f0b6ef39c4e76c04a0f75232489bb65',1,'oiaa81b5e002fc2f73b9398c361c0b97','10101','Online shops with OXID eShop','','',0,0,0,10,'',0,0,0,'','','','','','oxid_book_cover_1.jpg','','','','',0,600,'0000-00-00','2012-04-25','2020-09-10 09:13:36',0,0,0,'','','','',1,'','',0,1,0);
 
-REPLACE INTO `oxvoucherseries` (`OXID`, `OXSERIENR`, `OXDISCOUNT`, `OXDISCOUNTTYPE`, `OXBEGINDATE`, `OXENDDATE`, `OXSERIEDESCRIPTION`, `OXALLOWOTHERSERIES`) VALUES
-('voucherserie1', 'voucherserie1', 21.6, 'absolute', '2000-01-01', '2050-12-31', '', 1),
-('serie2', 'serie2', 2.0, 'absolute', '2000-01-01', '2050-12-31', 'serie2 description', 1),
-('serie3', 'serie3', 3.0, 'absolute', '2000-01-01', '2050-12-31', 'serie3 description', 1);
+REPLACE INTO `oxvoucherseries` (`OXID`, `OXSHOPID`, `OXSERIENR`, `OXDISCOUNT`, `OXDISCOUNTTYPE`, `OXBEGINDATE`, `OXENDDATE`, `OXSERIEDESCRIPTION`, `OXALLOWOTHERSERIES`) VALUES
+('voucherserie1', 1, 'voucherserie1', 21.6, 'absolute', '2000-01-01', '2050-12-31', '', 1),
+('serie2', 1, 'serie2', 2.0, 'absolute', '2000-01-01', '2050-12-31', 'serie2 description', 1),
+('serie3', 1, 'serie3', 3.0, 'absolute', '2000-01-01', '2050-12-31', 'serie3 description', 1),
+('personal_voucher', 1, 'myVoucher', 5.0, 'absolute', '2000-01-01', '2050-12-31', 'personal voucher', 0),
+('personal_series_voucher', 1, 'mySeriesVoucher', 6.0, 'absolute', '2000-01-01', '2050-12-31', 'personal voucher', 1),
+('series_voucher', 1, 'seriesVoucher', 8.0, 'absolute', '2000-01-01', '2050-12-31', 'series voucher', 0),
+('used_voucher', 1, 'used_voucher', 3.0, 'absolute', '2000-01-01', '2050-12-31', 'used voucher', 0),
+('shop_2_voucher_series', 2, 'shop2voucher', 10.0, 'percent', '2000-01-01', '2050-12-31', 'shop 2 voucher', 0);
 
 REPLACE INTO `oxvouchers` (`OXDATEUSED`, `OXORDERID`, `OXUSERID`, `OXRESERVED`, `OXVOUCHERNR`, `OXVOUCHERSERIEID`, `OXDISCOUNT`, `OXID`, `OXTIMESTAMP`, `OEGQL_BASKETID`) VALUES
 ('2020-08-28', '_149bc776dd339a83d863c4f64693bb6', '_45ad3b5380202966df6ff128e9eecaq', 1, 'voucher1', 'voucherserie1', 21.6, 'usedvoucherid', now(), null),
 (null, null, null, 0, 'voucher2', 'voucherserie1', 0, 'notusedvoucherid', now(), null),
 (null, null, null, 1601551714, 'serie2voucher', 'serie2', 0, 'serie2voucher', now(), '_test_basket_private'),
-(null, null, null, 1601551714, 'serie3voucher', 'serie3', 0, 'serie3voucher', now(), '_test_basket_private');
+(null, null, null, 1601551714, 'serie3voucher', 'serie3', 0, 'serie3voucher', now(), '_test_basket_private'),
+(null, null, null, 0, 'myVoucher', 'personal_voucher', 0, 'personal_voucher_1', now(), null),
+(null, null, null, 0, 'myVoucher', 'personal_voucher', 0, 'personal_voucher_2', now(), null),
+(null, null, null, 0, 'mySeriesVoucher', 'personal_series_voucher', 0, 'personal_series_voucher_1', now(), null),
+(null, null, null, 0, 'mySeriesVoucher', 'personal_series_voucher', 0, 'personal_series_voucher_2', now(), null),
+(null, null, null, 0, 'seriesVoucher', 'series_voucher', 0, 'series_voucher_1', now(), null),
+('2020-10-10', '_test_order', 'e7af1c3b786fd02906ccd75698f4e6b9', 0, 'used_voucher', 'used_voucher', 0, 'used_voucher', now(), ''),
+(null, null, null, 0, 'shop2voucher', 'shop_2_voucher_series', 0, 'shop_2_voucher_series', now(), '');
 
 REPLACE INTO `oxuserpayments` (`OXID`, `OXUSERID`, `OXPAYMENTSID`, `OXVALUE`, `OXTIMESTAMP`) VALUES
 ('direct_debit_order_payment',  'e7af1c3b786fd02906ccd75698f4e6b9', 'oxiddebitnote', ENCODE('lsbankname__Pro Credit Bank@@lsblz__PRCBBGSF456@@lsktonr__DE89 3704 0044 0532 0130 00@@lsktoinhaber__Marc Muster@@', 'sd45DF09_sdlk09239DD'), '2020-09-10 08:15:00');
@@ -233,8 +248,9 @@ REPLACE INTO `oxfiles` (`OXID`, `OXARTID`, `OXFILENAME`) VALUES ('48d949cb0af607
 REPLACE INTO `oxorderfiles` (`OXID`, `OXORDERID`, `OXFILENAME`, `OXFILEID`, `OXSHOPID`, `OXORDERARTICLEID`, `OXFIRSTDOWNLOAD`, `OXLASTDOWNLOAD`, `OXDOWNLOADCOUNT`, `OXMAXDOWNLOADCOUNT`, `OXDOWNLOADEXPIRATIONTIME`, `OXLINKEXPIRATIONTIME`, `OXRESETCOUNT`, `OXVALIDUNTIL`, `OXTIMESTAMP`) VALUES
 ('729aafa296783575ddfd8e9527355b9b',	'85ecbd1d5e56172ff5af6917894d4a31',	'ch99.pdf',	'48d949cb0af6076f841aea5cb5b703ed',	2,	'677688370a4a64d8336107bcf174fdeb',	'2020-09-10 09:14:15',	'2020-09-10 09:14:15',	1,	0,	24,	168,	0,	'2020-09-11 09:14:15',	'2020-09-10 09:14:15');
 
-REPLACE INTO `oxshops` (`OXID`, `OXACTIVE`, `OXNAME`, `OXEDITION`, `OXVERSION`, `OXORDEREMAIL`, `OXINFOEMAIL`) VALUES
-(2, 1, 'Second Shop', 'EE', '6.0.0', 'reply@myoxideshop.com', 'info@myoxideshop.com');
+REPLACE INTO `oxshops` (`OXID`, `OXPARENTID`, `OXISINHERITED`, `OXISMULTISHOP`, `OXISSUPERSHOP`, `OXACTIVE`, `OXNAME`, `OXEDITION`, `OXVERSION`, `OXORDEREMAIL`, `OXINFOEMAIL`) VALUES
+(2, 0, 0, 0, 0, 1, 'Second Shop', 'EE', '6.0.0', 'reply@myoxideshop.com', 'info@myoxideshop.com'),
+(3, 1, 1, 1, 1, 1, 'Third Shop', 'EE', '6.0.0', 'reply@myoxideshop.com', 'info@myoxideshop.com');
 
 REPLACE INTO `oxconfig` (`OXID`, `OXSHOPID`, `OXVARNAME`, `OXVARTYPE`, `OXVARVALUE`, `OXMODULE`)
 SELECT MD5(RAND()), 2, oxvarname, oxvartype, oxvarvalue, oxmodule FROM oxconfig
@@ -264,7 +280,12 @@ REPLACE INTO  `oxnewssubscribed` ( `OXID`,  `OXUSERID`,  `OXDBOPTIN`,  `OXSHOPID
 REPLACE INTO `oxvoucherseries2shop` (`OXSHOPID`, `OXMAPOBJECTID`) VALUES
 ('1', '1'),
 ('1', '2'),
-('1', '3');
+('1', '3'),
+('1', '4'),
+('1', '5'),
+('1', '6'),
+('1', '7'),
+('2', '8');
 
 UPDATE `oxuserbaskets` SET `OEGQL_PAYMENTID` = 'oxidcashondel' WHERE `OXID` = '_test_basket_public';
 

@@ -12,8 +12,12 @@ namespace OxidEsales\GraphQL\Account\Voucher\Infrastructure;
 use Exception;
 use OxidEsales\Eshop\Application\Model\Voucher as EshopVoucherModel;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
+use OxidEsales\GraphQL\Account\Basket\DataType\BasketVoucherFilterList;
+use OxidEsales\GraphQL\Account\Voucher\DataType\Sorting;
 use OxidEsales\GraphQL\Account\Voucher\DataType\Voucher as VoucherDataType;
 use OxidEsales\GraphQL\Account\Voucher\Exception\VoucherNotFound;
+use OxidEsales\GraphQL\Base\DataType\IDFilter;
+use OxidEsales\GraphQL\Base\DataType\PaginationFilter;
 use OxidEsales\GraphQL\Base\Exception\NotFound;
 use OxidEsales\GraphQL\Catalogue\Shared\Infrastructure\Repository as SharedRepository;
 use TheCodingMachine\GraphQLite\Types\ID;
@@ -61,7 +65,7 @@ final class Repository
         try {
             $voucherModel->getVoucherByNr($voucher, [], true);
         } catch (Exception $exception) {
-            throw VoucherNotFound::byVoucher($voucher);
+            throw VoucherNotFound::byNumber($voucher);
         }
 
         return $this->getVoucherById($voucherModel->getId());
@@ -99,5 +103,24 @@ final class Repository
                 ]
             )
             ->execute();
+    }
+
+    /**
+     * @return VoucherDataType[]
+     */
+    public function getBasketVouchers(string $basketId)
+    {
+        return $this->sharedRepository->getList(
+            VoucherDataType::class,
+            new BasketVoucherFilterList(
+                new IDFilter(
+                    new ID(
+                        $basketId
+                    )
+                )
+            ),
+            new PaginationFilter(),
+            new Sorting()
+        );
     }
 }
