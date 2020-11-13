@@ -251,8 +251,6 @@ final class Basket
 
     public function basketCost(BasketDataType $basket): BasketCost
     {
-        $basket = $this->getAuthenticatedCustomerBasket($basketId);
-
         $basketModel = $this->sharedInfrastructure->getCalculatedBasket($basket);
 
         return new BasketCost($basketModel);
