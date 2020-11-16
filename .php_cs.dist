@@ -27,7 +27,8 @@ return PhpCsFixer\Config::create()
             'annotation-white-list' => [],
             'consider-absent-docblock-as-internal-class' => true,
             'annotation-black-list' => [
-                '@eshopExtension'
+                '@eshopExtension',
+                'dataType-extension'
             ],
         ],
         'method_argument_space' => [
