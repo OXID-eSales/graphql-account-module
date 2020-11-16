@@ -45,13 +45,6 @@ final class VoucherCest extends BaseCest
         //Reset voucher usage
         $this->prepareVoucher($I, '', 'personal_voucher_1');
         $this->prepareVoucher($I, '', self::USED_VOUCHER);
-
-        // TODO: Remove when the test with min price is fixed
-        $I->updateInDatabase(
-            'oxvoucherseries',
-            ['oxminimumvalue' => 0.00],
-            ['oxid'           => 'personal_voucher']
-        );
     }
 
     public function testAddVoucherNotLoggedIn(AcceptanceTester $I): void
@@ -676,6 +669,36 @@ final class VoucherCest extends BaseCest
         $this->basketRemoveProductMutation($I, $basketId, self::PRODUCT_ID);
         $this->basketRemoveMutation($I, $basketId);
         $I->seeResponseCodeIs(HttpCode::OK);
+    }
+
+    public function testBasketWithTimedOutVoucherReservation(AcceptanceTester $I): void
+    {
+        $I->wantToTest('basket with voucher reservation timed out');
+        $I->updateConfigInDatabase('iVoucherTimeout', 10800, 'int'); //shop's default value
+        $I->login(self::USERNAME, self::PASSWORD);
+
+        $I->sendGQLQuery($this->addVoucherMutation(self::BASKET, self::VOUCHER));
+        $I->seeResponseCodeIs(HttpCode::OK);
+
+        $I->sendGQLQuery($this->basketQuery(self::BASKET));
+        $result = $I->grabJsonResponseAsArray();
+        $I->assertNotEmpty($result['data']['basket']['vouchers']);
+
+        //Voucher outdated after basket was created but before order is placed
+        $I->updateInDatabase(
+            'oxvouchers',
+            [
+                'oxreserved'     => time() - 10900,
+            ],
+            [
+                'oegql_basketid' => self::BASKET,
+            ]
+        );
+
+        $I->sendGQLQuery($this->basketQuery(self::BASKET));
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $result = $I->grabJsonResponseAsArray();
+        $I->assertEmpty($result['data']['basket']['vouchers']);
     }
 
     private function basketRemoveProductMutation(AcceptanceTester $I, string $basketId, string $productId, int $amount = 1): void

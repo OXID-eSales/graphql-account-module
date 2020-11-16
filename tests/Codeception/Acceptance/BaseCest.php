@@ -18,6 +18,8 @@ abstract class BaseCest
     public function _before(AcceptanceTester $I, Scenario $scenario): void
     {
         $this->activateModules();
+
+        $I->updateConfigInDatabase('iVoucherTimeout', time(), 'int');
     }
 
     /**
