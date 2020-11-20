@@ -19,7 +19,8 @@ abstract class BaseCest
     {
         $this->activateModules();
 
-        $I->updateConfigInDatabase('iVoucherTimeout', time(), 'int');
+        //Some voucher tests are too fast so give 1 minute extra reservation time gap
+        $I->updateConfigInDatabase('iVoucherTimeout', (time() - 60), 'int');
     }
 
     /**
