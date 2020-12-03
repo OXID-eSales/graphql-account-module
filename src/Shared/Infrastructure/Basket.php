@@ -44,6 +44,7 @@ final class Basket
 
         /** @var EshopBasketModel $basketModel */
         $basketModel = oxNew(EshopBasketModel::class);
+        $basketModel->setUserBasketId($userBasketModel->getId());
 
         foreach ($savedItems as $key => $savedItem) {
             $basketModel->addProductToBasket($savedItem, $key);

@@ -24,6 +24,21 @@ use OxidEsales\Eshop\Core\Price as EshopPrice;
 class Basket extends Basket_parent
 {
     /**
+     * @var string
+     */
+    protected $userBasketId = '';
+
+    public function setUserBasketId(string $userBasketId): void
+    {
+        $this->userBasketId = $userBasketId;
+    }
+
+    public function getUserBasketId(): string
+    {
+        return $this->userBasketId;
+    }
+
+    /**
      * Add product to basket without doing any check.
      */
     public function addProductToBasket(UserBasketItem $basketItem, string $key): void
