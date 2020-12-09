@@ -47,7 +47,7 @@ final class Basket
         $basketModel->setUserBasketId($userBasketModel->getId());
 
         foreach ($savedItems as $key => $savedItem) {
-            $basketModel->addProductToBasket($savedItem, $key);
+            $basketModel->addProductToBasket($savedItem);
         }
 
         //Set user to basket otherwise delivery cost will not be calculated

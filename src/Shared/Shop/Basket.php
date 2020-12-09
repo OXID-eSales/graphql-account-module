@@ -41,9 +41,10 @@ class Basket extends Basket_parent
     /**
      * Add product to basket without doing any check.
      */
-    public function addProductToBasket(UserBasketItem $basketItem, string $key): void
+    public function addProductToBasket(UserBasketItem $basketItem): void
     {
-        $this->_aBasketContents[$key] = $this->convertUserBasketItemToBasketItem($basketItem);
+        $item = $this->convertUserBasketItemToBasketItem($basketItem);
+        $this->_aBasketContents[$item->getBasketItemKey()] = $item;
     }
 
     /**
